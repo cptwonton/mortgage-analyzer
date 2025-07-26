@@ -19,6 +19,7 @@ export default function Home() {
   });
 
   const [errors, setErrors] = useState<string[]>([]);
+  const [showPMIInfo, setShowPMIInfo] = useState(false);
 
   const handleInputChange = (field: keyof MortgageInputs, value: string) => {
     // Convert string to number, but handle empty strings
@@ -98,66 +99,132 @@ export default function Home() {
                         Down Payment
                       </label>
                       <div className="relative">
-                        <input
-                          type="number"
-                          value={inputs.downPaymentPercent === 0 ? '' : inputs.downPaymentPercent}
-                          onChange={(e) => handleInputChange('downPaymentPercent', e.target.value)}
-                          placeholder="20"
-                          className="w-full px-4 py-4 bg-white/5 border border-white/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-white placeholder-slate-400 backdrop-blur-sm transition-all duration-200 hover:bg-white/10"
-                        />
-                        <span className="absolute right-4 top-1/2 transform -translate-y-1/2 text-slate-400 font-medium">%</span>
+                        <div className="px-4 py-4 bg-white/5 border border-white/20 rounded-xl backdrop-blur-sm">
+                          <div className="flex items-center justify-between mb-3">
+                            <span className="text-white font-bold text-lg">
+                              {inputs.downPaymentPercent.toFixed(0)}%
+                            </span>
+                            <div className="flex space-x-1 text-xs text-slate-400">
+                              <span>0%</span>
+                              <span>•</span>
+                              <span>50%</span>
+                            </div>
+                          </div>
+                          <div className="relative">
+                            <input
+                              type="range"
+                              min="0"
+                              max="50"
+                              step="1"
+                              value={inputs.downPaymentPercent}
+                              onChange={(e) => handleInputChange('downPaymentPercent', e.target.value)}
+                              className="w-full h-2 bg-white/10 rounded-lg appearance-none cursor-pointer slider"
+                            />
+                            <div 
+                              className={`absolute top-0 left-0 h-2 rounded-lg pointer-events-none transition-all duration-300 ${
+                                inputs.downPaymentPercent < 20 
+                                  ? 'bg-gradient-to-r from-red-400 to-amber-400'
+                                  : 'bg-gradient-to-r from-green-400 to-blue-400'
+                              }`}
+                              style={{ width: `${(inputs.downPaymentPercent / 50) * 100}%` }}
+                            ></div>
+                            <div 
+                              className={`absolute top-1/2 transform -translate-y-1/2 w-4 h-4 rounded-full shadow-lg border-2 pointer-events-none transition-all duration-300 ${
+                                inputs.downPaymentPercent < 20 
+                                  ? 'bg-white border-amber-500'
+                                  : 'bg-white border-green-500'
+                              }`}
+                              style={{ left: `calc(${(inputs.downPaymentPercent / 50) * 100}% - 8px)` }}
+                            ></div>
+                          </div>
+                        </div>
                       </div>
                       
-                      {/* PMI Indicator */}
+                      {/* PMI Indicator with Info Icon */}
                       <div className={`mt-3 p-3 rounded-lg border transition-all duration-300 ${
                         inputs.downPaymentPercent < 20 
                           ? 'bg-amber-500/20 border-amber-500/40 shadow-lg shadow-amber-500/20' 
                           : 'bg-white/5 border-white/10'
                       }`}>
-                        <div className="flex items-center space-x-2">
-                          <div className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                            inputs.downPaymentPercent < 20 
-                              ? 'bg-amber-400 shadow-lg shadow-amber-400/50' 
-                              : 'bg-slate-500'
-                          }`}></div>
-                          <span className={`text-xs font-medium transition-colors duration-300 ${
-                            inputs.downPaymentPercent < 20 
-                              ? 'text-amber-300' 
-                              : 'text-slate-400'
-                          }`}>
-                            {inputs.downPaymentPercent < 20 ? (
-                              <>
-                                <span className="flex items-center">
-                                  <span className="mr-1">⚠️</span>
-                                  PMI Required
-                                </span>
-                              </>
-                            ) : (
-                              <>
-                                <span className="flex items-center">
-                                  <span className="mr-1">✅</span>
-                                  No PMI
-                                </span>
-                              </>
-                            )}
-                          </span>
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-2">
+                            <div className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                              inputs.downPaymentPercent < 20 
+                                ? 'bg-amber-400 shadow-lg shadow-amber-400/50' 
+                                : 'bg-slate-500'
+                            }`}></div>
+                            <span className={`text-xs font-medium transition-colors duration-300 ${
+                              inputs.downPaymentPercent < 20 
+                                ? 'text-amber-300' 
+                                : 'text-slate-400'
+                            }`}>
+                              {inputs.downPaymentPercent < 20 ? (
+                                <>
+                                  <span className="flex items-center">
+                                    <span className="mr-1">⚠️</span>
+                                    PMI Required
+                                  </span>
+                                </>
+                              ) : (
+                                <>
+                                  <span className="flex items-center">
+                                    <span className="mr-1">✅</span>
+                                    No PMI
+                                  </span>
+                                </>
+                              )}
+                            </span>
+                          </div>
+                          
+                          {/* Info Icon */}
+                          <button
+                            onClick={() => setShowPMIInfo(!showPMIInfo)}
+                            className={`w-5 h-5 rounded-full border flex items-center justify-center transition-all duration-200 hover:scale-110 ${
+                              inputs.downPaymentPercent < 20 
+                                ? 'border-amber-400/50 text-amber-300 hover:border-amber-400 hover:bg-amber-400/10' 
+                                : 'border-slate-500/50 text-slate-400 hover:border-slate-400 hover:bg-slate-400/10'
+                            }`}
+                          >
+                            <span className="text-xs font-bold">i</span>
+                          </button>
                         </div>
                         
+                        {/* PMI Cost Display (when applicable) */}
                         {inputs.downPaymentPercent < 20 && analysis && (
                           <div className="mt-2 text-xs text-amber-200">
                             <div className="flex justify-between">
                               <span>Monthly PMI:</span>
                               <span className="font-semibold">+${analysis.breakdown.pmi.toLocaleString()}</span>
                             </div>
-                            <div className="text-amber-300/80 mt-1">
-                              Put down 20% to eliminate this cost
-                            </div>
                           </div>
                         )}
                         
-                        {inputs.downPaymentPercent >= 20 && (
-                          <div className="mt-2 text-xs text-slate-400">
-                            Great! No PMI with 20%+ down payment
+                        {/* Expandable Info Section */}
+                        {showPMIInfo && (
+                          <div className={`mt-3 pt-3 border-t text-xs transition-all duration-300 ${
+                            inputs.downPaymentPercent < 20 
+                              ? 'border-amber-400/30 text-amber-200' 
+                              : 'border-slate-500/30 text-slate-400'
+                          }`}>
+                            {inputs.downPaymentPercent < 20 ? (
+                              <div>
+                                <p className="mb-2">
+                                  <strong>Private Mortgage Insurance (PMI)</strong> is required when you put down less than 20%.
+                                </p>
+                                <p>
+                                  PMI protects the lender if you default on your loan. You can eliminate this cost by putting down 20% or more.
+                                </p>
+                              </div>
+                            ) : (
+                              <div>
+                                <p className="mb-2">
+                                  <strong>Great choice!</strong> With 20% or more down, you avoid PMI entirely.
+                                </p>
+                                <p>
+                                  This saves you money each month and reduces your total cost of homeownership.
+                                </p>
+                              </div>
+                            )}
                           </div>
                         )}
                       </div>
