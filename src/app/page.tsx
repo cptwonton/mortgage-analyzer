@@ -77,14 +77,14 @@ export default function Home() {
             <div className="inline-flex items-center justify-center p-2 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full mb-6">
               <span className="text-4xl">🏠</span>
             </div>
-            <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-white via-purple-200 to-blue-200 bg-clip-text text-transparent mb-4">
+            <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-white via-blue-100 to-purple-100 bg-clip-text text-transparent mb-4">
               Mortgage Analyzer
             </h1>
             <p className="text-xl text-slate-300 max-w-2xl mx-auto leading-relaxed">
               Discover the exact rental income needed to make your investment property profitable
             </p>
             <div className="mt-6 flex justify-center">
-              <div className="h-1 w-24 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full"></div>
+              <div className="h-1 w-24 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 rounded-full"></div>
             </div>
           </div>
 
@@ -92,7 +92,7 @@ export default function Home() {
             {/* Input Panel */}
             <div className="bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl border border-white/20 p-8 physical-card">
               <div className="flex items-center mb-6">
-                <div className="w-3 h-3 bg-gradient-to-r from-green-400 to-blue-500 rounded-full mr-3"></div>
+                <div className="w-3 h-3 bg-gradient-to-r from-emerald-400 via-teal-500 to-cyan-500 rounded-full mr-3"></div>
                 <h2 className="text-2xl font-bold text-white">Property Details</h2>
               </div>
               
@@ -269,8 +269,8 @@ export default function Home() {
                             <div 
                               className={`absolute top-0 left-0 h-2 rounded-lg pointer-events-none transition-all duration-300 ${
                                 inputs.downPaymentPercent < 20 
-                                  ? 'bg-gradient-to-r from-red-400 to-amber-400'
-                                  : 'bg-gradient-to-r from-green-400 to-blue-400'
+                                  ? 'bg-gradient-to-r from-red-400 via-orange-400 to-amber-400'
+                                  : 'bg-gradient-to-r from-emerald-400 via-teal-500 to-cyan-500'
                               }`}
                               style={{ width: `${(inputs.downPaymentPercent / 50) * 100}%` }}
                             ></div>
@@ -387,8 +387,8 @@ export default function Home() {
                             <div 
                               className={`absolute top-0 left-0 h-2 rounded-lg pointer-events-none transition-all duration-300 ${
                                 inputs.loanTermYears <= 20 
-                                  ? 'bg-gradient-to-r from-green-400 to-blue-400'
-                                  : 'bg-gradient-to-r from-blue-400 to-purple-400'
+                                  ? 'bg-gradient-to-r from-emerald-400 via-teal-500 to-cyan-500'
+                                  : 'bg-gradient-to-r from-blue-400 via-indigo-500 to-purple-500'
                               }`}
                               style={{ width: `${((inputs.loanTermYears - 15) / 15) * 100}%` }}
                             ></div>
@@ -441,7 +441,7 @@ export default function Home() {
                             className="w-full h-2 bg-white/10 rounded-lg appearance-none cursor-pointer slider"
                           />
                           <div 
-                            className="absolute top-0 left-0 h-2 bg-gradient-to-r from-green-400 via-yellow-400 to-red-500 rounded-lg pointer-events-none"
+                            className="absolute top-0 left-0 h-2 bg-gradient-to-r from-emerald-400 via-teal-500 via-blue-500 via-indigo-500 via-purple-500 via-pink-500 to-red-500 rounded-lg pointer-events-none"
                             style={{ width: `${(inputs.interestRate / 10) * 100}%` }}
                           ></div>
                         </div>
@@ -656,7 +656,7 @@ export default function Home() {
             {/* Results Panel */}
             <div className="bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl border border-white/20 p-8 physical-card">
               <div className="flex items-center mb-6">
-                <div className="w-3 h-3 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full mr-3"></div>
+                <div className="w-3 h-3 bg-gradient-to-r from-amber-400 via-orange-500 to-red-500 rounded-full mr-3"></div>
                 <h2 className="text-2xl font-bold text-white">Required Rental Income</h2>
               </div>
               
@@ -664,8 +664,8 @@ export default function Home() {
                 <div className="space-y-4">
                   {/* Breakeven Points */}
                   <div className="space-y-4">
-                    <div className="group relative overflow-hidden bg-gradient-to-r from-red-500/20 to-pink-500/20 border border-red-500/30 rounded-xl p-6 hover:from-red-500/30 hover:to-pink-500/30 transition-all duration-300 physical-card">
-                      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-500 to-pink-500"></div>
+                    <div className="group relative overflow-hidden bg-gradient-to-br from-red-500/20 via-rose-500/20 to-pink-500/20 border border-red-500/30 rounded-xl p-6 hover:from-red-500/30 hover:via-rose-500/30 hover:to-pink-500/30 transition-all duration-300 physical-card">
+                      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-500 via-rose-500 to-pink-500"></div>
                       <div className="flex items-center justify-between mb-2">
                         <h3 className="font-bold text-red-200 flex items-center">
                           <span className="mr-2">🔥</span>
@@ -678,8 +678,8 @@ export default function Home() {
                       <p className="text-sm text-red-200">Covers carrying costs (non-equity expenses)</p>
                     </div>
 
-                    <div className="group relative overflow-hidden bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border border-yellow-500/30 rounded-xl p-6 hover:from-yellow-500/30 hover:to-orange-500/30 transition-all duration-300 physical-card">
-                      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-yellow-500 to-orange-500"></div>
+                    <div className="group relative overflow-hidden bg-gradient-to-br from-amber-500/20 via-yellow-500/20 to-orange-500/20 border border-amber-500/30 rounded-xl p-6 hover:from-amber-500/30 hover:via-yellow-500/30 hover:to-orange-500/30 transition-all duration-300 physical-card">
+                      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-500 via-yellow-500 to-orange-500"></div>
                       <div className="flex items-center justify-between mb-2">
                         <h3 className="font-bold text-yellow-200 flex items-center">
                           <span className="mr-2">⚖️</span>
@@ -692,8 +692,8 @@ export default function Home() {
                       <p className="text-sm text-yellow-200">Covers all expenses including principal</p>
                     </div>
 
-                    <div className="group relative overflow-hidden bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-500/30 rounded-xl p-6 hover:from-green-500/30 hover:to-emerald-500/30 transition-all duration-300 physical-card">
-                      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-500 to-emerald-500"></div>
+                    <div className="group relative overflow-hidden bg-gradient-to-br from-emerald-500/20 via-teal-500/20 to-green-500/20 border border-emerald-500/30 rounded-xl p-6 hover:from-emerald-500/30 hover:via-teal-500/30 hover:to-green-500/30 transition-all duration-300 physical-card">
+                      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 via-teal-500 to-green-500"></div>
                       <div className="flex items-center justify-between mb-2">
                         <h3 className="font-bold text-green-200 flex items-center">
                           <span className="mr-2">💎</span>
@@ -708,8 +708,8 @@ export default function Home() {
                     
                     {/* ARM Payment Range */}
                     {inputs.mortgageType === 'arm' && analysis.armPaymentRange && (
-                      <div className="group relative overflow-hidden bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-500/30 rounded-xl p-6 hover:from-purple-500/30 hover:to-pink-500/30 transition-all duration-300 physical-card">
-                        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 to-pink-500"></div>
+                      <div className="group relative overflow-hidden bg-gradient-to-br from-violet-500/20 via-purple-500/20 to-fuchsia-500/20 border border-violet-500/30 rounded-xl p-6 hover:from-violet-500/30 hover:via-purple-500/30 hover:to-fuchsia-500/30 transition-all duration-300 physical-card">
+                        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-violet-500 via-purple-500 to-fuchsia-500"></div>
                         <div className="flex items-center justify-between mb-2">
                           <h3 className="font-bold text-purple-200 flex items-center">
                             <span className="mr-2">📊</span>
@@ -752,7 +752,7 @@ export default function Home() {
                     <div className="space-y-3">
                       <div className="flex justify-between items-center py-2 border-b border-white/10">
                         <span className="text-slate-300 flex items-center">
-                          <span className="w-3 h-3 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full mr-3"></span>
+                          <span className="w-3 h-3 bg-gradient-to-r from-emerald-400 via-teal-500 to-green-500 rounded-full mr-3"></span>
                           Principal (equity building)
                         </span>
                         <span className="font-bold text-green-400">
@@ -761,7 +761,7 @@ export default function Home() {
                       </div>
                       <div className="flex justify-between items-center py-2 border-b border-white/10">
                         <span className="text-slate-300 flex items-center">
-                          <span className="w-3 h-3 bg-gradient-to-r from-red-400 to-pink-500 rounded-full mr-3"></span>
+                          <span className="w-3 h-3 bg-gradient-to-r from-red-400 via-rose-500 to-pink-500 rounded-full mr-3"></span>
                           Interest
                         </span>
                         <span className="font-bold text-red-400">
@@ -770,7 +770,7 @@ export default function Home() {
                       </div>
                       <div className="flex justify-between items-center py-2 border-b border-white/10">
                         <span className="text-slate-300 flex items-center">
-                          <span className="w-3 h-3 bg-gradient-to-r from-orange-400 to-yellow-500 rounded-full mr-3"></span>
+                          <span className="w-3 h-3 bg-gradient-to-r from-amber-400 via-yellow-500 to-orange-500 rounded-full mr-3"></span>
                           Property Tax
                         </span>
                         <span className="font-bold text-orange-400">
@@ -779,7 +779,7 @@ export default function Home() {
                       </div>
                       <div className="flex justify-between items-center py-2 border-b border-white/10">
                         <span className="text-slate-300 flex items-center">
-                          <span className="w-3 h-3 bg-gradient-to-r from-blue-400 to-cyan-500 rounded-full mr-3"></span>
+                          <span className="w-3 h-3 bg-gradient-to-r from-sky-400 via-blue-500 to-cyan-500 rounded-full mr-3"></span>
                           Insurance
                         </span>
                         <span className="font-bold text-blue-400">
@@ -789,7 +789,7 @@ export default function Home() {
                       {analysis.breakdown.pmi > 0 && (
                         <div className="flex justify-between items-center py-2 border-b border-white/10">
                           <span className="text-slate-300 flex items-center">
-                            <span className="w-3 h-3 bg-gradient-to-r from-purple-400 to-pink-500 rounded-full mr-3"></span>
+                            <span className="w-3 h-3 bg-gradient-to-r from-violet-400 via-purple-500 to-fuchsia-500 rounded-full mr-3"></span>
                             PMI
                           </span>
                           <span className="font-bold text-purple-400">
@@ -799,7 +799,7 @@ export default function Home() {
                       )}
                       <div className="flex justify-between items-center py-2 border-b border-white/10">
                         <span className="text-slate-300 flex items-center">
-                          <span className="w-3 h-3 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full mr-3"></span>
+                          <span className="w-3 h-3 bg-gradient-to-r from-orange-400 via-amber-500 to-yellow-500 rounded-full mr-3"></span>
                           Maintenance
                         </span>
                         <span className="font-bold text-yellow-400">
@@ -808,7 +808,7 @@ export default function Home() {
                       </div>
                       <div className="flex justify-between items-center py-2 border-b border-white/10">
                         <span className="text-slate-300 flex items-center">
-                          <span className="w-3 h-3 bg-gradient-to-r from-amber-400 to-orange-500 rounded-full mr-3"></span>
+                          <span className="w-3 h-3 bg-gradient-to-r from-rose-400 via-orange-500 to-amber-500 rounded-full mr-3"></span>
                           CapEx Reserve
                         </span>
                         <span className="font-bold text-amber-400">
@@ -818,7 +818,7 @@ export default function Home() {
                       {analysis.breakdown.propertyManagement > 0 && (
                         <div className="flex justify-between items-center py-2 border-b border-white/10">
                           <span className="text-slate-300 flex items-center">
-                            <span className="w-3 h-3 bg-gradient-to-r from-indigo-400 to-purple-500 rounded-full mr-3"></span>
+                            <span className="w-3 h-3 bg-gradient-to-r from-indigo-400 via-blue-500 to-purple-500 rounded-full mr-3"></span>
                             Property Management
                           </span>
                           <span className="font-bold text-indigo-400">
@@ -828,10 +828,10 @@ export default function Home() {
                       )}
                       <div className="flex justify-between items-center pt-4 border-t-2 border-gradient-to-r from-purple-500 to-blue-500">
                         <span className="font-bold text-white flex items-center">
-                          <span className="w-4 h-4 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full mr-3"></span>
+                          <span className="w-4 h-4 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 rounded-full mr-3"></span>
                           Total Monthly Expenses
                         </span>
-                        <span className="font-bold text-2xl bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
+                        <span className="font-bold text-2xl bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 bg-clip-text text-transparent">
                           ${analysis.breakdown.totalMonthlyExpenses.toLocaleString()}
                         </span>
                       </div>
@@ -840,7 +840,7 @@ export default function Home() {
                 </div>
               ) : (
                 <div className="text-center py-12">
-                  <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <div className="w-16 h-16 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-4">
                     <span className="text-2xl">📊</span>
                   </div>
                   <p className="text-slate-300 text-lg">Enter property details to see your analysis</p>
@@ -856,7 +856,7 @@ export default function Home() {
               <div className="bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl border border-white/20 p-8 physical-card">
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center">
-                    <div className="w-3 h-3 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full mr-3"></div>
+                    <div className="w-3 h-3 bg-gradient-to-r from-cyan-400 via-teal-500 to-blue-500 rounded-full mr-3"></div>
                     <h2 className="text-2xl font-bold text-white">Payment Breakdown Over Time</h2>
                   </div>
                   
