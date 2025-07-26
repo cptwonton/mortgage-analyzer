@@ -20,7 +20,7 @@ const FloatingMortgageControls: React.FC<FloatingMortgageControlsProps> = ({
     <>
       {/* Backdrop */}
       <div 
-        className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40"
+        className="fixed inset-0 bg-black/10 backdrop-blur-[2px] z-40"
         onClick={onClose}
       />
       
