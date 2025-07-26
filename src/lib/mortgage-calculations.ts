@@ -83,7 +83,7 @@ export function calculateMonthlyPayment(
 export function calculatePMI(
   loanAmount: number,
   downPaymentPercent: number,
-  _purchasePrice: number
+  purchasePrice: number
 ): number {
   if (downPaymentPercent >= 20) {
     return 0;

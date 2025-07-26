@@ -35,7 +35,7 @@ export default function Home() {
     // Handle mortgage type separately since it's not a number
     if (field === 'mortgageType') {
       const newMortgageType = value as 'fixed' | 'arm';
-      const newInputs = { ...inputs, [field]: newMortgageType };
+      let newInputs = { ...inputs, [field]: newMortgageType };
       
       // No auto-adjustment of loan term - keep controls independent
       

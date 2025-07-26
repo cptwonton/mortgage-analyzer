@@ -154,7 +154,7 @@ const AmortizationChart: React.FC<AmortizationChartProps> = ({
   }, [crossoverPoint, filteredData]);
 
   // Custom tooltip with enhanced information and ARM awareness
-  const CustomTooltip = ({ active, payload }: { active?: boolean; payload?: any[] }) => {
+  const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload as ChartDataPoint;
       const isArmPeriod = data.isArmAdjustmentPeriod;
@@ -239,7 +239,7 @@ const AmortizationChart: React.FC<AmortizationChartProps> = ({
     return null;
   };
 
-  const handleChartClick = (data: { activePayload?: any[] }) => {
+  const handleChartClick = (data: any) => {
     if (data && data.activePayload && data.activePayload[0]) {
       setSelectedPoint(data.activePayload[0].payload);
     }
@@ -302,7 +302,7 @@ const AmortizationChart: React.FC<AmortizationChartProps> = ({
                 </div>
               </div>
               <p className="text-green-200 text-xs">
-                Your loan terms are so favorable that you&apos;re building more equity than paying interest from day one! 
+                Your loan terms are so favorable that you're building more equity than paying interest from day one! 
                 {mortgageType === 'fixed' && inputs.loanTermYears <= 20 && (
                   <> Your {inputs.loanTermYears}-year term is paying off big time.</>
                 )}
