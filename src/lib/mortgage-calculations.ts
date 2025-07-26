@@ -9,6 +9,7 @@ export interface MortgageInputs {
   interestRate: number; // Annual percentage rate
   loanTermYears: number;
   mortgageType: 'fixed' | 'arm'; // Add mortgage type
+  armInitialPeriod?: number; // ARM initial fixed period (3, 5, 7, 10 years)
   armRateCaps?: { // Add ARM rate caps (optional for fixed mortgages)
     initial: number; // First adjustment cap (e.g., 2%)
     subsequent: number; // Subsequent adjustment cap (e.g., 2%) 
