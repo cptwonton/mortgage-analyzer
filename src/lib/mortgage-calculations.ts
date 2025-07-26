@@ -42,6 +42,7 @@ export interface BreakevenAnalysis {
   fullBreakeven: number; // Rent needed to cover all costs including principal
   investmentViableBreakeven: number; // Rent needed after vacancy/management
   breakdown: MortgageBreakdown;
+  amortizationSchedule: AmortizationPayment[]; // Add amortization schedule
   armPaymentRange?: { // Add ARM payment range info
     minPayment: number;
     maxPayment: number;
@@ -106,6 +107,78 @@ export function calculatePrincipalInterestSplit(
   const principal = Math.round((monthlyPayment - interest) * 100) / 100;
 
   return { principal, interest };
+}
+
+/**
+ * Calculate full amortization schedule
+ */
+export interface AmortizationPayment {
+  month: number;
+  year: number;
+  payment: number;
+  principal: number;
+  interest: number;
+  remainingBalance: number;
+  cumulativeInterest: number;
+  cumulativePrincipal: number;
+}
+
+export function calculateAmortizationSchedule(
+  loanAmount: number,
+  annualInterestRate: number,
+  loanTermYears: number
+): AmortizationPayment[] {
+  if (annualInterestRate === 0) {
+    // Handle 0% interest rate case
+    const monthlyPayment = loanAmount / (loanTermYears * 12);
+    const schedule: AmortizationPayment[] = [];
+    
+    for (let month = 1; month <= loanTermYears * 12; month++) {
+      const remainingBalance = loanAmount - (monthlyPayment * month);
+      schedule.push({
+        month,
+        year: Math.ceil(month / 12),
+        payment: monthlyPayment,
+        principal: monthlyPayment,
+        interest: 0,
+        remainingBalance: Math.max(0, remainingBalance),
+        cumulativeInterest: 0,
+        cumulativePrincipal: monthlyPayment * month
+      });
+    }
+    return schedule;
+  }
+
+  const monthlyRate = annualInterestRate / 100 / 12;
+  const numberOfPayments = loanTermYears * 12;
+  const monthlyPayment = calculateMonthlyPayment(loanAmount, annualInterestRate, loanTermYears);
+  
+  const schedule: AmortizationPayment[] = [];
+  let remainingBalance = loanAmount;
+  let cumulativeInterest = 0;
+  let cumulativePrincipal = 0;
+
+  for (let month = 1; month <= numberOfPayments; month++) {
+    const interestPayment = remainingBalance * monthlyRate;
+    const principalPayment = monthlyPayment - interestPayment;
+    
+    remainingBalance -= principalPayment;
+    cumulativeInterest += interestPayment;
+    cumulativePrincipal += principalPayment;
+
+    schedule.push({
+      month,
+      year: Math.ceil(month / 12),
+      payment: monthlyPayment,
+      principal: principalPayment,
+      interest: interestPayment,
+      remainingBalance: Math.max(0, remainingBalance),
+      cumulativeInterest,
+      cumulativePrincipal
+    });
+  }
+
+  return schedule;
 }
 
 /**
@@ -195,6 +268,13 @@ export function calculateBreakevenAnalysis(inputs: MortgageInputs): BreakevenAna
   // Calculate property management fee based on investment viable rent
   const propertyManagement = Math.round((investmentViableBreakeven * (inputs.propertyManagementRate / 100)) * 100) / 100;
 
+  // Calculate amortization schedule
+  const amortizationSchedule = calculateAmortizationSchedule(
+    loanAmount,
+    inputs.interestRate,
+    inputs.loanTermYears
+  );
+
   // Create breakdown object
   const breakdown: MortgageBreakdown = {
     monthlyPayment,
@@ -233,6 +313,7 @@ export function calculateBreakevenAnalysis(inputs: MortgageInputs): BreakevenAna
     fullBreakeven: Math.round(fullBreakeven * 100) / 100,
     investmentViableBreakeven: Math.round(investmentViableBreakeven * 100) / 100,
     breakdown,
+    amortizationSchedule,
     armPaymentRange
   };
 }

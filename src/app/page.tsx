@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { calculateBreakevenAnalysis, MortgageInputs, validateMortgageInputs } from '@/lib/mortgage-calculations';
+import AmortizationChart from '@/components/AmortizationChart';
 
 export default function Home() {
   const [inputs, setInputs] = useState<MortgageInputs>({
@@ -805,6 +806,64 @@ export default function Home() {
               )}
             </div>
           </div>
+
+          {/* Amortization Chart Section */}
+          {analysis && (
+            <div className="mt-8">
+              <div className="bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl border border-white/20 p-8 physical-card">
+                <div className="flex items-center mb-6">
+                  <div className="w-3 h-3 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full mr-3"></div>
+                  <h2 className="text-2xl font-bold text-white">Payment Breakdown Over Time</h2>
+                </div>
+                
+                <div className="mb-4">
+                  <p className="text-slate-300 text-sm">
+                    {inputs.mortgageType === 'fixed' 
+                      ? `This chart shows how your ${inputs.loanTermYears}-year fixed-rate mortgage payments are split between principal (equity building) and interest over time.`
+                      : `This chart shows the initial ${inputs.loanTermYears}-year period of your ARM. Note that payments will change when the rate adjusts.`
+                    }
+                  </p>
+                </div>
+
+                <AmortizationChart 
+                  schedule={analysis.amortizationSchedule} 
+                  mortgageType={inputs.mortgageType}
+                />
+
+                <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                  <div className="bg-white/5 rounded-lg p-4 border border-white/10">
+                    <div className="flex items-center mb-2">
+                      <div className="w-3 h-3 bg-green-400 rounded-full mr-2"></div>
+                      <span className="text-green-300 font-semibold">Principal Payments</span>
+                    </div>
+                    <p className="text-slate-300">
+                      Build equity in your property. Early payments are mostly interest, but this shifts over time.
+                    </p>
+                  </div>
+                  
+                  <div className="bg-white/5 rounded-lg p-4 border border-white/10">
+                    <div className="flex items-center mb-2">
+                      <div className="w-3 h-3 bg-red-400 rounded-full mr-2"></div>
+                      <span className="text-red-300 font-semibold">Interest Payments</span>
+                    </div>
+                    <p className="text-slate-300">
+                      Cost of borrowing money. Higher at the beginning, decreases as you pay down the loan.
+                    </p>
+                  </div>
+                  
+                  <div className="bg-white/5 rounded-lg p-4 border border-white/10">
+                    <div className="flex items-center mb-2">
+                      <div className="w-3 h-3 bg-cyan-400 rounded-full mr-2"></div>
+                      <span className="text-cyan-300 font-semibold">The Crossover</span>
+                    </div>
+                    <p className="text-slate-300">
+                      The point where principal payments exceed interest. This is when equity building accelerates.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
