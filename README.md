@@ -4,7 +4,7 @@ A sophisticated **investment property evaluation tool** that answers the strateg
 
 ## 🚀 Live Demo
 
-**[View Live Application](https://mortgage-analyzer-cptwonton.vercel.app/)**
+**[View Live Application](https://mortgage-analyzer-lac.vercel.app/)**
 
 ## ✨ Key Features
 
