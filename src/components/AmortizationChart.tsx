@@ -146,6 +146,13 @@ const AmortizationChart: React.FC<AmortizationChartProps> = ({
     return chartData.find(d => d.principal > d.interest);
   }, [chartData]);
 
+  // Check if crossover happens before chart starts (financially smart scenario)
+  const crossoverBeforeChart = useMemo(() => {
+    if (!crossoverPoint) return false;
+    const chartStartYear = filteredData.length > 0 ? filteredData[0].year : 1;
+    return crossoverPoint.year <= chartStartYear;
+  }, [crossoverPoint, filteredData]);
+
   // Custom tooltip with enhanced information and ARM awareness
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
@@ -276,6 +283,42 @@ const AmortizationChart: React.FC<AmortizationChartProps> = ({
         </div>
       </div>
 
+      {/* Smart Financial Choice Celebration */}
+      {crossoverBeforeChart && (
+        <div className="bg-gradient-to-r from-green-500/10 to-emerald-500/10 border border-green-500/20 rounded-lg p-4 mb-4">
+          <div className="flex items-center space-x-3">
+            <div className="flex-shrink-0">
+              <div className="w-12 h-12 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full flex items-center justify-center">
+                <span className="text-2xl">🎉</span>
+              </div>
+            </div>
+            <div className="flex-1">
+              <div className="flex items-center space-x-2 mb-1">
+                <h4 className="text-green-300 font-bold text-sm">Excellent Financial Choice!</h4>
+                <div className="flex space-x-1">
+                  <span className="text-yellow-400">⭐</span>
+                  <span className="text-yellow-400">⭐</span>
+                  <span className="text-yellow-400">⭐</span>
+                </div>
+              </div>
+              <p className="text-green-200 text-xs">
+                Your loan terms are so favorable that you're building more equity than paying interest from day one! 
+                {mortgageType === 'fixed' && inputs.loanTermYears <= 20 && (
+                  <> Your {inputs.loanTermYears}-year term is paying off big time.</>
+                )}
+                {mortgageType === 'arm' && (
+                  <> Even with an ARM, your initial terms are fantastic.</>
+                )}
+              </p>
+            </div>
+            <div className="flex-shrink-0 text-right">
+              <div className="text-green-300 font-bold text-xs">SMART MONEY</div>
+              <div className="text-green-400 text-xs">💰 Building Equity Fast</div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Data Range Indicator - Always Present */}
       <div className="bg-white/5 border border-white/20 rounded-lg p-3">
         <div className="flex items-center space-x-2">
@@ -389,8 +432,8 @@ const AmortizationChart: React.FC<AmortizationChartProps> = ({
               iconType="circle"
             />
 
-            {/* Crossover point reference line */}
-            {crossoverPoint && zoomLevel === 'full' && (
+            {/* Crossover point reference line - only show if crossover is visible in chart */}
+            {crossoverPoint && zoomLevel === 'full' && !crossoverBeforeChart && (
               <ReferenceLine 
                 x={crossoverPoint.year} 
                 stroke="#06b6d4" 
