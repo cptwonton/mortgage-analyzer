@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { calculateBreakevenAnalysis, MortgageInputs, validateMortgageInputs } from '@/lib/mortgage-calculations';
 import AmortizationChart from '@/components/AmortizationChart';
+import FloatingMortgageControls from '@/components/FloatingMortgageControls';
 
 export default function Home() {
   const [inputs, setInputs] = useState<MortgageInputs>({
@@ -28,6 +29,7 @@ export default function Home() {
 
   const [errors, setErrors] = useState<string[]>([]);
   const [showPMIInfo, setShowPMIInfo] = useState(false);
+  const [showFloatingControls, setShowFloatingControls] = useState(false);
 
   const handleInputChange = (field: keyof MortgageInputs, value: string) => {
     // Handle mortgage type separately since it's not a number
@@ -878,9 +880,24 @@ export default function Home() {
           {analysis && (
             <div className="mt-8">
               <div className="bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl border border-white/20 p-8 physical-card">
-                <div className="flex items-center mb-6">
-                  <div className="w-3 h-3 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full mr-3"></div>
-                  <h2 className="text-2xl font-bold text-white">Payment Breakdown Over Time</h2>
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center">
+                    <div className="w-3 h-3 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full mr-3"></div>
+                    <h2 className="text-2xl font-bold text-white">Payment Breakdown Over Time</h2>
+                  </div>
+                  
+                  {/* Quick Adjust Button */}
+                  <button
+                    onClick={() => setShowFloatingControls(true)}
+                    className="flex items-center space-x-2 px-4 py-2 bg-purple-500/20 hover:bg-purple-500/30 border border-purple-500/40 rounded-lg text-purple-300 hover:text-purple-200 transition-all duration-200 physical-button"
+                  >
+                    <span className="text-sm font-medium">Quick Adjust</span>
+                    <div className="w-4 h-4 flex items-center justify-center">
+                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4" />
+                      </svg>
+                    </div>
+                  </button>
                 </div>
                 
                 <div className="mb-4">
@@ -934,6 +951,14 @@ export default function Home() {
           )}
         </div>
       </div>
+
+      {/* Floating Mortgage Controls */}
+      <FloatingMortgageControls
+        isOpen={showFloatingControls}
+        onClose={() => setShowFloatingControls(false)}
+        inputs={inputs}
+        onInputChange={handleInputChange}
+      />
     </div>
   );
 }
