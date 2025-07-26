@@ -255,17 +255,28 @@ async function scrapeRatesWithPuppeteer(): Promise<RateResponse> {
       console.log(`📊 PUPPETEER: Extraction method: ${rates.method}`);
       console.log(`🎯 PUPPETEER: Found rates: ${rates.rates.join('%, ')}%`);
       
-      if (rates.rates.length >= 2) {
-        // Map to common mortgage products
+      if (rates.rates.length >= 6) {
+        // Correct mapping based on Mr. Cooper's actual order:
+        // [0] = 15-year rate, [1] = 15-year APR
+        // [2] = FHA 30-year rate, [3] = FHA 30-year APR  
+        // [4] = 30-year rate, [5] = 30-year APR
+        // [6] = VA cash-out rate, [7] = VA APR
+        
+        // Use rates (not APRs) for consistency - positions 0, 2, 4
         const mortgageRates = {
-          '30-year-fixed': rates.rates[0] || null,
-          '15-year-fixed': rates.rates[1] || null,
-          'fha-30-year': rates.rates[2] || rates.rates[0],
-          'va-30-year': rates.rates[3] || rates.rates[0],
-          'arm-5-1': rates.rates[4] || (rates.rates[0] - 0.5), // ARM typically lower
+          '30-year-fixed': rates.rates[4] || null,      // 30-year rate
+          '15-year-fixed': rates.rates[0] || null,      // 15-year rate  
+          'fha-30-year': rates.rates[2] || null,        // FHA 30-year rate
+          'va-30-year': rates.rates[6] || rates.rates[4] || null, // VA rate (fallback to 30-year)
+          'arm-5-1': rates.rates[4] ? (rates.rates[4] - 0.5) : null, // ARM typically 0.5% lower
         };
         
-        console.log('✅ PUPPETEER: Successfully mapped rates to mortgage products');
+        console.log('✅ PUPPETEER: Correctly mapped rates:');
+        console.log(`   30-Year Fixed: ${mortgageRates['30-year-fixed']}% (position 4)`);
+        console.log(`   15-Year Fixed: ${mortgageRates['15-year-fixed']}% (position 0)`);
+        console.log(`   FHA 30-Year: ${mortgageRates['fha-30-year']}% (position 2)`);
+        console.log(`   VA 30-Year: ${mortgageRates['va-30-year']}% (position 6 or fallback)`);
+        console.log(`   5/1 ARM: ${mortgageRates['arm-5-1']}% (calculated)`);
         
         return {
           success: true,
@@ -274,8 +285,8 @@ async function scrapeRatesWithPuppeteer(): Promise<RateResponse> {
           timestamp: new Date().toISOString()
         };
       } else {
-        console.log('❌ PUPPETEER: Insufficient rate data found');
-        throw new Error('Insufficient rate data found');
+        console.log(`❌ PUPPETEER: Insufficient rate data found (need 6+, got ${rates.rates.length})`);
+        throw new Error(`Insufficient rate data found (got ${rates.rates.length}, need 6+)`);
       }
       
     } finally {
