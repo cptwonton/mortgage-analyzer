@@ -232,23 +232,36 @@ const AmortizationChart: React.FC<AmortizationChartProps> = ({ schedule, mortgag
         </div>
       </div>
 
-      {/* Data Range Indicator for Monthly Mode */}
-      {showMonthly && (
-        <div className="bg-purple-500/10 border border-purple-500/20 rounded-lg p-3">
-          <div className="flex items-center space-x-2">
-            <div className="w-2 h-2 bg-purple-400 rounded-full"></div>
-            <span className="text-sm text-purple-300 font-medium">Monthly Detail View</span>
-          </div>
-          <p className="text-xs text-purple-200 mt-1">
-            Showing month-by-month data for {
-              zoomLevel === 'full' ? 'the entire loan term (up to 30 years for performance)' :
-              zoomLevel === '5yr' ? 'the first 5 years (60 months)' :
-              zoomLevel === '10yr' ? 'the first 10 years (120 months)' :
-              'the first 15 years (180 months)'
-            }. Switch to "Yearly" for full loan overview.
-          </p>
+      {/* Data Range Indicator - Always Present */}
+      <div className="bg-white/5 border border-white/20 rounded-lg p-3">
+        <div className="flex items-center space-x-2">
+          <div className={`w-2 h-2 rounded-full ${showMonthly ? 'bg-purple-400' : 'bg-cyan-400'}`}></div>
+          <span className={`text-sm font-medium ${showMonthly ? 'text-purple-300' : 'text-cyan-300'}`}>
+            {showMonthly ? 'Monthly Detail View' : 'Yearly Overview'}
+          </span>
         </div>
-      )}
+        <p className="text-xs text-slate-300 mt-1">
+          {showMonthly ? (
+            <>
+              Showing month-by-month data for {
+                zoomLevel === 'full' ? 'the entire loan term (up to 30 years for performance)' :
+                zoomLevel === '5yr' ? 'the first 5 years (60 months)' :
+                zoomLevel === '10yr' ? 'the first 10 years (120 months)' :
+                'the first 15 years (180 months)'
+              }. Switch to "Yearly" for full loan overview.
+            </>
+          ) : (
+            <>
+              Showing year-end data points for {
+                zoomLevel === 'full' ? 'the entire loan term' :
+                zoomLevel === '5yr' ? 'the first 5 years' :
+                zoomLevel === '10yr' ? 'the first 10 years' :
+                'the first 15 years'
+              }. Switch to "Monthly" for detailed month-by-month analysis.
+            </>
+          )}
+        </p>
+      </div>
 
       {/* Chart */}
       <div className="w-full h-80 cursor-pointer">
