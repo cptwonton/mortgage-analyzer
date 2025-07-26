@@ -39,8 +39,9 @@ const StandardInput: React.FC<StandardInputProps> = ({
     onChange(e.target.value);
   };
 
-  // Handle display value - show empty for 0 only if not allowed or if it's truly empty
-  const displayValue = (value === 0 && type === 'number' && !allowZero) ? '' : value;
+  // For number inputs, show the actual value (including 0)
+  // Only show empty string if the value is actually empty/undefined
+  const displayValue = value;
 
   // Generate range hint for help text
   const getRangeHint = () => {
@@ -130,13 +131,6 @@ const StandardInput: React.FC<StandardInputProps> = ({
       ) : combinedHelpText ? (
         <p className="text-xs text-slate-400 mt-1">{combinedHelpText}</p>
       ) : null}
-      
-      {/* Zero value indicator */}
-      {type === 'number' && value === 0 && allowZero && (
-        <p className="text-xs text-slate-500 mt-1">
-          Currently set to 0 {allowZero ? '(optional)' : ''}
-        </p>
-      )}
     </div>
   );
 };

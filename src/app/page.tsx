@@ -121,7 +121,7 @@ export default function Home() {
                 <div className="space-y-4">
                   <StandardInput
                     label="Purchase Price"
-                    value={inputs.purchasePrice}
+                    value={inputs.purchasePrice === 0 ? '' : inputs.purchasePrice.toString()}
                     onChange={(value) => handleInputChange('purchasePrice', value)}
                     type="number"
                     prefix="$"
@@ -476,7 +476,7 @@ export default function Home() {
                   <StandardInput
                     label="Property Tax Rate (Annual)"
                     type="number"
-                    value={inputs.propertyTaxRate === 0 ? '' : inputs.propertyTaxRate.toString()}
+                    value={inputs.propertyTaxRate.toString()}
                     onChange={(value) => handleInputChange('propertyTaxRate', value)}
                     placeholder="1.2"
                     suffix="%"
@@ -499,7 +499,7 @@ export default function Home() {
                     <StandardInput
                       label="Monthly Insurance"
                       type="number"
-                      value={inputs.monthlyInsurance === 0 ? '' : inputs.monthlyInsurance.toString()}
+                      value={inputs.monthlyInsurance.toString()}
                       onChange={(value) => handleInputChange('monthlyInsurance', value)}
                       placeholder="150"
                       prefix="$"
@@ -520,7 +520,7 @@ export default function Home() {
                     <StandardInput
                       label="Monthly Maintenance"
                       type="number"
-                      value={inputs.monthlyMaintenance === 0 ? '' : inputs.monthlyMaintenance.toString()}
+                      value={inputs.monthlyMaintenance.toString()}
                       onChange={(value) => handleInputChange('monthlyMaintenance', value)}
                       placeholder="200"
                       prefix="$"
@@ -556,7 +556,7 @@ export default function Home() {
                     <StandardInput
                       label="CapEx Reserve"
                       type="number"
-                      value={inputs.monthlyCapEx === 0 ? '' : inputs.monthlyCapEx.toString()}
+                      value={inputs.monthlyCapEx.toString()}
                       onChange={(value) => handleInputChange('monthlyCapEx', value)}
                       placeholder="150"
                       prefix="$"
@@ -577,7 +577,7 @@ export default function Home() {
                     <StandardInput
                       label="Vacancy Rate"
                       type="number"
-                      value={inputs.vacancyRate === 0 ? '' : inputs.vacancyRate.toString()}
+                      value={inputs.vacancyRate.toString()}
                       onChange={(value) => handleInputChange('vacancyRate', value)}
                       placeholder="8"
                       suffix="%"
