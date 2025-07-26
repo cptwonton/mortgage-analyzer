@@ -7,7 +7,7 @@ export default function Home() {
   const [inputs, setInputs] = useState<MortgageInputs>({
     purchasePrice: 0,
     downPaymentPercent: 20,
-    interestRate: 7.5,
+    interestRate: 7.0, // Start with a reasonable default
     loanTermYears: 30,
     propertyTaxRate: 1.2,
     monthlyInsurance: 150,
@@ -107,15 +107,37 @@ export default function Home() {
                       Interest Rate
                     </label>
                     <div className="relative">
-                      <input
-                        type="number"
-                        step="0.1"
-                        value={inputs.interestRate === 0 ? '' : inputs.interestRate}
-                        onChange={(e) => handleInputChange('interestRate', e.target.value)}
-                        placeholder="7.5"
-                        className="w-full px-4 py-4 bg-white/5 border border-white/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-white placeholder-slate-400 backdrop-blur-sm transition-all duration-200 hover:bg-white/10"
-                      />
-                      <span className="absolute right-4 top-1/2 transform -translate-y-1/2 text-slate-400 font-medium">%</span>
+                      <div className="px-4 py-4 bg-white/5 border border-white/20 rounded-xl backdrop-blur-sm">
+                        <div className="flex items-center justify-between mb-3">
+                          <span className="text-white font-bold text-lg">
+                            {inputs.interestRate.toFixed(1)}%
+                          </span>
+                          <div className="flex space-x-1 text-xs text-slate-400">
+                            <span>0%</span>
+                            <span>•</span>
+                            <span>10%</span>
+                          </div>
+                        </div>
+                        <div className="relative">
+                          <input
+                            type="range"
+                            min="0"
+                            max="10"
+                            step="0.1"
+                            value={inputs.interestRate}
+                            onChange={(e) => handleInputChange('interestRate', e.target.value)}
+                            className="w-full h-2 bg-white/10 rounded-lg appearance-none cursor-pointer slider"
+                          />
+                          <div 
+                            className="absolute top-0 left-0 h-2 bg-gradient-to-r from-green-400 via-yellow-400 to-red-500 rounded-lg pointer-events-none"
+                            style={{ width: `${(inputs.interestRate / 10) * 100}%` }}
+                          ></div>
+                          <div 
+                            className="absolute top-1/2 transform -translate-y-1/2 w-4 h-4 bg-white rounded-full shadow-lg border-2 border-purple-500 pointer-events-none"
+                            style={{ left: `calc(${(inputs.interestRate / 10) * 100}% - 8px)` }}
+                          ></div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
