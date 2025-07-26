@@ -154,7 +154,7 @@ const AmortizationChart: React.FC<AmortizationChartProps> = ({
   }, [crossoverPoint, filteredData]);
 
   // Custom tooltip with enhanced information and ARM awareness
-  const CustomTooltip = ({ active, payload, label }: any) => {
+  const CustomTooltip = ({ active, payload }: { active?: boolean; payload?: any[] }) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload as ChartDataPoint;
       const isArmPeriod = data.isArmAdjustmentPeriod;
@@ -239,7 +239,7 @@ const AmortizationChart: React.FC<AmortizationChartProps> = ({
     return null;
   };
 
-  const handleChartClick = (data: any) => {
+  const handleChartClick = (data: { activePayload?: any[] }) => {
     if (data && data.activePayload && data.activePayload[0]) {
       setSelectedPoint(data.activePayload[0].payload);
     }
