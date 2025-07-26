@@ -9,6 +9,7 @@ import StandardInput from '@/components/ui/StandardInput';
 import SliderInput from '@/components/ui/SliderInput';
 import ToggleGroup from '@/components/ui/ToggleGroup';
 import Card from '@/components/ui/Card';
+import BreakevenCard from '@/components/ui/BreakevenCard';
 
 export default function Home() {
   const [inputs, setInputs] = useState<MortgageInputs>({
@@ -558,82 +559,61 @@ export default function Home() {
                 <div className="space-y-4">
                   {/* Breakeven Points */}
                   <div className="space-y-4">
-                    <div className="group relative overflow-hidden bg-gradient-to-br from-red-500/20 via-rose-500/20 to-pink-500/20 border border-red-500/30 rounded-xl p-6 hover:from-red-500/30 hover:via-rose-500/30 hover:to-pink-500/30 transition-all duration-300 physical-card">
-                      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-500 via-rose-500 to-pink-500"></div>
-                      <div className="flex items-center justify-between mb-2">
-                        <h3 className="font-bold text-red-200 flex items-center">
-                          <span className="mr-2">🔥</span>
-                          Burned Money Breakeven
-                        </h3>
-                      </div>
-                      <p className="text-3xl font-bold text-white mb-2">
-                        ${analysis.burnedMoneyBreakeven.toLocaleString()}<span className="text-lg text-slate-300">/month</span>
-                      </p>
-                      <p className="text-sm text-red-200">Covers carrying costs (non-equity expenses)</p>
-                    </div>
+                    <BreakevenCard
+                      title="Burned Money Breakeven"
+                      icon="🔥"
+                      amount={analysis.burnedMoneyBreakeven}
+                      description="Covers carrying costs (non-equity expenses)"
+                      colorScheme="danger"
+                    />
 
-                    <div className="group relative overflow-hidden bg-gradient-to-br from-amber-500/20 via-yellow-500/20 to-orange-500/20 border border-amber-500/30 rounded-xl p-6 hover:from-amber-500/30 hover:via-yellow-500/30 hover:to-orange-500/30 transition-all duration-300 physical-card">
-                      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-500 via-yellow-500 to-orange-500"></div>
-                      <div className="flex items-center justify-between mb-2">
-                        <h3 className="font-bold text-yellow-200 flex items-center">
-                          <span className="mr-2">⚖️</span>
-                          Full Breakeven
-                        </h3>
-                      </div>
-                      <p className="text-3xl font-bold text-white mb-2">
-                        ${analysis.fullBreakeven.toLocaleString()}<span className="text-lg text-slate-300">/month</span>
-                      </p>
-                      <p className="text-sm text-yellow-200">Covers all expenses including principal</p>
-                    </div>
+                    <BreakevenCard
+                      title="Full Breakeven"
+                      icon="⚖️"
+                      amount={analysis.fullBreakeven}
+                      description="Covers all expenses including principal"
+                      colorScheme="warning"
+                    />
 
-                    <div className="group relative overflow-hidden bg-gradient-to-br from-emerald-500/20 via-teal-500/20 to-green-500/20 border border-emerald-500/30 rounded-xl p-6 hover:from-emerald-500/30 hover:via-teal-500/30 hover:to-green-500/30 transition-all duration-300 physical-card">
-                      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 via-teal-500 to-green-500"></div>
-                      <div className="flex items-center justify-between mb-2">
-                        <h3 className="font-bold text-green-200 flex items-center">
-                          <span className="mr-2">💎</span>
-                          Investment Viable
-                        </h3>
-                      </div>
-                      <p className="text-3xl font-bold text-white mb-2">
-                        ${analysis.investmentViableBreakeven.toLocaleString()}<span className="text-lg text-slate-300">/month</span>
-                      </p>
-                      <p className="text-sm text-green-200">Accounts for vacancy & property management</p>
-                    </div>
+                    <BreakevenCard
+                      title="Investment Viable"
+                      icon="💎"
+                      amount={analysis.investmentViableBreakeven}
+                      description="Accounts for vacancy & property management"
+                      colorScheme="success"
+                    />
                     
                     {/* ARM Payment Range */}
                     {inputs.mortgageType === 'arm' && analysis.armPaymentRange && (
-                      <div className="group relative overflow-hidden bg-gradient-to-br from-violet-500/20 via-purple-500/20 to-fuchsia-500/20 border border-violet-500/30 rounded-xl p-6 hover:from-violet-500/30 hover:via-purple-500/30 hover:to-fuchsia-500/30 transition-all duration-300 physical-card">
-                        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-violet-500 via-purple-500 to-fuchsia-500"></div>
-                        <div className="flex items-center justify-between mb-2">
-                          <h3 className="font-bold text-purple-200 flex items-center">
-                            <span className="mr-2">📊</span>
-                            ARM Payment Range
-                          </h3>
-                        </div>
+                      <BreakevenCard
+                        title="ARM Payment Range"
+                        icon="📊"
+                        colorScheme="amber"
+                      >
                         <div className="space-y-2">
                           <div className="flex justify-between items-center">
-                            <span className="text-sm text-purple-200">Current (Initial Rate):</span>
+                            <span className="text-sm text-amber-200">Current (Initial Rate):</span>
                             <span className="text-xl font-bold text-white">
                               ${analysis.armPaymentRange.currentPayment.toLocaleString()}
                             </span>
                           </div>
                           <div className="flex justify-between items-center">
-                            <span className="text-sm text-purple-200">Potential Range:</span>
-                            <span className="text-lg font-bold text-purple-200">
+                            <span className="text-sm text-amber-200">Potential Range:</span>
+                            <span className="text-lg font-bold text-amber-200">
                               ${analysis.armPaymentRange.minPayment.toLocaleString()} - ${analysis.armPaymentRange.maxPayment.toLocaleString()}
                             </span>
                           </div>
-                          <div className="flex justify-between items-center pt-2 border-t border-purple-500/30">
-                            <span className="text-sm text-purple-200">Rent Range Needed:</span>
-                            <span className="text-lg font-bold text-purple-200">
+                          <div className="flex justify-between items-center pt-2 border-t border-amber-500/30">
+                            <span className="text-sm text-amber-200">Rent Range Needed:</span>
+                            <span className="text-lg font-bold text-amber-200">
                               ${analysis.armPaymentRange.minBreakeven.toLocaleString()} - ${analysis.armPaymentRange.maxBreakeven.toLocaleString()}
                             </span>
                           </div>
                         </div>
-                        <p className="text-xs text-purple-300 mt-3">
+                        <p className="text-xs text-amber-300 mt-3">
                           Based on {inputs.armRateCaps?.initial}%/{inputs.armRateCaps?.subsequent}%/{inputs.armRateCaps?.lifetime}% rate caps
                         </p>
-                      </div>
+                      </BreakevenCard>
                     )}
                   </div>
 
