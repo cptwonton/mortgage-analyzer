@@ -63,7 +63,7 @@ export default function Home() {
 
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
             {/* Input Panel */}
-            <div className="bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl border border-white/20 p-8">
+            <div className="bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl border border-white/20 p-8 physical-card">
               <div className="flex items-center mb-6">
                 <div className="w-3 h-3 bg-gradient-to-r from-green-400 to-blue-500 rounded-full mr-3"></div>
                 <h2 className="text-2xl font-bold text-white">Property Details</h2>
@@ -179,7 +179,7 @@ export default function Home() {
                           {/* Info Icon */}
                           <button
                             onClick={() => setShowPMIInfo(!showPMIInfo)}
-                            className={`w-5 h-5 rounded-full border flex items-center justify-center transition-all duration-200 hover:scale-110 ${
+                            className={`w-5 h-5 rounded-full border flex items-center justify-center transition-all duration-200 hover:scale-110 physical-button ${
                               inputs.downPaymentPercent < 20 
                                 ? 'border-amber-400/50 text-amber-300 hover:border-amber-400 hover:bg-amber-400/10' 
                                 : 'border-slate-500/50 text-slate-400 hover:border-slate-400 hover:bg-slate-400/10'
@@ -418,7 +418,7 @@ export default function Home() {
             </div>
 
             {/* Results Panel */}
-            <div className="bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl border border-white/20 p-8">
+            <div className="bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl border border-white/20 p-8 physical-card">
               <div className="flex items-center mb-6">
                 <div className="w-3 h-3 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full mr-3"></div>
                 <h2 className="text-2xl font-bold text-white">Required Rental Income</h2>
@@ -428,7 +428,7 @@ export default function Home() {
                 <div className="space-y-6">
                   {/* Breakeven Points */}
                   <div className="space-y-4">
-                    <div className="group relative overflow-hidden bg-gradient-to-r from-red-500/20 to-pink-500/20 border border-red-500/30 rounded-xl p-6 hover:from-red-500/30 hover:to-pink-500/30 transition-all duration-300">
+                    <div className="group relative overflow-hidden bg-gradient-to-r from-red-500/20 to-pink-500/20 border border-red-500/30 rounded-xl p-6 hover:from-red-500/30 hover:to-pink-500/30 transition-all duration-300 physical-card">
                       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-500 to-pink-500"></div>
                       <div className="flex items-center justify-between mb-2">
                         <h3 className="font-bold text-red-200 flex items-center">
@@ -442,7 +442,7 @@ export default function Home() {
                       <p className="text-sm text-red-200">Covers carrying costs (non-equity expenses)</p>
                     </div>
 
-                    <div className="group relative overflow-hidden bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border border-yellow-500/30 rounded-xl p-6 hover:from-yellow-500/30 hover:to-orange-500/30 transition-all duration-300">
+                    <div className="group relative overflow-hidden bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border border-yellow-500/30 rounded-xl p-6 hover:from-yellow-500/30 hover:to-orange-500/30 transition-all duration-300 physical-card">
                       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-yellow-500 to-orange-500"></div>
                       <div className="flex items-center justify-between mb-2">
                         <h3 className="font-bold text-yellow-200 flex items-center">
@@ -456,7 +456,7 @@ export default function Home() {
                       <p className="text-sm text-yellow-200">Covers all expenses including principal</p>
                     </div>
 
-                    <div className="group relative overflow-hidden bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-500/30 rounded-xl p-6 hover:from-green-500/30 hover:to-emerald-500/30 transition-all duration-300">
+                    <div className="group relative overflow-hidden bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-500/30 rounded-xl p-6 hover:from-green-500/30 hover:to-emerald-500/30 transition-all duration-300 physical-card">
                       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-500 to-emerald-500"></div>
                       <div className="flex items-center justify-between mb-2">
                         <h3 className="font-bold text-green-200 flex items-center">
