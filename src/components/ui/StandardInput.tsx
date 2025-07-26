@@ -111,7 +111,7 @@ const StandardInput: React.FC<StandardInputProps> = ({
           value={displayValue}
           onChange={handleChange}
           placeholder={placeholder}
-          className={`w-full py-4 bg-white/5 border ${styles.border} ${styles.focusRing} rounded-xl focus:outline-none focus:ring-2 focus:border-transparent text-white placeholder-slate-400 backdrop-blur-sm transition-all duration-200 hover:bg-white/10 ${
+          className={`w-full py-4 bg-white/5 border ${styles.border} ${styles.focusRing} rounded-xl focus:outline-none focus:ring-2 focus:border-transparent text-white placeholder-slate-400 backdrop-blur-sm transition-all duration-200 hover:bg-white/10 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${
             prefix ? 'pl-8 pr-4' : suffix ? 'pl-4 pr-8' : 'px-4'
           }`}
         />
