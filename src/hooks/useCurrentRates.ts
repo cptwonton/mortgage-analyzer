@@ -39,23 +39,31 @@ export function useCurrentRates(): UseCurrentRatesReturn {
       setError(null);
 
       const response = await fetch('/api/current-rates');
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      
       const data: RateResponse = await response.json();
 
       if (data.success && data.rates) {
+        // Successfully got live rates
         setRates(data.rates);
-        setSource(data.source || 'Unknown');
+        setSource(data.source || 'Live rates');
         setLastUpdated(data.timestamp || new Date().toISOString());
+        setError(null);
       } else {
-        // Use fallback rates if available
+        // Failed to get live rates, using fallback
         if (data.fallback) {
           setRates(data.fallback);
           setSource('Fallback rates');
           setLastUpdated(new Date().toISOString());
         }
-        setError(data.error || 'Failed to fetch rates');
+        setError(data.error || 'Failed to fetch live rates');
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Network error');
+      const errorMessage = err instanceof Error ? err.message : 'Network error';
+      setError(errorMessage);
       
       // Set fallback rates on error
       setRates({

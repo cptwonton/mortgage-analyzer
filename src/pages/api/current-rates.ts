@@ -90,14 +90,11 @@ async function scrapeRatesSimple(): Promise<RateResponse> {
 
 // Alternative: Use a rate API service (if available)
 async function getRatesFromAPI(): Promise<RateResponse> {
-  // This would integrate with a real mortgage rate API
-  // For now, return fallback rates with a note
-  
+  // For now, return fallback rates with proper labeling
   return {
-    success: true,
-    rates: FALLBACK_RATES,
-    source: 'Fallback rates (updated periodically)',
-    timestamp: new Date().toISOString()
+    success: false, // Mark as failed so UI shows correct status
+    error: 'Live rate scraping not available on Vercel',
+    fallback: FALLBACK_RATES
   };
 }
 
@@ -117,6 +114,7 @@ export default async function handler(
     // Try scraping first, fall back to API rates
     let result = await scrapeRatesSimple();
     
+    // If scraping failed, use fallback rates with proper error indication
     if (!result.success) {
       result = await getRatesFromAPI();
     }
@@ -129,9 +127,9 @@ export default async function handler(
   } catch (error) {
     console.error('API error:', error);
     
-    return res.status(500).json({
+    return res.status(200).json({ // Return 200 with error info instead of 500
       success: false,
-      error: 'Internal server error',
+      error: 'Rate scraping failed on serverless environment',
       fallback: FALLBACK_RATES
     });
   }

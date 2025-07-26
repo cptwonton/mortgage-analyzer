@@ -51,11 +51,17 @@ const CurrentRatesDisplay: React.FC<CurrentRatesDisplayProps> = ({
   const lastUpdatedDate = lastUpdated ? new Date(lastUpdated) : null;
 
   if (compact) {
-    // Determine status color based on data source
+    // Determine status color based on data source and errors
     const getStatusColor = () => {
-      if (error && rates) return 'bg-yellow-400'; // Fallback data
-      if (error && !rates) return 'bg-red-400'; // Failed (never shown since we always have fallback)
-      return 'bg-green-400'; // Successfully pulled
+      if (error) return 'bg-yellow-400'; // Any error means fallback data
+      return 'bg-green-400'; // No error means successfully pulled
+    };
+
+    const getSourceText = () => {
+      if (error || source?.includes('fallback') || source?.includes('Fallback')) {
+        return 'Fallback rates';
+      }
+      return 'Mr. Cooper';
     };
 
     return (
@@ -93,7 +99,7 @@ const CurrentRatesDisplay: React.FC<CurrentRatesDisplayProps> = ({
         
         <div className="flex items-center justify-between mt-2 text-xs">
           <span className="text-slate-400">
-            Source: {source?.includes('fallback') ? 'Fallback rates' : 'Mr. Cooper'}
+            Source: {getSourceText()}
           </span>
           <span className="text-slate-500">
             {lastUpdatedDate?.toLocaleTimeString() || 'Unknown time'}
@@ -103,15 +109,27 @@ const CurrentRatesDisplay: React.FC<CurrentRatesDisplayProps> = ({
     );
   }
 
+  const getStatusColor = () => {
+    if (error) return 'bg-yellow-400'; // Any error means fallback data
+    return 'bg-green-400'; // No error means successfully pulled
+  };
+
+  const getSourceText = () => {
+    if (error || source?.includes('fallback') || source?.includes('Fallback')) {
+      return 'Fallback rates';
+    }
+    return 'Mr. Cooper';
+  };
+
   return (
     <div className="px-6 py-4 bg-white/5 border border-white/20 rounded-xl backdrop-blur-sm">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center space-x-3">
-          <div className={`w-2 h-2 ${error && rates ? 'bg-yellow-400' : 'bg-green-400'} rounded-full animate-pulse`}></div>
+          <div className={`w-2 h-2 ${getStatusColor()} rounded-full animate-pulse`}></div>
           <div>
             <h3 className="text-lg font-semibold text-white">Current Mortgage Rates</h3>
             <div className="text-sm text-slate-400 mt-1">
-              Source: {source?.includes('fallback') ? 'Fallback rates' : 'Mr. Cooper'} • {lastUpdatedDate?.toLocaleString() || 'Unknown time'}
+              Source: {getSourceText()} • {lastUpdatedDate?.toLocaleString() || 'Unknown time'}
             </div>
           </div>
         </div>
