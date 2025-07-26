@@ -9,6 +9,7 @@ export default function Home() {
     downPaymentPercent: 20,
     interestRate: 7.0, // Start with a reasonable default
     loanTermYears: 30,
+    mortgageType: 'fixed', // Default to fixed rate
     propertyTaxRate: 1.2,
     monthlyInsurance: 150,
     monthlyMaintenance: 200,
@@ -22,6 +23,17 @@ export default function Home() {
   const [showPMIInfo, setShowPMIInfo] = useState(false);
 
   const handleInputChange = (field: keyof MortgageInputs, value: string) => {
+    // Handle mortgage type separately since it's not a number
+    if (field === 'mortgageType') {
+      const newInputs = { ...inputs, [field]: value as 'fixed' | 'arm' };
+      setInputs(newInputs);
+      
+      // Validate inputs
+      const validationErrors = validateMortgageInputs(newInputs);
+      setErrors(validationErrors);
+      return;
+    }
+
     // Convert string to number, but handle empty strings
     const numericValue = value === '' ? 0 : Number(value);
     const newInputs = { ...inputs, [field]: numericValue };
@@ -91,6 +103,46 @@ export default function Home() {
                         className="w-full pl-8 pr-4 py-4 bg-white/5 border border-white/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-white placeholder-slate-400 backdrop-blur-sm transition-all duration-200 hover:bg-white/10"
                       />
                     </div>
+                  </div>
+
+                  <div className="group">
+                    <label className="block text-sm font-semibold text-slate-200 mb-2 group-focus-within:text-purple-300 transition-colors">
+                      Mortgage Type
+                    </label>
+                    <div className="grid grid-cols-2 gap-2">
+                      <button
+                        onClick={() => handleInputChange('mortgageType', 'fixed')}
+                        className={`px-4 py-4 rounded-xl border transition-all duration-200 physical-button ${
+                          inputs.mortgageType === 'fixed'
+                            ? 'bg-blue-500/20 border-blue-500/40 text-blue-300 shadow-lg shadow-blue-500/20'
+                            : 'bg-white/5 border-white/20 text-slate-300 hover:bg-white/10'
+                        }`}
+                      >
+                        <div className="text-center">
+                          <div className="font-semibold">Fixed Rate</div>
+                          <div className="text-xs opacity-80">Rate stays same</div>
+                        </div>
+                      </button>
+                      <button
+                        onClick={() => handleInputChange('mortgageType', 'arm')}
+                        className={`px-4 py-4 rounded-xl border transition-all duration-200 physical-button ${
+                          inputs.mortgageType === 'arm'
+                            ? 'bg-orange-500/20 border-orange-500/40 text-orange-300 shadow-lg shadow-orange-500/20'
+                            : 'bg-white/5 border-white/20 text-slate-300 hover:bg-white/10'
+                        }`}
+                      >
+                        <div className="text-center">
+                          <div className="font-semibold">ARM</div>
+                          <div className="text-xs opacity-80">Rate can change</div>
+                        </div>
+                      </button>
+                    </div>
+                    <p className="text-xs text-slate-400 mt-1">
+                      {inputs.mortgageType === 'fixed' 
+                        ? 'Interest rate remains constant throughout the loan term'
+                        : 'Interest rate may adjust after initial period (typically 5-7 years)'
+                      }
+                    </p>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
@@ -224,35 +276,77 @@ export default function Home() {
 
                     <div className="group">
                       <label className="block text-sm font-semibold text-slate-200 mb-2 group-focus-within:text-purple-300 transition-colors">
-                        Interest Rate
+                        Loan Term
                       </label>
                       <div className="relative">
                         <div className="px-4 py-4 bg-white/5 border border-white/20 rounded-xl backdrop-blur-sm">
                           <div className="flex items-center justify-between mb-3">
                             <span className="text-white font-bold text-lg">
-                              {inputs.interestRate.toFixed(1)}%
+                              {inputs.loanTermYears} years
                             </span>
                             <div className="flex space-x-1 text-xs text-slate-400">
-                              <span>0%</span>
+                              <span>15</span>
                               <span>•</span>
-                              <span>10%</span>
+                              <span>30</span>
                             </div>
                           </div>
                           <div className="relative">
                             <input
                               type="range"
-                              min="0"
-                              max="10"
-                              step="0.1"
-                              value={inputs.interestRate}
-                              onChange={(e) => handleInputChange('interestRate', e.target.value)}
+                              min="15"
+                              max="30"
+                              step="5"
+                              value={inputs.loanTermYears}
+                              onChange={(e) => handleInputChange('loanTermYears', e.target.value)}
                               className="w-full h-2 bg-white/10 rounded-lg appearance-none cursor-pointer slider"
                             />
                             <div 
-                              className="absolute top-0 left-0 h-2 bg-gradient-to-r from-green-400 via-yellow-400 to-red-500 rounded-lg pointer-events-none"
-                              style={{ width: `${(inputs.interestRate / 10) * 100}%` }}
+                              className={`absolute top-0 left-0 h-2 rounded-lg pointer-events-none transition-all duration-300 ${
+                                inputs.loanTermYears <= 20 
+                                  ? 'bg-gradient-to-r from-green-400 to-blue-400'
+                                  : 'bg-gradient-to-r from-blue-400 to-purple-400'
+                              }`}
+                              style={{ width: `${((inputs.loanTermYears - 15) / 15) * 100}%` }}
                             ></div>
                           </div>
+                        </div>
+                      </div>
+                      <p className="text-xs text-slate-400 mt-1">
+                        {inputs.loanTermYears <= 20 ? 'Lower interest, higher payments' : 'Higher interest, lower payments'}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="group">
+                    <label className="block text-sm font-semibold text-slate-200 mb-2 group-focus-within:text-purple-300 transition-colors">
+                      Interest Rate
+                    </label>
+                    <div className="relative">
+                      <div className="px-4 py-4 bg-white/5 border border-white/20 rounded-xl backdrop-blur-sm">
+                        <div className="flex items-center justify-between mb-3">
+                          <span className="text-white font-bold text-lg">
+                            {inputs.interestRate.toFixed(1)}%
+                          </span>
+                          <div className="flex space-x-1 text-xs text-slate-400">
+                            <span>0%</span>
+                            <span>•</span>
+                            <span>10%</span>
+                          </div>
+                        </div>
+                        <div className="relative">
+                          <input
+                            type="range"
+                            min="0"
+                            max="10"
+                            step="0.1"
+                            value={inputs.interestRate}
+                            onChange={(e) => handleInputChange('interestRate', e.target.value)}
+                            className="w-full h-2 bg-white/10 rounded-lg appearance-none cursor-pointer slider"
+                          />
+                          <div 
+                            className="absolute top-0 left-0 h-2 bg-gradient-to-r from-green-400 via-yellow-400 to-red-500 rounded-lg pointer-events-none"
+                            style={{ width: `${(inputs.interestRate / 10) * 100}%` }}
+                          ></div>
                         </div>
                       </div>
                     </div>

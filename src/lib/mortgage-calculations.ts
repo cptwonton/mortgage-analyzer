@@ -8,6 +8,7 @@ export interface MortgageInputs {
   downPaymentPercent: number;
   interestRate: number; // Annual percentage rate
   loanTermYears: number;
+  mortgageType: 'fixed' | 'arm'; // Add mortgage type
   propertyTaxRate: number; // Annual percentage rate
   monthlyInsurance: number;
   monthlyMaintenance: number;
