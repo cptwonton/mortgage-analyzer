@@ -913,6 +913,7 @@ export default function Home() {
                   schedule={analysis.amortizationSchedule} 
                   mortgageType={inputs.mortgageType}
                   armInitialPeriod={inputs.armInitialPeriod || 5}
+                  loanTermYears={inputs.loanTermYears}
                 />
 
                 <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">

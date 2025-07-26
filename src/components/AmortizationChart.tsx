@@ -16,6 +16,7 @@ interface AmortizationChartProps {
   schedule: AmortizationPayment[];
   mortgageType: 'fixed' | 'arm';
   armInitialPeriod?: number; // For ARM visualization
+  loanTermYears: number; // Add loan term for celebration messages
 }
 
 interface ChartDataPoint {
@@ -35,7 +36,8 @@ type ZoomLevel = 'full' | '5yr' | '10yr' | '15yr';
 const AmortizationChart: React.FC<AmortizationChartProps> = ({ 
   schedule, 
   mortgageType, 
-  armInitialPeriod = 5 
+  armInitialPeriod = 5,
+  loanTermYears
 }) => {
   const [zoomLevel, setZoomLevel] = useState<ZoomLevel>('full');
   const [selectedPoint, setSelectedPoint] = useState<ChartDataPoint | null>(null);
@@ -303,8 +305,8 @@ const AmortizationChart: React.FC<AmortizationChartProps> = ({
               </div>
               <p className="text-green-200 text-xs">
                 Your loan terms are so favorable that you're building more equity than paying interest from day one! 
-                {mortgageType === 'fixed' && inputs.loanTermYears <= 20 && (
-                  <> Your {inputs.loanTermYears}-year term is paying off big time.</>
+                {mortgageType === 'fixed' && loanTermYears <= 20 && (
+                  <> Your {loanTermYears}-year term is paying off big time.</>
                 )}
                 {mortgageType === 'arm' && (
                   <> Even with an ARM, your initial terms are fantastic.</>
