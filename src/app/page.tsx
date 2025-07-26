@@ -104,7 +104,17 @@ export default function Home() {
                       />
                     </div>
                   </div>
+                </div>
+              </div>
 
+              {/* Mortgage Details Section */}
+              <div className="mb-8">
+                <div className="flex items-center mb-4">
+                  <span className="text-lg font-semibold text-purple-300 mr-2">🏦</span>
+                  <h3 className="text-lg font-semibold text-purple-300">Mortgage Details</h3>
+                </div>
+                
+                <div className="space-y-6">
                   <div className="group">
                     <label className="block text-sm font-semibold text-slate-200 mb-2 group-focus-within:text-purple-300 transition-colors">
                       Mortgage Type
