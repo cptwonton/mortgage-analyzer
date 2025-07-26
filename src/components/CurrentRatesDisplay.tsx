@@ -51,12 +51,19 @@ const CurrentRatesDisplay: React.FC<CurrentRatesDisplayProps> = ({
   const lastUpdatedDate = lastUpdated ? new Date(lastUpdated) : null;
 
   if (compact) {
+    // Determine status color based on data source
+    const getStatusColor = () => {
+      if (error && rates) return 'bg-yellow-400'; // Fallback data
+      if (error && !rates) return 'bg-red-400'; // Failed (never shown since we always have fallback)
+      return 'bg-green-400'; // Successfully pulled
+    };
+
     return (
       <div className="px-4 py-3 bg-white/5 border border-white/20 rounded-xl backdrop-blur-sm">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+              <div className={`w-2 h-2 ${getStatusColor()} rounded-full animate-pulse`}></div>
               <span className="text-slate-300 text-sm font-medium">
                 Current Market Rate
               </span>
@@ -86,19 +93,12 @@ const CurrentRatesDisplay: React.FC<CurrentRatesDisplayProps> = ({
         
         <div className="flex items-center justify-between mt-2 text-xs">
           <span className="text-slate-400">
-            Source: {source?.includes('fallback') ? 'Fallback data' : 'Mr. Cooper'}
+            Source: {source?.includes('fallback') ? 'Fallback rates' : 'Mr. Cooper'}
           </span>
           <span className="text-slate-500">
             {lastUpdatedDate?.toLocaleTimeString() || 'Unknown time'}
           </span>
         </div>
-        
-        {error && (
-          <div className="text-xs text-yellow-400 mt-2 flex items-center space-x-1">
-            <span>⚠️</span>
-            <span>Using fallback data - live rates unavailable</span>
-          </div>
-        )}
       </div>
     );
   }
@@ -106,10 +106,13 @@ const CurrentRatesDisplay: React.FC<CurrentRatesDisplayProps> = ({
   return (
     <div className="px-6 py-4 bg-white/5 border border-white/20 rounded-xl backdrop-blur-sm">
       <div className="flex items-center justify-between mb-4">
-        <div>
-          <h3 className="text-lg font-semibold text-white">Current Mortgage Rates</h3>
-          <div className="text-sm text-slate-400 mt-1">
-            Source: {source} • {lastUpdatedDate?.toLocaleString() || 'Unknown time'}
+        <div className="flex items-center space-x-3">
+          <div className={`w-2 h-2 ${error && rates ? 'bg-yellow-400' : 'bg-green-400'} rounded-full animate-pulse`}></div>
+          <div>
+            <h3 className="text-lg font-semibold text-white">Current Mortgage Rates</h3>
+            <div className="text-sm text-slate-400 mt-1">
+              Source: {source?.includes('fallback') ? 'Fallback rates' : 'Mr. Cooper'} • {lastUpdatedDate?.toLocaleString() || 'Unknown time'}
+            </div>
           </div>
         </div>
         <button
@@ -202,15 +205,6 @@ const CurrentRatesDisplay: React.FC<CurrentRatesDisplayProps> = ({
           </div>
         </div>
       </div>
-
-      {error && (
-        <div className="mt-4 px-3 py-2 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
-          <div className="text-yellow-300 text-sm flex items-center space-x-2">
-            <span>⚠️</span>
-            <span><strong>Note:</strong> {error}. Showing fallback rates for reference.</span>
-          </div>
-        </div>
-      )}
 
       <div className="mt-4 text-xs text-slate-500">
         <p>
