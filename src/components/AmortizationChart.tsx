@@ -145,8 +145,8 @@ const AmortizationChart: React.FC<AmortizationChartProps> = ({
 
   // Find crossover point (where principal > interest)
   const crossoverPoint = useMemo(() => {
-    return chartData.find(d => d.principal > d.interest);
-  }, [chartData]);
+    return filteredData.find(d => d.principal > d.interest);
+  }, [filteredData]);
 
   // Check if crossover happens before chart starts (financially smart scenario)
   const crossoverBeforeChart = useMemo(() => {
