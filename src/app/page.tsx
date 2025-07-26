@@ -10,6 +10,7 @@ import SliderInput from '@/components/ui/SliderInput';
 import ToggleGroup from '@/components/ui/ToggleGroup';
 import Card from '@/components/ui/Card';
 import BreakevenCard from '@/components/ui/BreakevenCard';
+import InfoCard from '@/components/ui/InfoCard';
 
 export default function Home() {
   const [inputs, setInputs] = useState<MortgageInputs>({
@@ -531,11 +532,12 @@ export default function Home() {
               </div>
 
               {errors.length > 0 && (
-                <div className="p-4 bg-red-500/20 border border-red-500/30 rounded-xl backdrop-blur-sm">
-                  <div className="flex items-center mb-2">
-                    <span className="text-red-400 mr-2">⚠️</span>
-                    <h3 className="text-sm font-semibold text-red-300">Validation Errors</h3>
-                  </div>
+                <InfoCard 
+                  variant="error"
+                  size="large"
+                  title="Validation Errors"
+                  icon="⚠️"
+                >
                   <ul className="text-sm text-red-200 space-y-1">
                     {errors.map((error, index) => (
                       <li key={index} className="flex items-center">
@@ -544,7 +546,7 @@ export default function Home() {
                       </li>
                     ))}
                   </ul>
-                </div>
+                </InfoCard>
               )}
             </Card>
 
@@ -618,11 +620,11 @@ export default function Home() {
                   </div>
 
                   {/* Expense Breakdown */}
-                  <div className="bg-white/5 rounded-xl p-6 border border-white/10">
-                    <h3 className="font-bold text-white mb-4 flex items-center">
-                      <span className="mr-2">📊</span>
-                      Monthly Expense Breakdown
-                    </h3>
+                  <InfoCard 
+                    title="Monthly Expense Breakdown"
+                    icon="📊"
+                    size="large"
+                  >
                     <div className="space-y-3">
                       <div className="flex justify-between items-center py-2 border-b border-white/10">
                         <span className="text-slate-300 flex items-center">
@@ -710,7 +712,7 @@ export default function Home() {
                         </span>
                       </div>
                     </div>
-                  </div>
+                  </InfoCard>
                 </div>
               ) : (
                 <div className="text-center py-12">
@@ -765,7 +767,7 @@ export default function Home() {
                 />
 
                 <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                  <div className="bg-white/5 rounded-lg p-4 border border-white/10">
+                  <InfoCard size="small">
                     <div className="flex items-center mb-2">
                       <div className="w-3 h-3 bg-green-400 rounded-full mr-2"></div>
                       <span className="text-green-300 font-semibold">Principal Payments</span>
@@ -773,9 +775,9 @@ export default function Home() {
                     <p className="text-slate-300">
                       Build equity in your property. Early payments are mostly interest, but this shifts over time.
                     </p>
-                  </div>
+                  </InfoCard>
                   
-                  <div className="bg-white/5 rounded-lg p-4 border border-white/10">
+                  <InfoCard size="small">
                     <div className="flex items-center mb-2">
                       <div className="w-3 h-3 bg-red-400 rounded-full mr-2"></div>
                       <span className="text-red-300 font-semibold">Interest Payments</span>
@@ -783,9 +785,9 @@ export default function Home() {
                     <p className="text-slate-300">
                       Cost of borrowing money. Higher at the beginning, decreases as you pay down the loan.
                     </p>
-                  </div>
+                  </InfoCard>
                   
-                  <div className="bg-white/5 rounded-lg p-4 border border-white/10">
+                  <InfoCard size="small">
                     <div className="flex items-center mb-2">
                       <div className="w-3 h-3 bg-cyan-400 rounded-full mr-2"></div>
                       <span className="text-cyan-300 font-semibold">The Crossover</span>
@@ -793,7 +795,7 @@ export default function Home() {
                     <p className="text-slate-300">
                       The point where principal payments exceed interest. This is when equity building accelerates.
                     </p>
-                  </div>
+                  </InfoCard>
                 </div>
               </Card>
             </div>
