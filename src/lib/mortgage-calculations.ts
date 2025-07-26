@@ -269,6 +269,9 @@ export function calculateBreakevenAnalysis(inputs: MortgageInputs): BreakevenAna
   // Calculate property management fee based on investment viable rent
   const propertyManagement = Math.round((investmentViableBreakeven * (inputs.propertyManagementRate / 100)) * 100) / 100;
 
+  // Calculate total monthly expenses including property management
+  const totalMonthlyExpenses = fullBreakeven + propertyManagement;
+
   // Calculate amortization schedule
   const amortizationSchedule = calculateAmortizationSchedule(
     loanAmount,
@@ -288,7 +291,7 @@ export function calculateBreakevenAnalysis(inputs: MortgageInputs): BreakevenAna
     capEx: inputs.monthlyCapEx,
     hoa: inputs.monthlyHOA,
     propertyManagement,
-    totalMonthlyExpenses: fullBreakeven
+    totalMonthlyExpenses
   };
 
   // Calculate ARM payment range if applicable
