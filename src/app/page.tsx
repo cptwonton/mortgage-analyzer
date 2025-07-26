@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import { calculateBreakevenAnalysis, MortgageInputs, validateMortgageInputs, validateField, getFieldRanges } from '@/lib/mortgage-calculations';
+import { getStorageInfo } from '@/lib/localStorage';
+import { usePersistedInputs } from '@/hooks/usePersistedInputs';
 import AmortizationChart from '@/components/AmortizationChart';
 import FloatingMortgageControls from '@/components/FloatingMortgageControls';
 import CurrentRatesDisplay from '@/components/CurrentRatesDisplay';
@@ -13,27 +15,7 @@ import BreakevenCard from '@/components/ui/BreakevenCard';
 import InfoCard from '@/components/ui/InfoCard';
 
 export default function Home() {
-  const [inputs, setInputs] = useState<MortgageInputs>({
-    purchasePrice: 0,
-    downPaymentPercent: 20,
-    interestRate: 7.0, // Start with a reasonable default
-    loanTermYears: 30,
-    mortgageType: 'fixed', // Default to fixed rate
-    armInitialPeriod: 5, // Default to 5/1 ARM
-    armRateCaps: { // Default ARM rate caps (2/2/5 is common)
-      initial: 2,
-      subsequent: 2,
-      lifetime: 5
-    },
-    propertyTaxRate: 1.2,
-    monthlyInsurance: 150,
-    monthlyMaintenance: 200,
-    monthlyCapEx: 150,
-    vacancyRate: 8,
-    propertyManagementRate: 10,
-    monthlyHOA: 0
-  });
-
+  const { inputs, updateInput, resetInputs, isLoaded } = usePersistedInputs();
   const [errors, setErrors] = useState<string[]>([]);
   const [showPMIInfo, setShowPMIInfo] = useState(false);
   const [showFloatingControls, setShowFloatingControls] = useState(false);
@@ -42,13 +24,10 @@ export default function Home() {
     // Handle mortgage type separately since it's not a number
     if (field === 'mortgageType') {
       const newMortgageType = value as 'fixed' | 'arm';
+      updateInput(field, newMortgageType);
+      
+      // Create temporary inputs object for validation
       const newInputs = { ...inputs, [field]: newMortgageType };
-      
-      // No auto-adjustment of loan term - keep controls independent
-      
-      setInputs(newInputs);
-      
-      // Validate inputs
       const validationErrors = validateMortgageInputs(newInputs);
       setErrors(validationErrors);
       return;
@@ -56,15 +35,29 @@ export default function Home() {
 
     // Convert string to number, but handle empty strings
     const numericValue = value === '' ? 0 : Number(value);
-    const newInputs = { ...inputs, [field]: numericValue };
-    setInputs(newInputs);
+    updateInput(field, numericValue);
     
-    // Validate inputs
+    // Create temporary inputs object for validation
+    const newInputs = { ...inputs, [field]: numericValue };
     const validationErrors = validateMortgageInputs(newInputs);
     setErrors(validationErrors);
   };
 
   const analysis = errors.length === 0 ? calculateBreakevenAnalysis(inputs) : null;
+
+  // Show loading state while localStorage is being read
+  if (!isLoaded) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse">
+            <span className="text-2xl">🏠</span>
+          </div>
+          <p className="text-slate-300 text-lg">Loading your mortgage analysis...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
@@ -96,9 +89,26 @@ export default function Home() {
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
             {/* Input Panel */}
             <Card variant="section">
-              <div className="flex items-center mb-6">
-                <div className="w-3 h-3 bg-gradient-to-r from-emerald-400 via-teal-500 to-cyan-500 rounded-full mr-3"></div>
-                <h2 className="text-2xl font-bold text-white">Property Details</h2>
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center">
+                  <div className="w-3 h-3 bg-gradient-to-r from-emerald-400 via-teal-500 to-cyan-500 rounded-full mr-3"></div>
+                  <h2 className="text-2xl font-bold text-white">Property Details</h2>
+                </div>
+                
+                {/* Reset Button */}
+                <button
+                  onClick={resetInputs}
+                  className="flex items-center space-x-2 px-3 py-2 bg-slate-700/50 hover:bg-slate-600/50 border border-slate-600/50 rounded-lg text-slate-300 hover:text-slate-200 transition-all duration-200 text-sm"
+                  title={(() => {
+                    const storageInfo = getStorageInfo();
+                    return storageInfo.hasData 
+                      ? `Reset all inputs to defaults\nData saved: ${storageInfo.age} ago (v${storageInfo.version})`
+                      : 'Reset all inputs to defaults\nNo saved data';
+                  })()}
+                >
+                  <span className="text-xs">🔄</span>
+                  <span>Reset</span>
+                </button>
               </div>
               
               {/* Basic Information Section */}
@@ -381,7 +391,7 @@ export default function Home() {
                     <CurrentRatesDisplay 
                       mortgageType={inputs.mortgageType}
                       loanTermYears={inputs.loanTermYears}
-                      onRateSelect={(rate) => setInputs({...inputs, interestRate: rate})}
+                      onRateSelect={(rate) => updateInput('interestRate', rate)}
                       compact={true}
                     />
                   </div>
