@@ -11,6 +11,8 @@ const testProperty1: MortgageInputs = {
   downPaymentPercent: 20,
   interestRate: 7.5,
   loanTermYears: 30,
+  mortgageType: 'fixed',
+  armInitialPeriod: 5,
   propertyTaxRate: 1.2, // 1.2% annually
   monthlyInsurance: 150,
   monthlyMaintenance: 200,
@@ -26,6 +28,8 @@ const testProperty2: MortgageInputs = {
   downPaymentPercent: 10, // Should trigger PMI
   interestRate: 6.8,
   loanTermYears: 30,
+  mortgageType: 'fixed',
+  armInitialPeriod: 5,
   propertyTaxRate: 1.5,
   monthlyInsurance: 120,
   monthlyMaintenance: 175,

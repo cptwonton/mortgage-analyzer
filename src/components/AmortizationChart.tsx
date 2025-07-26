@@ -156,7 +156,8 @@ const AmortizationChart: React.FC<AmortizationChartProps> = ({
   }, [crossoverPoint, filteredData]);
 
   // Custom tooltip with enhanced information and ARM awareness
-  const CustomTooltip = ({ active, payload, label }: any) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload as ChartDataPoint;
       const isArmPeriod = data.isArmAdjustmentPeriod;
@@ -241,6 +242,7 @@ const AmortizationChart: React.FC<AmortizationChartProps> = ({
     return null;
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleChartClick = (data: any) => {
     if (data && data.activePayload && data.activePayload[0]) {
       setSelectedPoint(data.activePayload[0].payload);
@@ -304,7 +306,7 @@ const AmortizationChart: React.FC<AmortizationChartProps> = ({
                 </div>
               </div>
               <p className="text-green-200 text-xs">
-                Your loan terms are so favorable that you're building more equity than paying interest from day one! 
+                Your loan terms are so favorable that you&apos;re building more equity than paying interest from day one! 
                 {mortgageType === 'fixed' && loanTermYears <= 20 && (
                   <> Your {loanTermYears}-year term is paying off big time.</>
                 )}
@@ -343,7 +345,7 @@ const AmortizationChart: React.FC<AmortizationChartProps> = ({
                 zoomLevel === '5yr' ? 'the first 5 years (60 months)' :
                 zoomLevel === '10yr' ? 'the first 10 years (120 months)' :
                 'the first 15 years (180 months)'
-              }. Switch to "Yearly" for full loan overview.
+              }. Switch to &quot;Yearly&quot; for full loan overview.
               {mortgageType === 'arm' && (
                 <> <strong className="text-orange-300">ARM Note:</strong> Rate adjustments begin after year {armInitialPeriod}.</>
               )}
@@ -355,7 +357,7 @@ const AmortizationChart: React.FC<AmortizationChartProps> = ({
                 zoomLevel === '5yr' ? 'the first 5 years' :
                 zoomLevel === '10yr' ? 'the first 10 years' :
                 'the first 15 years'
-              }. Switch to "Monthly" for detailed month-by-month analysis.
+              }. Switch to &quot;Monthly&quot; for detailed month-by-month analysis.
               {mortgageType === 'arm' && (
                 <> <strong className="text-orange-300">ARM Note:</strong> Orange line marks when rate adjustments begin (year {armInitialPeriod}).</>
               )}
@@ -459,7 +461,7 @@ const AmortizationChart: React.FC<AmortizationChartProps> = ({
                 strokeWidth={2}
                 label={{ 
                   value: "Rate Adjustments Begin", 
-                  position: "topLeft",
+                  position: "top",
                   style: { fill: '#f59e0b', fontSize: '12px', fontWeight: 'bold' }
                 }}
               />
