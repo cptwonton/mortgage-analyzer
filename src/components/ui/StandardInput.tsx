@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import HelpTooltip from './HelpTooltip';
 
 interface StandardInputProps {
@@ -43,7 +43,6 @@ const StandardInput: React.FC<StandardInputProps> = ({
   allowZero = true,
   formatCurrency = false
 }) => {
-  const [displayValue, setDisplayValue] = useState('');
   const [isFocused, setIsFocused] = useState(false);
 
   // Format number with commas for currency display
@@ -58,42 +57,22 @@ const StandardInput: React.FC<StandardInputProps> = ({
     return cleaned === '' ? 0 : parseInt(cleaned, 10);
   };
 
-  // Update display value when prop value changes
-  useEffect(() => {
-    if (formatCurrency && type === 'number' && !isFocused) {
-      const numValue = typeof value === 'string' ? parseFloat(value) || 0 : value;
-      setDisplayValue(formatCurrencyValue(numValue));
-    } else if (!isFocused) {
-      setDisplayValue(value.toString());
-    }
-  }, [value, isFocused, formatCurrency, type]);
-
   const handleFocus = () => {
-    if (formatCurrency && type === 'number') {
-      setIsFocused(true);
-      const numValue = typeof value === 'string' ? parseFloat(value) || 0 : value;
-      setDisplayValue(numValue === 0 ? '' : numValue.toString());
-    }
+    setIsFocused(true);
   };
 
   const handleBlur = () => {
-    if (formatCurrency && type === 'number') {
-      setIsFocused(false);
-      const numericValue = parseCurrencyValue(displayValue);
-      onChange(numericValue.toString());
-      setDisplayValue(formatCurrencyValue(numericValue));
-    }
+    setIsFocused(false);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
     
-    if (formatCurrency && type === 'number' && isFocused) {
-      // When focused on currency field, allow raw number input
+    if (formatCurrency && type === 'number') {
+      // For currency fields, clean the input and pass the raw number
       const cleaned = inputValue.replace(/[^\d]/g, '');
-      setDisplayValue(cleaned);
+      onChange(cleaned);
     } else {
-      setDisplayValue(inputValue);
       onChange(inputValue);
     }
   };
@@ -116,8 +95,25 @@ const StandardInput: React.FC<StandardInputProps> = ({
     }
   };
 
-  // Use displayValue for currency formatting, otherwise use the regular value
-  const inputValue = formatCurrency && type === 'number' ? displayValue : value;
+  // Determine what to display in the input
+  const getDisplayValue = (): string => {
+    if (formatCurrency && type === 'number') {
+      const numValue = typeof value === 'string' ? parseFloat(value) || 0 : value;
+      
+      if (isFocused) {
+        // When focused, show raw number for easy editing
+        return numValue === 0 ? '' : numValue.toString();
+      } else {
+        // When not focused, show formatted number with commas
+        return formatCurrencyValue(numValue);
+      }
+    } else {
+      // For non-currency fields, use the value as-is
+      return value.toString();
+    }
+  };
+
+  const inputValue = getDisplayValue();
 
   // Generate range hint for help text
   const getRangeHint = () => {
