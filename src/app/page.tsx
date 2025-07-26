@@ -5,6 +5,7 @@ import { calculateBreakevenAnalysis, MortgageInputs, validateMortgageInputs } fr
 import AmortizationChart from '@/components/AmortizationChart';
 import FloatingMortgageControls from '@/components/FloatingMortgageControls';
 import CurrentRatesDisplay from '@/components/CurrentRatesDisplay';
+import { getBreakevenCardClasses } from '@/styles/design-system';
 
 export default function Home() {
   const [inputs, setInputs] = useState<MortgageInputs>({
@@ -72,7 +73,7 @@ export default function Home() {
       <div className="relative z-10 py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Hero Header */}
-          <div className="text-center mb-12">
+          <div className="text-center mb-8">
             <div className="inline-flex items-center justify-center p-2 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full mb-6">
               <span className="text-4xl">🏠</span>
             </div>
@@ -102,9 +103,9 @@ export default function Home() {
                   <h3 className="text-lg font-semibold text-blue-300">Basic Information</h3>
                 </div>
                 
-                <div className="space-y-6">
+                <div className="space-y-4">
                   <div className="group">
-                    <label className="block text-sm font-semibold text-slate-200 mb-2 group-focus-within:text-purple-300 transition-colors">
+                    <label className="block text-sm font-semibold text-slate-200 mb-2 group-focus-within:text-blue-300 transition-colors">
                       Purchase Price
                     </label>
                     <div className="relative">
@@ -124,13 +125,13 @@ export default function Home() {
               {/* Mortgage Details Section */}
               <div className="mb-8">
                 <div className="flex items-center mb-4">
-                  <span className="text-lg font-semibold text-purple-300 mr-2">🏦</span>
-                  <h3 className="text-lg font-semibold text-purple-300">Mortgage Details</h3>
+                  <span className="text-lg font-semibold text-blue-300 mr-2">🏦</span>
+                  <h3 className="text-lg font-semibold text-blue-300">Mortgage Details</h3>
                 </div>
                 
-                <div className="space-y-6">
+                <div className="space-y-4">
                   <div className="group">
-                    <label className="block text-sm font-semibold text-slate-200 mb-2 group-focus-within:text-purple-300 transition-colors">
+                    <label className="block text-sm font-semibold text-slate-200 mb-2 group-focus-within:text-blue-300 transition-colors">
                       Mortgage Type
                     </label>
                     <div className="grid grid-cols-2 gap-2">
@@ -151,7 +152,7 @@ export default function Home() {
                         onClick={() => handleInputChange('mortgageType', 'arm')}
                         className={`px-4 py-4 rounded-xl border transition-all duration-200 physical-button ${
                           inputs.mortgageType === 'arm'
-                            ? 'bg-orange-500/20 border-orange-500/40 text-orange-300 shadow-lg shadow-orange-500/20'
+                            ? 'bg-amber-500/20 border-amber-500/40 text-amber-300 shadow-lg shadow-amber-500/20'
                             : 'bg-white/5 border-white/20 text-slate-300 hover:bg-white/10'
                         }`}
                       >
@@ -164,12 +165,12 @@ export default function Home() {
                     
                     {/* ARM Educational Info */}
                     {inputs.mortgageType === 'arm' && (
-                      <div className="mt-3 p-4 bg-orange-500/10 border border-orange-500/20 rounded-lg">
+                      <div className="mt-3 p-4 bg-amber-500/10 border border-amber-500/20 rounded-lg">
                         <div className="flex items-center space-x-2 mb-2">
-                          <div className="w-2 h-2 bg-orange-400 rounded-full"></div>
-                          <span className="text-sm font-medium text-orange-300">About ARM Loans</span>
+                          <div className="w-2 h-2 bg-amber-400 rounded-full"></div>
+                          <span className="text-sm font-medium text-amber-300">About ARM Loans</span>
                         </div>
-                        <div className="text-xs text-orange-200 space-y-2">
+                        <div className="text-xs text-amber-200 space-y-2">
                           <p>
                             <strong>Adjustable Rate Mortgages (ARMs)</strong> have two phases:
                           </p>
@@ -195,7 +196,7 @@ export default function Home() {
                   {/* ARM Initial Period Slider - Only show for ARM */}
                   {inputs.mortgageType === 'arm' && (
                     <div className="group">
-                      <label className="block text-sm font-semibold text-slate-200 mb-2 group-focus-within:text-purple-300 transition-colors">
+                      <label className="block text-sm font-semibold text-slate-200 mb-2 group-focus-within:text-blue-300 transition-colors">
                         Initial Fixed Period
                       </label>
                       <div className="relative">
@@ -242,7 +243,7 @@ export default function Home() {
                       <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
                         <div className={`p-2 rounded border transition-all ${
                           inputs.armInitialPeriod === 5 
-                            ? 'bg-orange-500/20 border-orange-500/40 text-orange-300'
+                            ? 'bg-amber-500/20 border-amber-500/40 text-amber-300'
                             : 'bg-white/5 border-white/20 text-slate-400'
                         }`}>
                           <div className="font-medium">5/1 ARM</div>
@@ -250,7 +251,7 @@ export default function Home() {
                         </div>
                         <div className={`p-2 rounded border transition-all ${
                           inputs.armInitialPeriod === 7 
-                            ? 'bg-orange-500/20 border-orange-500/40 text-orange-300'
+                            ? 'bg-amber-500/20 border-amber-500/40 text-amber-300'
                             : 'bg-white/5 border-white/20 text-slate-400'
                         }`}>
                           <div className="font-medium">7/1 ARM</div>
@@ -262,7 +263,7 @@ export default function Home() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="group">
-                      <label className="block text-sm font-semibold text-slate-200 mb-2 group-focus-within:text-purple-300 transition-colors">
+                      <label className="block text-sm font-semibold text-slate-200 mb-2 group-focus-within:text-blue-300 transition-colors">
                         Down Payment
                       </label>
                       <div className="relative">
@@ -390,7 +391,7 @@ export default function Home() {
                     </div>
 
                     <div className="group">
-                      <label className="block text-sm font-semibold text-slate-200 mb-2 group-focus-within:text-purple-300 transition-colors">
+                      <label className="block text-sm font-semibold text-slate-200 mb-2 group-focus-within:text-blue-300 transition-colors">
                         Loan Term
                       </label>
                       <div className="relative">
@@ -436,7 +437,7 @@ export default function Home() {
                   </div>
 
                   {/* Current Market Rates */}
-                  <div className="mb-6">
+                  <div className="mb-4">
                     <CurrentRatesDisplay 
                       mortgageType={inputs.mortgageType}
                       loanTermYears={inputs.loanTermYears}
@@ -446,7 +447,7 @@ export default function Home() {
                   </div>
 
                   <div className="group">
-                    <label className="block text-sm font-semibold text-slate-200 mb-2 group-focus-within:text-purple-300 transition-colors">
+                    <label className="block text-sm font-semibold text-slate-200 mb-2 group-focus-within:text-blue-300 transition-colors">
                       {inputs.mortgageType === 'fixed' ? 'Interest Rate' : 'Initial Interest Rate'}
                     </label>
                     <div className="relative">
@@ -480,12 +481,12 @@ export default function Home() {
                     </div>
                     {inputs.mortgageType === 'arm' && (
                       <div className="mt-3 space-y-3">
-                        <div className="p-3 bg-orange-500/20 border border-orange-500/30 rounded-lg">
+                        <div className="p-3 bg-amber-500/20 border border-amber-500/30 rounded-lg">
                           <div className="flex items-center space-x-2 mb-2">
-                            <div className="w-2 h-2 bg-orange-400 rounded-full"></div>
-                            <span className="text-xs font-medium text-orange-300">Rate Adjustment Notice</span>
+                            <div className="w-2 h-2 bg-amber-400 rounded-full"></div>
+                            <span className="text-xs font-medium text-amber-300">Rate Adjustment Notice</span>
                           </div>
-                          <p className="text-xs text-orange-200">
+                          <p className="text-xs text-amber-200">
                             After the initial {inputs.loanTermYears}-year period, your interest rate will adjust annually based on market conditions. 
                             Your actual payments may increase or decrease.
                           </p>
@@ -527,9 +528,9 @@ export default function Home() {
                   <h3 className="text-lg font-semibold text-orange-300">Property Expenses</h3>
                 </div>
                 
-                <div className="space-y-6">
+                <div className="space-y-4">
                   <div className="group">
-                    <label className="block text-sm font-semibold text-slate-200 mb-2 group-focus-within:text-purple-300 transition-colors">
+                    <label className="block text-sm font-semibold text-slate-200 mb-2 group-focus-within:text-blue-300 transition-colors">
                       Property Tax Rate (Annual)
                     </label>
                     <div className="relative">
@@ -547,7 +548,7 @@ export default function Home() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="group">
-                      <label className="block text-sm font-semibold text-slate-200 mb-2 group-focus-within:text-purple-300 transition-colors">
+                      <label className="block text-sm font-semibold text-slate-200 mb-2 group-focus-within:text-blue-300 transition-colors">
                         Monthly Insurance
                       </label>
                       <div className="relative">
@@ -563,7 +564,7 @@ export default function Home() {
                     </div>
 
                     <div className="group">
-                      <label className="block text-sm font-semibold text-slate-200 mb-2 group-focus-within:text-purple-300 transition-colors">
+                      <label className="block text-sm font-semibold text-slate-200 mb-2 group-focus-within:text-blue-300 transition-colors">
                         Monthly Maintenance
                       </label>
                       <div className="relative">
@@ -591,10 +592,10 @@ export default function Home() {
                   </div>
                 </div>
                 
-                <div className="space-y-6">
+                <div className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="group">
-                      <label className="block text-sm font-semibold text-slate-200 mb-2 group-focus-within:text-purple-300 transition-colors">
+                      <label className="block text-sm font-semibold text-slate-200 mb-2 group-focus-within:text-blue-300 transition-colors">
                         CapEx Reserve
                       </label>
                       <div className="relative">
@@ -611,7 +612,7 @@ export default function Home() {
                     </div>
 
                     <div className="group">
-                      <label className="block text-sm font-semibold text-slate-200 mb-2 group-focus-within:text-purple-300 transition-colors">
+                      <label className="block text-sm font-semibold text-slate-200 mb-2 group-focus-within:text-blue-300 transition-colors">
                         Vacancy Rate
                       </label>
                       <div className="relative">
@@ -629,7 +630,7 @@ export default function Home() {
                   </div>
 
                   <div className="group">
-                    <label className="block text-sm font-semibold text-slate-200 mb-2 group-focus-within:text-purple-300 transition-colors">
+                    <label className="block text-sm font-semibold text-slate-200 mb-2 group-focus-within:text-blue-300 transition-colors">
                       Property Management Fee
                     </label>
                     <div className="relative">
@@ -698,7 +699,7 @@ export default function Home() {
               </div>
               
               {analysis ? (
-                <div className="space-y-6">
+                <div className="space-y-4">
                   {/* Breakeven Points */}
                   <div className="space-y-4">
                     <div className="group relative overflow-hidden bg-gradient-to-r from-red-500/20 to-pink-500/20 border border-red-500/30 rounded-xl p-6 hover:from-red-500/30 hover:to-pink-500/30 transition-all duration-300 physical-card">
