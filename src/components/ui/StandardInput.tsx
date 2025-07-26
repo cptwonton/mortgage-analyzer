@@ -98,7 +98,7 @@ const StandardInput: React.FC<StandardInputProps> = ({
   // Determine what to display in the input
   const getDisplayValue = (): string => {
     if (formatCurrency && type === 'number') {
-      const numValue = typeof value === 'string' ? parseFloat(value) || 0 : value;
+      const numValue = typeof value === 'number' ? value : (typeof value === 'string' ? parseFloat(value) || 0 : 0);
       
       if (isFocused) {
         // When focused, show raw number for easy editing
@@ -109,7 +109,7 @@ const StandardInput: React.FC<StandardInputProps> = ({
       }
     } else {
       // For non-currency fields, use the value as-is
-      return value.toString();
+      return typeof value === 'number' ? value.toString() : value.toString();
     }
   };
 
