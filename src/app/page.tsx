@@ -68,236 +68,286 @@ export default function Home() {
                 <h2 className="text-2xl font-bold text-white">Property Details</h2>
               </div>
               
-              <div className="space-y-6">
-                <div className="group">
-                  <label className="block text-sm font-semibold text-slate-200 mb-2 group-focus-within:text-purple-300 transition-colors">
-                    Purchase Price
-                  </label>
-                  <div className="relative">
-                    <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 font-medium">$</span>
-                    <input
-                      type="number"
-                      value={inputs.purchasePrice === 0 ? '' : inputs.purchasePrice}
-                      onChange={(e) => handleInputChange('purchasePrice', e.target.value)}
-                      placeholder="450,000"
-                      className="w-full pl-8 pr-4 py-4 bg-white/5 border border-white/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-white placeholder-slate-400 backdrop-blur-sm transition-all duration-200 hover:bg-white/10"
-                    />
-                  </div>
+              {/* Basic Information Section */}
+              <div className="mb-8">
+                <div className="flex items-center mb-4">
+                  <span className="text-lg font-semibold text-blue-300 mr-2">🏠</span>
+                  <h3 className="text-lg font-semibold text-blue-300">Basic Information</h3>
                 </div>
-
-                <div className="grid grid-cols-2 gap-4">
+                
+                <div className="space-y-6">
                   <div className="group">
                     <label className="block text-sm font-semibold text-slate-200 mb-2 group-focus-within:text-purple-300 transition-colors">
-                      Down Payment
+                      Purchase Price
                     </label>
                     <div className="relative">
+                      <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 font-medium">$</span>
                       <input
                         type="number"
-                        value={inputs.downPaymentPercent === 0 ? '' : inputs.downPaymentPercent}
-                        onChange={(e) => handleInputChange('downPaymentPercent', e.target.value)}
-                        placeholder="20"
-                        className="w-full px-4 py-4 bg-white/5 border border-white/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-white placeholder-slate-400 backdrop-blur-sm transition-all duration-200 hover:bg-white/10"
+                        value={inputs.purchasePrice === 0 ? '' : inputs.purchasePrice}
+                        onChange={(e) => handleInputChange('purchasePrice', e.target.value)}
+                        placeholder="450,000"
+                        className="w-full pl-8 pr-4 py-4 bg-white/5 border border-white/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-white placeholder-slate-400 backdrop-blur-sm transition-all duration-200 hover:bg-white/10"
                       />
-                      <span className="absolute right-4 top-1/2 transform -translate-y-1/2 text-slate-400 font-medium">%</span>
-                    </div>
-                    
-                    {/* PMI Indicator */}
-                    <div className={`mt-3 p-3 rounded-lg border transition-all duration-300 ${
-                      inputs.downPaymentPercent < 20 
-                        ? 'bg-amber-500/20 border-amber-500/40 shadow-lg shadow-amber-500/20' 
-                        : 'bg-white/5 border-white/10'
-                    }`}>
-                      <div className="flex items-center space-x-2">
-                        <div className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                          inputs.downPaymentPercent < 20 
-                            ? 'bg-amber-400 shadow-lg shadow-amber-400/50' 
-                            : 'bg-slate-500'
-                        }`}></div>
-                        <span className={`text-xs font-medium transition-colors duration-300 ${
-                          inputs.downPaymentPercent < 20 
-                            ? 'text-amber-300' 
-                            : 'text-slate-400'
-                        }`}>
-                          {inputs.downPaymentPercent < 20 ? (
-                            <>
-                              <span className="flex items-center">
-                                <span className="mr-1">⚠️</span>
-                                PMI Required
-                              </span>
-                            </>
-                          ) : (
-                            <>
-                              <span className="flex items-center">
-                                <span className="mr-1">✅</span>
-                                No PMI
-                              </span>
-                            </>
-                          )}
-                        </span>
-                      </div>
-                      
-                      {inputs.downPaymentPercent < 20 && analysis && (
-                        <div className="mt-2 text-xs text-amber-200">
-                          <div className="flex justify-between">
-                            <span>Monthly PMI:</span>
-                            <span className="font-semibold">+${analysis.breakdown.pmi.toLocaleString()}</span>
-                          </div>
-                          <div className="text-amber-300/80 mt-1">
-                            Put down 20% to eliminate this cost
-                          </div>
-                        </div>
-                      )}
-                      
-                      {inputs.downPaymentPercent >= 20 && (
-                        <div className="mt-2 text-xs text-slate-400">
-                          Great! No PMI with 20%+ down payment
-                        </div>
-                      )}
                     </div>
                   </div>
 
-                  <div className="group">
-                    <label className="block text-sm font-semibold text-slate-200 mb-2 group-focus-within:text-purple-300 transition-colors">
-                      Interest Rate
-                    </label>
-                    <div className="relative">
-                      <div className="px-4 py-4 bg-white/5 border border-white/20 rounded-xl backdrop-blur-sm">
-                        <div className="flex items-center justify-between mb-3">
-                          <span className="text-white font-bold text-lg">
-                            {inputs.interestRate.toFixed(1)}%
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="group">
+                      <label className="block text-sm font-semibold text-slate-200 mb-2 group-focus-within:text-purple-300 transition-colors">
+                        Down Payment
+                      </label>
+                      <div className="relative">
+                        <input
+                          type="number"
+                          value={inputs.downPaymentPercent === 0 ? '' : inputs.downPaymentPercent}
+                          onChange={(e) => handleInputChange('downPaymentPercent', e.target.value)}
+                          placeholder="20"
+                          className="w-full px-4 py-4 bg-white/5 border border-white/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-white placeholder-slate-400 backdrop-blur-sm transition-all duration-200 hover:bg-white/10"
+                        />
+                        <span className="absolute right-4 top-1/2 transform -translate-y-1/2 text-slate-400 font-medium">%</span>
+                      </div>
+                      
+                      {/* PMI Indicator */}
+                      <div className={`mt-3 p-3 rounded-lg border transition-all duration-300 ${
+                        inputs.downPaymentPercent < 20 
+                          ? 'bg-amber-500/20 border-amber-500/40 shadow-lg shadow-amber-500/20' 
+                          : 'bg-white/5 border-white/10'
+                      }`}>
+                        <div className="flex items-center space-x-2">
+                          <div className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                            inputs.downPaymentPercent < 20 
+                              ? 'bg-amber-400 shadow-lg shadow-amber-400/50' 
+                              : 'bg-slate-500'
+                          }`}></div>
+                          <span className={`text-xs font-medium transition-colors duration-300 ${
+                            inputs.downPaymentPercent < 20 
+                              ? 'text-amber-300' 
+                              : 'text-slate-400'
+                          }`}>
+                            {inputs.downPaymentPercent < 20 ? (
+                              <>
+                                <span className="flex items-center">
+                                  <span className="mr-1">⚠️</span>
+                                  PMI Required
+                                </span>
+                              </>
+                            ) : (
+                              <>
+                                <span className="flex items-center">
+                                  <span className="mr-1">✅</span>
+                                  No PMI
+                                </span>
+                              </>
+                            )}
                           </span>
-                          <div className="flex space-x-1 text-xs text-slate-400">
-                            <span>0%</span>
-                            <span>•</span>
-                            <span>10%</span>
-                          </div>
                         </div>
-                        <div className="relative">
-                          <input
-                            type="range"
-                            min="0"
-                            max="10"
-                            step="0.1"
-                            value={inputs.interestRate}
-                            onChange={(e) => handleInputChange('interestRate', e.target.value)}
-                            className="w-full h-2 bg-white/10 rounded-lg appearance-none cursor-pointer slider"
-                          />
-                          <div 
-                            className="absolute top-0 left-0 h-2 bg-gradient-to-r from-green-400 via-yellow-400 to-red-500 rounded-lg pointer-events-none"
-                            style={{ width: `${(inputs.interestRate / 10) * 100}%` }}
-                          ></div>
-                          <div 
-                            className="absolute top-1/2 transform -translate-y-1/2 w-4 h-4 bg-white rounded-full shadow-lg border-2 border-purple-500 pointer-events-none"
-                            style={{ left: `calc(${(inputs.interestRate / 10) * 100}% - 8px)` }}
-                          ></div>
+                        
+                        {inputs.downPaymentPercent < 20 && analysis && (
+                          <div className="mt-2 text-xs text-amber-200">
+                            <div className="flex justify-between">
+                              <span>Monthly PMI:</span>
+                              <span className="font-semibold">+${analysis.breakdown.pmi.toLocaleString()}</span>
+                            </div>
+                            <div className="text-amber-300/80 mt-1">
+                              Put down 20% to eliminate this cost
+                            </div>
+                          </div>
+                        )}
+                        
+                        {inputs.downPaymentPercent >= 20 && (
+                          <div className="mt-2 text-xs text-slate-400">
+                            Great! No PMI with 20%+ down payment
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="group">
+                      <label className="block text-sm font-semibold text-slate-200 mb-2 group-focus-within:text-purple-300 transition-colors">
+                        Interest Rate
+                      </label>
+                      <div className="relative">
+                        <div className="px-4 py-4 bg-white/5 border border-white/20 rounded-xl backdrop-blur-sm">
+                          <div className="flex items-center justify-between mb-3">
+                            <span className="text-white font-bold text-lg">
+                              {inputs.interestRate.toFixed(1)}%
+                            </span>
+                            <div className="flex space-x-1 text-xs text-slate-400">
+                              <span>0%</span>
+                              <span>•</span>
+                              <span>10%</span>
+                            </div>
+                          </div>
+                          <div className="relative">
+                            <input
+                              type="range"
+                              min="0"
+                              max="10"
+                              step="0.1"
+                              value={inputs.interestRate}
+                              onChange={(e) => handleInputChange('interestRate', e.target.value)}
+                              className="w-full h-2 bg-white/10 rounded-lg appearance-none cursor-pointer slider"
+                            />
+                            <div 
+                              className="absolute top-0 left-0 h-2 bg-gradient-to-r from-green-400 via-yellow-400 to-red-500 rounded-lg pointer-events-none"
+                              style={{ width: `${(inputs.interestRate / 10) * 100}%` }}
+                            ></div>
+                            <div 
+                              className="absolute top-1/2 transform -translate-y-1/2 w-4 h-4 bg-white rounded-full shadow-lg border-2 border-purple-500 pointer-events-none"
+                              style={{ left: `calc(${(inputs.interestRate / 10) * 100}% - 8px)` }}
+                            ></div>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
+              </div>
 
-                <div className="group">
-                  <label className="block text-sm font-semibold text-slate-200 mb-2 group-focus-within:text-purple-300 transition-colors">
-                    Property Tax Rate (Annual)
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="number"
-                      step="0.1"
-                      value={inputs.propertyTaxRate === 0 ? '' : inputs.propertyTaxRate}
-                      onChange={(e) => handleInputChange('propertyTaxRate', e.target.value)}
-                      placeholder="1.2"
-                      className="w-full px-4 py-4 bg-white/5 border border-white/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-white placeholder-slate-400 backdrop-blur-sm transition-all duration-200 hover:bg-white/10"
-                    />
-                    <span className="absolute right-4 top-1/2 transform -translate-y-1/2 text-slate-400 font-medium">%</span>
-                  </div>
+              {/* Property Expenses Section */}
+              <div className="mb-8">
+                <div className="flex items-center mb-4">
+                  <span className="text-lg font-semibold text-orange-300 mr-2">🏡</span>
+                  <h3 className="text-lg font-semibold text-orange-300">Property Expenses</h3>
                 </div>
-
-                <div className="grid grid-cols-2 gap-4">
+                
+                <div className="space-y-6">
                   <div className="group">
                     <label className="block text-sm font-semibold text-slate-200 mb-2 group-focus-within:text-purple-300 transition-colors">
-                      Monthly Insurance
-                    </label>
-                    <div className="relative">
-                      <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 font-medium">$</span>
-                      <input
-                        type="number"
-                        value={inputs.monthlyInsurance === 0 ? '' : inputs.monthlyInsurance}
-                        onChange={(e) => handleInputChange('monthlyInsurance', e.target.value)}
-                        placeholder="150"
-                        className="w-full pl-8 pr-4 py-4 bg-white/5 border border-white/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-white placeholder-slate-400 backdrop-blur-sm transition-all duration-200 hover:bg-white/10"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="group">
-                    <label className="block text-sm font-semibold text-slate-200 mb-2 group-focus-within:text-purple-300 transition-colors">
-                      Monthly Maintenance
-                    </label>
-                    <div className="relative">
-                      <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 font-medium">$</span>
-                      <input
-                        type="number"
-                        value={inputs.monthlyMaintenance === 0 ? '' : inputs.monthlyMaintenance}
-                        onChange={(e) => handleInputChange('monthlyMaintenance', e.target.value)}
-                        placeholder="200"
-                        className="w-full pl-8 pr-4 py-4 bg-white/5 border border-white/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-white placeholder-slate-400 backdrop-blur-sm transition-all duration-200 hover:bg-white/10"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="group">
-                    <label className="block text-sm font-semibold text-slate-200 mb-2 group-focus-within:text-purple-300 transition-colors">
-                      CapEx Reserve
-                    </label>
-                    <div className="relative">
-                      <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 font-medium">$</span>
-                      <input
-                        type="number"
-                        value={inputs.monthlyCapEx === 0 ? '' : inputs.monthlyCapEx}
-                        onChange={(e) => handleInputChange('monthlyCapEx', e.target.value)}
-                        placeholder="150"
-                        className="w-full pl-8 pr-4 py-4 bg-white/5 border border-white/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-white placeholder-slate-400 backdrop-blur-sm transition-all duration-200 hover:bg-white/10"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="group">
-                    <label className="block text-sm font-semibold text-slate-200 mb-2 group-focus-within:text-purple-300 transition-colors">
-                      Vacancy Rate
+                      Property Tax Rate (Annual)
                     </label>
                     <div className="relative">
                       <input
                         type="number"
-                        value={inputs.vacancyRate === 0 ? '' : inputs.vacancyRate}
-                        onChange={(e) => handleInputChange('vacancyRate', e.target.value)}
-                        placeholder="8"
+                        step="0.1"
+                        value={inputs.propertyTaxRate === 0 ? '' : inputs.propertyTaxRate}
+                        onChange={(e) => handleInputChange('propertyTaxRate', e.target.value)}
+                        placeholder="1.2"
                         className="w-full px-4 py-4 bg-white/5 border border-white/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-white placeholder-slate-400 backdrop-blur-sm transition-all duration-200 hover:bg-white/10"
                       />
                       <span className="absolute right-4 top-1/2 transform -translate-y-1/2 text-slate-400 font-medium">%</span>
                     </div>
                   </div>
-                </div>
 
-                {errors.length > 0 && (
-                  <div className="p-4 bg-red-500/20 border border-red-500/30 rounded-xl backdrop-blur-sm">
-                    <div className="flex items-center mb-2">
-                      <span className="text-red-400 mr-2">⚠️</span>
-                      <h3 className="text-sm font-semibold text-red-300">Validation Errors</h3>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="group">
+                      <label className="block text-sm font-semibold text-slate-200 mb-2 group-focus-within:text-purple-300 transition-colors">
+                        Monthly Insurance
+                      </label>
+                      <div className="relative">
+                        <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 font-medium">$</span>
+                        <input
+                          type="number"
+                          value={inputs.monthlyInsurance === 0 ? '' : inputs.monthlyInsurance}
+                          onChange={(e) => handleInputChange('monthlyInsurance', e.target.value)}
+                          placeholder="150"
+                          className="w-full pl-8 pr-4 py-4 bg-white/5 border border-white/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-white placeholder-slate-400 backdrop-blur-sm transition-all duration-200 hover:bg-white/10"
+                        />
+                      </div>
                     </div>
-                    <ul className="text-sm text-red-200 space-y-1">
-                      {errors.map((error, index) => (
-                        <li key={index} className="flex items-center">
-                          <span className="w-1 h-1 bg-red-400 rounded-full mr-2"></span>
-                          {error}
-                        </li>
-                      ))}
-                    </ul>
+
+                    <div className="group">
+                      <label className="block text-sm font-semibold text-slate-200 mb-2 group-focus-within:text-purple-300 transition-colors">
+                        Monthly Maintenance
+                      </label>
+                      <div className="relative">
+                        <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 font-medium">$</span>
+                        <input
+                          type="number"
+                          value={inputs.monthlyMaintenance === 0 ? '' : inputs.monthlyMaintenance}
+                          onChange={(e) => handleInputChange('monthlyMaintenance', e.target.value)}
+                          placeholder="200"
+                          className="w-full pl-8 pr-4 py-4 bg-white/5 border border-white/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-white placeholder-slate-400 backdrop-blur-sm transition-all duration-200 hover:bg-white/10"
+                        />
+                      </div>
+                    </div>
                   </div>
-                )}
+                </div>
               </div>
+
+              {/* Investment Analysis Section */}
+              <div className="mb-8">
+                <div className="flex items-center mb-4">
+                  <span className="text-lg font-semibold text-green-300 mr-2">💰</span>
+                  <h3 className="text-lg font-semibold text-green-300">Investment Analysis</h3>
+                  <div className="ml-2 px-2 py-1 bg-green-500/20 border border-green-500/30 rounded-full">
+                    <span className="text-xs text-green-300 font-medium">For Investors</span>
+                  </div>
+                </div>
+                
+                <div className="space-y-6">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="group">
+                      <label className="block text-sm font-semibold text-slate-200 mb-2 group-focus-within:text-purple-300 transition-colors">
+                        CapEx Reserve
+                      </label>
+                      <div className="relative">
+                        <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 font-medium">$</span>
+                        <input
+                          type="number"
+                          value={inputs.monthlyCapEx === 0 ? '' : inputs.monthlyCapEx}
+                          onChange={(e) => handleInputChange('monthlyCapEx', e.target.value)}
+                          placeholder="150"
+                          className="w-full pl-8 pr-4 py-4 bg-white/5 border border-white/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-white placeholder-slate-400 backdrop-blur-sm transition-all duration-200 hover:bg-white/10"
+                        />
+                      </div>
+                      <p className="text-xs text-slate-400 mt-1">Major repairs & replacements</p>
+                    </div>
+
+                    <div className="group">
+                      <label className="block text-sm font-semibold text-slate-200 mb-2 group-focus-within:text-purple-300 transition-colors">
+                        Vacancy Rate
+                      </label>
+                      <div className="relative">
+                        <input
+                          type="number"
+                          value={inputs.vacancyRate === 0 ? '' : inputs.vacancyRate}
+                          onChange={(e) => handleInputChange('vacancyRate', e.target.value)}
+                          placeholder="8"
+                          className="w-full px-4 py-4 bg-white/5 border border-white/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-white placeholder-slate-400 backdrop-blur-sm transition-all duration-200 hover:bg-white/10"
+                        />
+                        <span className="absolute right-4 top-1/2 transform -translate-y-1/2 text-slate-400 font-medium">%</span>
+                      </div>
+                      <p className="text-xs text-slate-400 mt-1">Expected vacancy periods</p>
+                    </div>
+                  </div>
+
+                  <div className="group">
+                    <label className="block text-sm font-semibold text-slate-200 mb-2 group-focus-within:text-purple-300 transition-colors">
+                      Property Management Fee
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="number"
+                        value={inputs.propertyManagementRate === 0 ? '' : inputs.propertyManagementRate}
+                        onChange={(e) => handleInputChange('propertyManagementRate', e.target.value)}
+                        placeholder="10"
+                        className="w-full px-4 py-4 bg-white/5 border border-white/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-white placeholder-slate-400 backdrop-blur-sm transition-all duration-200 hover:bg-white/10"
+                      />
+                      <span className="absolute right-4 top-1/2 transform -translate-y-1/2 text-slate-400 font-medium">% of rent</span>
+                    </div>
+                    <p className="text-xs text-slate-400 mt-1">Leave at 0 if self-managing</p>
+                  </div>
+                </div>
+              </div>
+
+              {errors.length > 0 && (
+                <div className="p-4 bg-red-500/20 border border-red-500/30 rounded-xl backdrop-blur-sm">
+                  <div className="flex items-center mb-2">
+                    <span className="text-red-400 mr-2">⚠️</span>
+                    <h3 className="text-sm font-semibold text-red-300">Validation Errors</h3>
+                  </div>
+                  <ul className="text-sm text-red-200 space-y-1">
+                    {errors.map((error, index) => (
+                      <li key={index} className="flex items-center">
+                        <span className="w-1 h-1 bg-red-400 rounded-full mr-2"></span>
+                        {error}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
 
             {/* Results Panel */}
