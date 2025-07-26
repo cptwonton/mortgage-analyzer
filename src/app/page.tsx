@@ -13,7 +13,6 @@ import ToggleGroup from '@/components/ui/ToggleGroup';
 import Card from '@/components/ui/Card';
 import BreakevenCard from '@/components/ui/BreakevenCard';
 import InfoCard from '@/components/ui/InfoCard';
-import PurchasePriceInput from '@/components/ui/PurchasePriceInput';
 
 export default function Home() {
   const { inputs, updateInput, resetInputs, isLoaded } = usePersistedInputs();
@@ -120,9 +119,25 @@ export default function Home() {
                 </div>
                 
                 <div className="space-y-4">
-                  <PurchasePriceInput
-                    value={inputs.purchasePrice}
-                    onChange={(value) => updateInput('purchasePrice', value)}
+                  <StandardInput
+                    label="Purchase Price"
+                    value={inputs.purchasePrice === 0 ? '' : inputs.purchasePrice.toString()}
+                    onChange={(value) => handleInputChange('purchasePrice', value)}
+                    type="number"
+                    prefix="$"
+                    placeholder="450,000"
+                    formatCurrency={true}
+                    {...(() => {
+                      const validation = validateField('purchasePrice', inputs.purchasePrice);
+                      const ranges = getFieldRanges('purchasePrice');
+                      return {
+                        validationState: validation.state,
+                        errorMessage: validation.message,
+                        min: ranges.min,
+                        max: ranges.max,
+                        allowZero: ranges.allowZero
+                      };
+                    })()}
                   />
                 </div>
               </div>

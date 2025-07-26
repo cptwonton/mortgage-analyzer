@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import HelpTooltip from './HelpTooltip';
 
 interface StandardInputProps {
@@ -21,6 +21,7 @@ interface StandardInputProps {
   min?: number;
   max?: number;
   allowZero?: boolean;
+  formatCurrency?: boolean; // New prop for currency formatting
 }
 
 const StandardInput: React.FC<StandardInputProps> = ({
@@ -39,15 +40,84 @@ const StandardInput: React.FC<StandardInputProps> = ({
   errorMessage,
   min,
   max,
-  allowZero = true
+  allowZero = true,
+  formatCurrency = false
 }) => {
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onChange(e.target.value);
+  const [displayValue, setDisplayValue] = useState('');
+  const [isFocused, setIsFocused] = useState(false);
+
+  // Format number with commas for currency display
+  const formatCurrencyValue = (num: number): string => {
+    if (num === 0) return '';
+    return num.toLocaleString('en-US');
   };
 
-  // For number inputs, show the actual value (including 0)
-  // Only show empty string if the value is actually empty/undefined
-  const displayValue = value;
+  // Parse formatted string back to number
+  const parseCurrencyValue = (str: string): number => {
+    const cleaned = str.replace(/[^\d]/g, '');
+    return cleaned === '' ? 0 : parseInt(cleaned, 10);
+  };
+
+  // Update display value when prop value changes
+  useEffect(() => {
+    if (formatCurrency && type === 'number' && !isFocused) {
+      const numValue = typeof value === 'string' ? parseFloat(value) || 0 : value;
+      setDisplayValue(formatCurrencyValue(numValue));
+    } else if (!isFocused) {
+      setDisplayValue(value.toString());
+    }
+  }, [value, isFocused, formatCurrency, type]);
+
+  const handleFocus = () => {
+    if (formatCurrency && type === 'number') {
+      setIsFocused(true);
+      const numValue = typeof value === 'string' ? parseFloat(value) || 0 : value;
+      setDisplayValue(numValue === 0 ? '' : numValue.toString());
+    }
+  };
+
+  const handleBlur = () => {
+    if (formatCurrency && type === 'number') {
+      setIsFocused(false);
+      const numericValue = parseCurrencyValue(displayValue);
+      onChange(numericValue.toString());
+      setDisplayValue(formatCurrencyValue(numericValue));
+    }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const inputValue = e.target.value;
+    
+    if (formatCurrency && type === 'number' && isFocused) {
+      // When focused on currency field, allow raw number input
+      const cleaned = inputValue.replace(/[^\d]/g, '');
+      setDisplayValue(cleaned);
+    } else {
+      setDisplayValue(inputValue);
+      onChange(inputValue);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (formatCurrency && type === 'number') {
+      // Allow: backspace, delete, tab, escape, enter, home, end, left, right
+      if ([8, 9, 27, 13, 46, 35, 36, 37, 39].indexOf(e.keyCode) !== -1 ||
+          // Allow Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
+          (e.keyCode === 65 && e.ctrlKey === true) ||
+          (e.keyCode === 67 && e.ctrlKey === true) ||
+          (e.keyCode === 86 && e.ctrlKey === true) ||
+          (e.keyCode === 88 && e.ctrlKey === true)) {
+        return;
+      }
+      // Ensure that it is a number and stop the keypress
+      if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+        e.preventDefault();
+      }
+    }
+  };
+
+  // Use displayValue for currency formatting, otherwise use the regular value
+  const inputValue = formatCurrency && type === 'number' ? displayValue : value;
 
   // Generate range hint for help text
   const getRangeHint = () => {
@@ -119,8 +189,11 @@ const StandardInput: React.FC<StandardInputProps> = ({
           step={step}
           min={min}
           max={max}
-          value={displayValue}
+          value={inputValue}
           onChange={handleChange}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+          onKeyDown={handleKeyDown}
           placeholder={placeholder}
           className={`w-full py-4 bg-white/5 border ${styles.border} ${styles.focusRing} rounded-xl focus:outline-none focus:ring-2 focus:border-transparent text-white placeholder-slate-400 backdrop-blur-sm transition-all duration-200 hover:bg-white/10 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${
             prefix ? 'pl-8 pr-4' : suffix ? 'pl-4 pr-8' : 'px-4'
