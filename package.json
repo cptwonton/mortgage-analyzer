@@ -6,7 +6,11 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "build:vercel": "vercel build",
+    "test:build": "npm run build && echo '✅ Next.js build passed!'",
+    "test:vercel": "npm run build:vercel && echo '✅ Vercel build passed!'",
+    "test:all": "npm run build && npm run build:vercel && echo '🚀 All builds passed! Ready to deploy!'"
   },
   "dependencies": {
     "next": "15.4.4",
