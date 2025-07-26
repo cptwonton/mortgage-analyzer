@@ -40,7 +40,7 @@ const AmortizationChart: React.FC<AmortizationChartProps> = ({ schedule, mortgag
     const data: ChartDataPoint[] = [];
     
     if (showMonthly) {
-      // Show monthly data (limited based on zoom level for performance and compatibility)
+      // Show monthly data - respect zoom level but limit for performance
       let monthsToShow: number;
       switch (zoomLevel) {
         case '5yr':
@@ -53,7 +53,8 @@ const AmortizationChart: React.FC<AmortizationChartProps> = ({ schedule, mortgag
           monthsToShow = Math.min(schedule.length, 180); // 15 years
           break;
         case 'full':
-          monthsToShow = schedule.length; // All months
+          // For performance, limit monthly full view to 30 years max
+          monthsToShow = Math.min(schedule.length, 360);
           break;
         default:
           monthsToShow = Math.min(schedule.length, 60);
@@ -100,45 +101,19 @@ const AmortizationChart: React.FC<AmortizationChartProps> = ({ schedule, mortgag
 
   // Auto-adjust zoom when switching to monthly if current zoom is incompatible
   const handleMonthlyToggle = () => {
-    const newShowMonthly = !showMonthly;
-    setShowMonthly(newShowMonthly);
-    
-    // If switching to monthly and zoom is full, auto-adjust to 5yr for better performance
-    if (newShowMonthly && zoomLevel === 'full') {
-      setZoomLevel('5yr');
-    }
+    setShowMonthly(!showMonthly);
+    // Remove auto-adjustment - let controls be independent
   };
 
-  // Get available zoom levels based on detail mode
+  // Get available zoom levels - always show all options for independent control
   const getAvailableZoomLevels = (): ZoomLevel[] => {
-    const allLevels: ZoomLevel[] = ['5yr', '10yr', '15yr', 'full'];
-    
-    if (showMonthly) {
-      // In monthly mode, limit zoom options based on performance and loan length
-      const maxYears = Math.ceil(schedule.length / 12);
-      const availableLevels: ZoomLevel[] = [];
-      
-      // Always include 5yr if we have data
-      if (maxYears >= 5) availableLevels.push('5yr');
-      if (maxYears >= 10) availableLevels.push('10yr');
-      if (maxYears >= 15) availableLevels.push('15yr');
-      if (maxYears > 15) availableLevels.push('full');
-      
-      return availableLevels;
-    }
-    
-    // In yearly mode, show all options in consistent order
-    return allLevels;
+    // Always show all zoom levels - let the chart handle data appropriately
+    return ['5yr', '10yr', '15yr', 'full'];
   };
 
   const availableZoomLevels = getAvailableZoomLevels();
 
-  // Ensure current zoom level is available, auto-adjust if not
-  React.useEffect(() => {
-    if (!availableZoomLevels.includes(zoomLevel)) {
-      setZoomLevel(availableZoomLevels[0]);
-    }
-  }, [availableZoomLevels, zoomLevel]);
+  // Remove auto-adjustment - let user control both settings independently
 
   // Filter data based on zoom level
   const filteredData = useMemo(() => {
@@ -266,10 +241,10 @@ const AmortizationChart: React.FC<AmortizationChartProps> = ({ schedule, mortgag
           </div>
           <p className="text-xs text-purple-200 mt-1">
             Showing month-by-month data for {
-              zoomLevel === 'full' ? 'the entire loan term' :
-              zoomLevel === '5yr' ? 'the first 5 years' :
-              zoomLevel === '10yr' ? 'the first 10 years' :
-              'the first 15 years'
+              zoomLevel === 'full' ? 'the entire loan term (up to 30 years for performance)' :
+              zoomLevel === '5yr' ? 'the first 5 years (60 months)' :
+              zoomLevel === '10yr' ? 'the first 10 years (120 months)' :
+              'the first 15 years (180 months)'
             }. Switch to "Yearly" for full loan overview.
           </p>
         </div>
