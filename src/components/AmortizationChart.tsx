@@ -153,7 +153,13 @@ const AmortizationChart: React.FC<AmortizationChartProps> = ({
       const isArmPeriod = data.isArmAdjustmentPeriod;
       
       return (
-        <div className="bg-slate-800/95 backdrop-blur-sm border border-white/20 rounded-lg p-4 shadow-xl min-w-64">
+        <div 
+          className="bg-slate-800/95 backdrop-blur-sm border border-white/20 rounded-lg p-4 shadow-xl min-w-64"
+          style={{ 
+            zIndex: 1000,
+            position: 'relative'
+          }}
+        >
           <div className="flex items-center justify-between mb-3">
             <p className="text-white font-semibold">
               {showMonthly ? `Month ${data.month}` : `Year ${Math.floor(data.year)}`}
@@ -367,12 +373,18 @@ const AmortizationChart: React.FC<AmortizationChartProps> = ({
               tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
             />
             
-            <Tooltip content={<CustomTooltip />} />
+            <Tooltip 
+              content={<CustomTooltip />} 
+              wrapperStyle={{ zIndex: 1000 }}
+              allowEscapeViewBox={{ x: false, y: true }}
+              position={{ x: undefined, y: undefined }}
+            />
             
             <Legend 
               wrapperStyle={{ 
-                paddingTop: '20px',
-                fontSize: '14px'
+                paddingTop: '30px',
+                fontSize: '14px',
+                zIndex: 1
               }}
               iconType="circle"
             />
