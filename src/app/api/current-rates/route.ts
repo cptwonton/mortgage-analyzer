@@ -1,4 +1,4 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+import { NextRequest, NextResponse } from 'next/server';
 
 // Types for rate data
 interface MortgageRates {
@@ -98,18 +98,7 @@ async function getRatesFromAPI(): Promise<RateResponse> {
   };
 }
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<RateResponse>
-) {
-  // Only allow GET requests
-  if (req.method !== 'GET') {
-    return res.status(405).json({
-      success: false,
-      error: 'Method not allowed'
-    });
-  }
-
+export async function GET(request: NextRequest) {
   try {
     // Try scraping first, fall back to API rates
     let result = await scrapeRatesSimple();
@@ -120,14 +109,15 @@ export default async function handler(
     }
     
     // Add cache headers (cache for 1 hour)
-    res.setHeader('Cache-Control', 'public, s-maxage=3600, stale-while-revalidate=86400');
+    const response = NextResponse.json(result);
+    response.headers.set('Cache-Control', 'public, s-maxage=3600, stale-while-revalidate=86400');
     
-    return res.status(200).json(result);
+    return response;
     
   } catch (error) {
     console.error('API error:', error);
     
-    return res.status(200).json({ // Return 200 with error info instead of 500
+    return NextResponse.json({ // Return 200 with error info instead of 500
       success: false,
       error: 'Rate scraping failed on serverless environment',
       fallback: FALLBACK_RATES
