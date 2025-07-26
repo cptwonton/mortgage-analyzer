@@ -128,14 +128,6 @@ export default function Home() {
                               }`}
                               style={{ width: `${(inputs.downPaymentPercent / 50) * 100}%` }}
                             ></div>
-                            <div 
-                              className={`absolute top-1/2 transform -translate-y-1/2 w-4 h-4 rounded-full shadow-lg border-2 pointer-events-none transition-all duration-300 ${
-                                inputs.downPaymentPercent < 20 
-                                  ? 'bg-white border-amber-500'
-                                  : 'bg-white border-green-500'
-                              }`}
-                              style={{ left: `calc(${(inputs.downPaymentPercent / 50) * 100}% - 8px)` }}
-                            ></div>
                           </div>
                         </div>
                       </div>
@@ -259,10 +251,6 @@ export default function Home() {
                             <div 
                               className="absolute top-0 left-0 h-2 bg-gradient-to-r from-green-400 via-yellow-400 to-red-500 rounded-lg pointer-events-none"
                               style={{ width: `${(inputs.interestRate / 10) * 100}%` }}
-                            ></div>
-                            <div 
-                              className="absolute top-1/2 transform -translate-y-1/2 w-4 h-4 bg-white rounded-full shadow-lg border-2 border-purple-500 pointer-events-none"
-                              style={{ left: `calc(${(inputs.interestRate / 10) * 100}% - 8px)` }}
                             ></div>
                           </div>
                         </div>
@@ -413,14 +401,6 @@ export default function Home() {
                                 : 'bg-gradient-to-r from-blue-400 to-purple-400'
                             }`}
                             style={{ width: `${(inputs.propertyManagementRate / 15) * 100}%` }}
-                          ></div>
-                          <div 
-                            className={`absolute top-1/2 transform -translate-y-1/2 w-4 h-4 rounded-full shadow-lg border-2 pointer-events-none transition-all duration-300 ${
-                              inputs.propertyManagementRate === 0 
-                                ? 'bg-white border-green-500'
-                                : 'bg-white border-purple-500'
-                            }`}
-                            style={{ left: `calc(${(inputs.propertyManagementRate / 15) * 100}% - 8px)` }}
                           ></div>
                         </div>
                       </div>
