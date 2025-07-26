@@ -5,6 +5,9 @@ import { calculateBreakevenAnalysis, MortgageInputs, validateMortgageInputs } fr
 import AmortizationChart from '@/components/AmortizationChart';
 import FloatingMortgageControls from '@/components/FloatingMortgageControls';
 import CurrentRatesDisplay from '@/components/CurrentRatesDisplay';
+import StandardInput from '@/components/ui/StandardInput';
+import SliderInput from '@/components/ui/SliderInput';
+import ToggleGroup from '@/components/ui/ToggleGroup';
 import { getBreakevenCardClasses } from '@/styles/design-system';
 
 export default function Home() {
@@ -104,21 +107,14 @@ export default function Home() {
                 </div>
                 
                 <div className="space-y-4">
-                  <div className="group">
-                    <label className="block text-sm font-semibold text-slate-200 mb-2 group-focus-within:text-blue-300 transition-colors">
-                      Purchase Price
-                    </label>
-                    <div className="relative">
-                      <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 font-medium">$</span>
-                      <input
-                        type="number"
-                        value={inputs.purchasePrice === 0 ? '' : inputs.purchasePrice}
-                        onChange={(e) => handleInputChange('purchasePrice', e.target.value)}
-                        placeholder="450,000"
-                        className="w-full pl-8 pr-4 py-4 bg-white/5 border border-white/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-white placeholder-slate-400 backdrop-blur-sm transition-all duration-200 hover:bg-white/10"
-                      />
-                    </div>
-                  </div>
+                  <StandardInput
+                    label="Purchase Price"
+                    value={inputs.purchasePrice}
+                    onChange={(value) => handleInputChange('purchasePrice', value)}
+                    type="number"
+                    prefix="$"
+                    placeholder="450,000"
+                  />
                 </div>
               </div>
 
@@ -163,34 +159,6 @@ export default function Home() {
                       </button>
                     </div>
                     
-                    {/* ARM Educational Info */}
-                    {inputs.mortgageType === 'arm' && (
-                      <div className="mt-3 p-4 bg-amber-500/10 border border-amber-500/20 rounded-lg">
-                        <div className="flex items-center space-x-2 mb-2">
-                          <div className="w-2 h-2 bg-amber-400 rounded-full"></div>
-                          <span className="text-sm font-medium text-amber-300">About ARM Loans</span>
-                        </div>
-                        <div className="text-xs text-amber-200 space-y-2">
-                          <p>
-                            <strong>Adjustable Rate Mortgages (ARMs)</strong> have two phases:
-                          </p>
-                          <div className="ml-2 space-y-1">
-                            <p>• <strong>Initial Fixed Period:</strong> Rate stays constant (3, 5, 7, or 10 years)</p>
-                            <p>• <strong>Adjustment Period:</strong> Rate adjusts annually based on market conditions</p>
-                          </div>
-                          <p>
-                            <strong>Example:</strong> A 5/1 ARM has 5 years fixed, then adjusts yearly for the remaining {inputs.loanTermYears - (inputs.armInitialPeriod || 5)} years.
-                          </p>
-                        </div>
-                      </div>
-                    )}
-                    
-                    <p className="text-xs text-slate-400 mt-2">
-                      {inputs.mortgageType === 'fixed' 
-                        ? 'Interest rate remains constant throughout the entire loan term'
-                        : `Rate is fixed for ${inputs.armInitialPeriod || 5} years, then adjusts annually with rate caps for protection`
-                      }
-                    </p>
                   </div>
 
                   {/* ARM Initial Period Slider - Only show for ARM */}
@@ -230,32 +198,45 @@ export default function Home() {
                               style={{ width: `${(((inputs.armInitialPeriod || 5) - 3) / 7) * 100}%` }}
                             ></div>
                           </div>
-                        </div>
-                      </div>
-                      <p className="text-xs text-slate-400 mt-1">
-                        {(inputs.armInitialPeriod || 5) <= 5 
-                          ? 'Shorter fixed period, sooner rate adjustments' 
-                          : 'Longer fixed period, more initial rate stability'
-                        }
-                      </p>
-                      
-                      {/* Common ARM Types */}
-                      <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
-                        <div className={`p-2 rounded border transition-all ${
-                          inputs.armInitialPeriod === 5 
-                            ? 'bg-amber-500/20 border-amber-500/40 text-amber-300'
-                            : 'bg-white/5 border-white/20 text-slate-400'
-                        }`}>
-                          <div className="font-medium">5/1 ARM</div>
-                          <div className="opacity-80">Most popular</div>
-                        </div>
-                        <div className={`p-2 rounded border transition-all ${
-                          inputs.armInitialPeriod === 7 
-                            ? 'bg-amber-500/20 border-amber-500/40 text-amber-300'
-                            : 'bg-white/5 border-white/20 text-slate-400'
-                        }`}>
-                          <div className="font-medium">7/1 ARM</div>
-                          <div className="opacity-80">More stability</div>
+                          
+                          {/* Integrated ARM Information */}
+                          <div className="mt-3 pt-3 border-t border-white/10">
+                            <div className="flex items-center space-x-2 mb-2">
+                              <div className="w-2 h-2 bg-amber-400 rounded-full"></div>
+                              <span className="text-xs font-medium text-amber-300">ARM Structure</span>
+                            </div>
+                            <div className="text-xs text-slate-300 mb-3">
+                              <p className="mb-1">
+                                <strong>{inputs.armInitialPeriod || 5}/1 ARM:</strong> Rate fixed for {inputs.armInitialPeriod || 5} years, then adjusts annually for remaining {inputs.loanTermYears - (inputs.armInitialPeriod || 5)} years
+                              </p>
+                              <p className="text-slate-400">
+                                {(inputs.armInitialPeriod || 5) <= 5 
+                                  ? 'Shorter fixed period = sooner rate adjustments' 
+                                  : 'Longer fixed period = more initial rate stability'
+                                }
+                              </p>
+                            </div>
+                            
+                            {/* Common ARM Types */}
+                            <div className="grid grid-cols-2 gap-2 text-xs">
+                              <div className={`p-2 rounded border transition-all ${
+                                inputs.armInitialPeriod === 5 
+                                  ? 'bg-amber-500/20 border-amber-500/40 text-amber-300'
+                                  : 'bg-white/5 border-white/20 text-slate-400'
+                              }`}>
+                                <div className="font-medium">5/1 ARM</div>
+                                <div className="opacity-80">Most popular</div>
+                              </div>
+                              <div className={`p-2 rounded border transition-all ${
+                                inputs.armInitialPeriod === 7 
+                                  ? 'bg-amber-500/20 border-amber-500/40 text-amber-300'
+                                  : 'bg-white/5 border-white/20 text-slate-400'
+                              }`}>
+                                <div className="font-medium">7/1 ARM</div>
+                                <div className="opacity-80">More stability</div>
+                              </div>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -297,96 +278,86 @@ export default function Home() {
                               style={{ width: `${(inputs.downPaymentPercent / 50) * 100}%` }}
                             ></div>
                           </div>
-                        </div>
-                      </div>
-                      
-                      {/* PMI Indicator with Info Icon */}
-                      <div className={`mt-3 p-3 rounded-lg border transition-all duration-300 ${
-                        inputs.downPaymentPercent < 20 
-                          ? 'bg-amber-500/20 border-amber-500/40 shadow-lg shadow-amber-500/20' 
-                          : 'bg-white/5 border-white/10'
-                      }`}>
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-2">
-                            <div className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                              inputs.downPaymentPercent < 20 
-                                ? 'bg-amber-400 shadow-lg shadow-amber-400/50' 
-                                : 'bg-slate-500'
-                            }`}></div>
-                            <span className={`text-xs font-medium transition-colors duration-300 ${
-                              inputs.downPaymentPercent < 20 
-                                ? 'text-amber-300' 
-                                : 'text-slate-400'
-                            }`}>
-                              {inputs.downPaymentPercent < 20 ? (
-                                <>
+                          
+                          {/* Integrated PMI Status */}
+                          <div className="flex items-center justify-between mt-3 pt-3 border-t border-white/10">
+                            <div className="flex items-center space-x-2">
+                              <div className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                                inputs.downPaymentPercent < 20 
+                                  ? 'bg-amber-400 shadow-lg shadow-amber-400/50' 
+                                  : 'bg-green-400'
+                              }`}></div>
+                              <span className={`text-xs font-medium transition-colors duration-300 ${
+                                inputs.downPaymentPercent < 20 
+                                  ? 'text-amber-300' 
+                                  : 'text-green-300'
+                              }`}>
+                                {inputs.downPaymentPercent < 20 ? (
                                   <span className="flex items-center">
                                     <span className="mr-1">⚠️</span>
                                     PMI Required
                                   </span>
-                                </>
-                              ) : (
-                                <>
+                                ) : (
                                   <span className="flex items-center">
                                     <span className="mr-1">✅</span>
                                     No PMI
                                   </span>
-                                </>
-                              )}
-                            </span>
+                                )}
+                              </span>
+                            </div>
+                            
+                            {/* Info Icon */}
+                            <button
+                              onClick={() => setShowPMIInfo(!showPMIInfo)}
+                              className={`w-5 h-5 rounded-full border flex items-center justify-center transition-all duration-200 hover:scale-110 physical-button ${
+                                inputs.downPaymentPercent < 20 
+                                  ? 'border-amber-400/50 text-amber-300 hover:border-amber-400 hover:bg-amber-400/10' 
+                                  : 'border-green-400/50 text-green-300 hover:border-green-400 hover:bg-green-400/10'
+                              }`}
+                            >
+                              <span className="text-xs font-bold">i</span>
+                            </button>
                           </div>
                           
-                          {/* Info Icon */}
-                          <button
-                            onClick={() => setShowPMIInfo(!showPMIInfo)}
-                            className={`w-5 h-5 rounded-full border flex items-center justify-center transition-all duration-200 hover:scale-110 physical-button ${
-                              inputs.downPaymentPercent < 20 
-                                ? 'border-amber-400/50 text-amber-300 hover:border-amber-400 hover:bg-amber-400/10' 
-                                : 'border-slate-500/50 text-slate-400 hover:border-slate-400 hover:bg-slate-400/10'
-                            }`}
-                          >
-                            <span className="text-xs font-bold">i</span>
-                          </button>
-                        </div>
-                        
-                        {/* PMI Cost Display (when applicable) */}
-                        {inputs.downPaymentPercent < 20 && analysis && (
-                          <div className="mt-2 text-xs text-amber-200">
-                            <div className="flex justify-between">
-                              <span>Monthly PMI:</span>
-                              <span className="font-semibold">+${analysis.breakdown.pmi.toLocaleString()}</span>
+                          {/* PMI Cost Display (when applicable) */}
+                          {inputs.downPaymentPercent < 20 && analysis && (
+                            <div className="mt-2 text-xs text-amber-200">
+                              <div className="flex justify-between">
+                                <span>Monthly PMI:</span>
+                                <span className="font-semibold">+${analysis.breakdown.pmi.toLocaleString()}</span>
+                              </div>
                             </div>
-                          </div>
-                        )}
-                        
-                        {/* Expandable Info Section */}
-                        {showPMIInfo && (
-                          <div className={`mt-3 pt-3 border-t text-xs transition-all duration-300 ${
-                            inputs.downPaymentPercent < 20 
-                              ? 'border-amber-400/30 text-amber-200' 
-                              : 'border-slate-500/30 text-slate-400'
-                          }`}>
-                            {inputs.downPaymentPercent < 20 ? (
-                              <div>
-                                <p className="mb-2">
-                                  <strong>Private Mortgage Insurance (PMI)</strong> is required when you put down less than 20%.
-                                </p>
-                                <p>
-                                  PMI protects the lender if you default on your loan. You can eliminate this cost by putting down 20% or more.
-                                </p>
-                              </div>
-                            ) : (
-                              <div>
-                                <p className="mb-2">
-                                  <strong>Great choice!</strong> With 20% or more down, you avoid PMI entirely.
-                                </p>
-                                <p>
-                                  This saves you money each month and reduces your total cost of homeownership.
-                                </p>
-                              </div>
-                            )}
-                          </div>
-                        )}
+                          )}
+                          
+                          {/* Expandable Info Section */}
+                          {showPMIInfo && (
+                            <div className={`mt-3 pt-3 border-t text-xs transition-all duration-300 ${
+                              inputs.downPaymentPercent < 20 
+                                ? 'border-amber-400/30 text-amber-200' 
+                                : 'border-green-400/30 text-green-200'
+                            }`}>
+                              {inputs.downPaymentPercent < 20 ? (
+                                <div>
+                                  <p className="mb-2">
+                                    <strong>Private Mortgage Insurance (PMI)</strong> is required when you put down less than 20%.
+                                  </p>
+                                  <p>
+                                    PMI protects the lender if you default on your loan. You can eliminate this cost by putting down 20% or more.
+                                  </p>
+                                </div>
+                              ) : (
+                                <div>
+                                  <p className="mb-2">
+                                    <strong>Great choice!</strong> With 20% or more down, you avoid PMI entirely.
+                                  </p>
+                                  <p>
+                                    This saves you money each month and reduces your total cost of homeownership.
+                                  </p>
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
 
@@ -477,46 +448,40 @@ export default function Home() {
                             style={{ width: `${(inputs.interestRate / 10) * 100}%` }}
                           ></div>
                         </div>
+                        
+                        {/* Integrated ARM Rate Information */}
+                        {inputs.mortgageType === 'arm' && (
+                          <div className="mt-3 pt-3 border-t border-white/10">
+                            <div className="flex items-center space-x-2 mb-2">
+                              <div className="w-2 h-2 bg-amber-400 rounded-full"></div>
+                              <span className="text-xs font-medium text-amber-300">Rate Adjustments</span>
+                            </div>
+                            <p className="text-xs text-slate-300 mb-3">
+                              After {inputs.armInitialPeriod || 5} years, rate adjusts annually based on market conditions with protective caps.
+                            </p>
+                            
+                            {/* Rate Caps */}
+                            <div className="grid grid-cols-3 gap-3 text-xs">
+                              <div className="text-center">
+                                <div className="text-white font-bold text-lg">{inputs.armRateCaps?.initial}%</div>
+                                <div className="text-slate-400">First Adj.</div>
+                              </div>
+                              <div className="text-center">
+                                <div className="text-white font-bold text-lg">{inputs.armRateCaps?.subsequent}%</div>
+                                <div className="text-slate-400">Annual</div>
+                              </div>
+                              <div className="text-center">
+                                <div className="text-white font-bold text-lg">{inputs.armRateCaps?.lifetime}%</div>
+                                <div className="text-slate-400">Lifetime</div>
+                              </div>
+                            </div>
+                            <p className="text-xs text-slate-400 mt-2">
+                              Maximum increases: {inputs.armRateCaps?.initial}% first, {inputs.armRateCaps?.subsequent}% annually, {inputs.armRateCaps?.lifetime}% total
+                            </p>
+                          </div>
+                        )}
                       </div>
                     </div>
-                    {inputs.mortgageType === 'arm' && (
-                      <div className="mt-3 space-y-3">
-                        <div className="p-3 bg-amber-500/20 border border-amber-500/30 rounded-lg">
-                          <div className="flex items-center space-x-2 mb-2">
-                            <div className="w-2 h-2 bg-amber-400 rounded-full"></div>
-                            <span className="text-xs font-medium text-amber-300">Rate Adjustment Notice</span>
-                          </div>
-                          <p className="text-xs text-amber-200">
-                            After the initial {inputs.loanTermYears}-year period, your interest rate will adjust annually based on market conditions. 
-                            Your actual payments may increase or decrease.
-                          </p>
-                        </div>
-                        
-                        <div className="p-3 bg-white/5 border border-white/20 rounded-lg">
-                          <div className="flex items-center space-x-2 mb-3">
-                            <div className="w-2 h-2 bg-purple-400 rounded-full"></div>
-                            <span className="text-xs font-medium text-purple-300">Rate Caps</span>
-                          </div>
-                          <div className="grid grid-cols-3 gap-3 text-xs">
-                            <div className="text-center">
-                              <div className="text-white font-bold text-lg">{inputs.armRateCaps?.initial}%</div>
-                              <div className="text-slate-400">First Adj.</div>
-                            </div>
-                            <div className="text-center">
-                              <div className="text-white font-bold text-lg">{inputs.armRateCaps?.subsequent}%</div>
-                              <div className="text-slate-400">Annual</div>
-                            </div>
-                            <div className="text-center">
-                              <div className="text-white font-bold text-lg">{inputs.armRateCaps?.lifetime}%</div>
-                              <div className="text-slate-400">Lifetime</div>
-                            </div>
-                          </div>
-                          <p className="text-xs text-slate-400 mt-2">
-                            Maximum rate increases: {inputs.armRateCaps?.initial}% first adjustment, {inputs.armRateCaps?.subsequent}% annually, {inputs.armRateCaps?.lifetime}% total
-                          </p>
-                        </div>
-                      </div>
-                    )}
                   </div>
                 </div>
               </div>
