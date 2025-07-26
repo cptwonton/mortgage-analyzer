@@ -82,8 +82,7 @@ export function calculateMonthlyPayment(
  */
 export function calculatePMI(
   loanAmount: number,
-  downPaymentPercent: number,
-  _purchasePrice: number
+  downPaymentPercent: number
 ): number {
   if (downPaymentPercent >= 20) {
     return 0;
@@ -239,7 +238,7 @@ export function calculateBreakevenAnalysis(inputs: MortgageInputs): BreakevenAna
   );
 
   // PMI calculation
-  const pmi = calculatePMI(loanAmount, inputs.downPaymentPercent, inputs.purchasePrice);
+  const pmi = calculatePMI(loanAmount, inputs.downPaymentPercent);
 
   // Other monthly costs
   const propertyTax = Math.round((inputs.purchasePrice * (inputs.propertyTaxRate / 100) / 12) * 100) / 100;

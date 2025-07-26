@@ -6,9 +6,6 @@ import AmortizationChart from '@/components/AmortizationChart';
 import FloatingMortgageControls from '@/components/FloatingMortgageControls';
 import CurrentRatesDisplay from '@/components/CurrentRatesDisplay';
 import StandardInput from '@/components/ui/StandardInput';
-import SliderInput from '@/components/ui/SliderInput';
-import ToggleGroup from '@/components/ui/ToggleGroup';
-import { getBreakevenCardClasses } from '@/styles/design-system';
 
 export default function Home() {
   const [inputs, setInputs] = useState<MortgageInputs>({

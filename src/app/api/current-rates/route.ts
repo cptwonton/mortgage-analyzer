@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 
 // Types for rate data
 interface MortgageRates {
@@ -34,6 +34,7 @@ async function scrapeRatesWithPuppeteer(): Promise<RateResponse> {
     
     let puppeteer;
     try {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
       puppeteer = require('puppeteer');
       console.log('✅ PUPPETEER: Module loaded successfully');
     } catch (err) {
@@ -66,7 +67,8 @@ async function scrapeRatesWithPuppeteer(): Promise<RateResponse> {
       
       // Disable images, CSS, and fonts for speed
       await page.setRequestInterception(true);
-      page.on('request', (req) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      page.on('request', (req: any) => {
         const resourceType = req.resourceType();
         if (resourceType === 'stylesheet' || resourceType === 'font' || resourceType === 'image') {
           req.abort();
@@ -94,7 +96,7 @@ async function scrapeRatesWithPuppeteer(): Promise<RateResponse> {
       try {
         await page.waitForSelector('*', { timeout: 2000 }); // Just wait for any element
         console.log('✅ PUPPETEER: Additional wait completed');
-      } catch (e) {
+      } catch {
         console.log('⚠️ PUPPETEER: Additional wait failed, proceeding anyway');
       }
       
@@ -103,9 +105,9 @@ async function scrapeRatesWithPuppeteer(): Promise<RateResponse> {
         console.log('🔍 BROWSER: Starting aggressive rate extraction...');
         
         const results = {
-          rates: [],
+          rates: [] as number[],
           method: 'unknown',
-          debug: []
+          debug: [] as string[]
         };
         
         // Get ALL text content from the page
@@ -128,7 +130,7 @@ async function scrapeRatesWithPuppeteer(): Promise<RateResponse> {
           /(\d+\.\d{2,3})\s*percent/gi, // "7.125 percent"
         ];
         
-        let allMatches = [];
+        const allMatches: string[] = [];
         
         for (const pattern of ratePatterns) {
           const matches = allText.match(pattern);
@@ -369,7 +371,7 @@ async function scrapeRatesSimple(): Promise<RateResponse> {
   }
 }
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     console.log('=== API CALLED ===');
     console.log('Environment variables:');
