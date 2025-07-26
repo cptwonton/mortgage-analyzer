@@ -82,14 +82,15 @@ const CurrentRatesDisplay: React.FC<CurrentRatesDisplayProps> = ({
             {onRateSelect && currentRate && (
               <button
                 onClick={() => onRateSelect(currentRate)}
-                className="px-3 py-1 bg-purple-600 hover:bg-purple-700 text-white text-sm rounded-lg transition-colors font-medium"
+                className="px-3 py-1.5 bg-white/10 hover:bg-white/20 border border-purple-400/30 hover:border-purple-300/50 text-purple-200 hover:text-purple-100 text-sm rounded-lg backdrop-blur-sm transition-all duration-200 font-medium flex items-center space-x-1.5"
               >
-                Use This Rate
+                <span className="text-xs">✨</span>
+                <span>Use This Rate</span>
               </button>
             )}
             <button
               onClick={refetch}
-              className="text-slate-400 hover:text-slate-200 text-sm transition-colors"
+              className="p-1.5 bg-white/5 hover:bg-white/10 border border-slate-600/30 hover:border-slate-500/50 text-slate-400 hover:text-slate-200 rounded-lg backdrop-blur-sm transition-all duration-200"
               title="Refresh rates"
             >
               🔄
@@ -135,10 +136,11 @@ const CurrentRatesDisplay: React.FC<CurrentRatesDisplayProps> = ({
         </div>
         <button
           onClick={refetch}
-          className="text-purple-400 hover:text-purple-300 text-sm transition-colors"
+          className="px-3 py-1.5 bg-white/5 hover:bg-white/10 border border-slate-600/30 hover:border-slate-500/50 text-slate-400 hover:text-slate-200 rounded-lg backdrop-blur-sm transition-all duration-200 text-sm flex items-center space-x-1.5"
           title="Refresh rates"
         >
-          🔄 Refresh
+          <span>🔄</span>
+          <span>Refresh</span>
         </button>
       </div>
 
@@ -155,7 +157,7 @@ const CurrentRatesDisplay: React.FC<CurrentRatesDisplayProps> = ({
             {onRateSelect && rates['30-year-fixed'] && (
               <button
                 onClick={() => onRateSelect(rates['30-year-fixed']!)}
-                className="px-2 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs rounded transition-colors"
+                className="px-2 py-1 bg-white/10 hover:bg-white/20 border border-blue-400/30 hover:border-blue-300/50 text-blue-200 hover:text-blue-100 text-xs rounded backdrop-blur-sm transition-all duration-200"
               >
                 Use
               </button>
@@ -175,7 +177,7 @@ const CurrentRatesDisplay: React.FC<CurrentRatesDisplayProps> = ({
             {onRateSelect && rates['15-year-fixed'] && (
               <button
                 onClick={() => onRateSelect(rates['15-year-fixed']!)}
-                className="px-2 py-1 bg-green-600 hover:bg-green-700 text-white text-xs rounded transition-colors"
+                className="px-2 py-1 bg-white/10 hover:bg-white/20 border border-green-400/30 hover:border-green-300/50 text-green-200 hover:text-green-100 text-xs rounded backdrop-blur-sm transition-all duration-200"
               >
                 Use
               </button>
@@ -195,7 +197,7 @@ const CurrentRatesDisplay: React.FC<CurrentRatesDisplayProps> = ({
             {onRateSelect && rates['fha-30-year'] && (
               <button
                 onClick={() => onRateSelect(rates['fha-30-year']!)}
-                className="px-2 py-1 bg-purple-600 hover:bg-purple-700 text-white text-xs rounded transition-colors"
+                className="px-2 py-1 bg-white/10 hover:bg-white/20 border border-purple-400/30 hover:border-purple-300/50 text-purple-200 hover:text-purple-100 text-xs rounded backdrop-blur-sm transition-all duration-200"
               >
                 Use
               </button>
@@ -215,7 +217,7 @@ const CurrentRatesDisplay: React.FC<CurrentRatesDisplayProps> = ({
             {onRateSelect && rates['arm-5-1'] && (
               <button
                 onClick={() => onRateSelect(rates['arm-5-1']!)}
-                className="px-2 py-1 bg-orange-600 hover:bg-orange-700 text-white text-xs rounded transition-colors"
+                className="px-2 py-1 bg-white/10 hover:bg-white/20 border border-orange-400/30 hover:border-orange-300/50 text-orange-200 hover:text-orange-100 text-xs rounded backdrop-blur-sm transition-all duration-200"
               >
                 Use
               </button>
