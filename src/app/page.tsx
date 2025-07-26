@@ -100,6 +100,60 @@ export default function Home() {
                       />
                       <span className="absolute right-4 top-1/2 transform -translate-y-1/2 text-slate-400 font-medium">%</span>
                     </div>
+                    
+                    {/* PMI Indicator */}
+                    <div className={`mt-3 p-3 rounded-lg border transition-all duration-300 ${
+                      inputs.downPaymentPercent < 20 
+                        ? 'bg-amber-500/20 border-amber-500/40 shadow-lg shadow-amber-500/20' 
+                        : 'bg-white/5 border-white/10'
+                    }`}>
+                      <div className="flex items-center space-x-2">
+                        <div className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                          inputs.downPaymentPercent < 20 
+                            ? 'bg-amber-400 shadow-lg shadow-amber-400/50' 
+                            : 'bg-slate-500'
+                        }`}></div>
+                        <span className={`text-xs font-medium transition-colors duration-300 ${
+                          inputs.downPaymentPercent < 20 
+                            ? 'text-amber-300' 
+                            : 'text-slate-400'
+                        }`}>
+                          {inputs.downPaymentPercent < 20 ? (
+                            <>
+                              <span className="flex items-center">
+                                <span className="mr-1">⚠️</span>
+                                PMI Required
+                              </span>
+                            </>
+                          ) : (
+                            <>
+                              <span className="flex items-center">
+                                <span className="mr-1">✅</span>
+                                No PMI
+                              </span>
+                            </>
+                          )}
+                        </span>
+                      </div>
+                      
+                      {inputs.downPaymentPercent < 20 && analysis && (
+                        <div className="mt-2 text-xs text-amber-200">
+                          <div className="flex justify-between">
+                            <span>Monthly PMI:</span>
+                            <span className="font-semibold">+${analysis.breakdown.pmi.toLocaleString()}</span>
+                          </div>
+                          <div className="text-amber-300/80 mt-1">
+                            Put down 20% to eliminate this cost
+                          </div>
+                        </div>
+                      )}
+                      
+                      {inputs.downPaymentPercent >= 20 && (
+                        <div className="mt-2 text-xs text-slate-400">
+                          Great! No PMI with 20%+ down payment
+                        </div>
+                      )}
+                    </div>
                   </div>
 
                   <div className="group">
