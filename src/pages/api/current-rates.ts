@@ -27,7 +27,7 @@ const FALLBACK_RATES: MortgageRates = {
   'arm-5-1': 6.8
 };
 
-// Simple rate scraping function (without external dependencies)
+// Improved rate scraping with better filtering
 async function scrapeRatesSimple(): Promise<RateResponse> {
   try {
     const response = await fetch('https://www.mrcooper.com/get-started/rates', {
@@ -42,28 +42,40 @@ async function scrapeRatesSimple(): Promise<RateResponse> {
 
     const html = await response.text();
     
-    // Look for rate patterns in the HTML
+    // Look for rate patterns with better filtering
     const ratePattern = /(\d+\.\d{2,3})%/g;
     const matches = html.match(ratePattern);
     
     if (matches && matches.length >= 2) {
-      const rates = matches.map(match => parseFloat(match.replace('%', '')));
+      // Filter out dummy values and unrealistic rates
+      const validRates = matches
+        .map(match => parseFloat(match.replace('%', '')))
+        .filter(rate => 
+          rate >= 3.0 && rate <= 12.0 && // Realistic range
+          rate !== 99.99 && rate !== 0.00 && // Common dummy values
+          rate !== 1.00 && rate !== 2.00 // Too low to be real
+        );
       
-      return {
-        success: true,
-        rates: {
-          '30-year-fixed': rates[0] || FALLBACK_RATES['30-year-fixed'],
-          '15-year-fixed': rates[1] || FALLBACK_RATES['15-year-fixed'],
-          'fha-30-year': rates[2] || FALLBACK_RATES['fha-30-year'],
-          'va-30-year': rates[3] || FALLBACK_RATES['va-30-year'],
-          'arm-5-1': rates[4] || FALLBACK_RATES['arm-5-1']
-        },
-        source: 'Mr. Cooper (scraped)',
-        timestamp: new Date().toISOString()
-      };
+      if (validRates.length >= 2) {
+        // Remove duplicates and sort
+        const uniqueRates = [...new Set(validRates)].sort((a, b) => a - b);
+        
+        return {
+          success: true,
+          rates: {
+            '30-year-fixed': uniqueRates[0] || FALLBACK_RATES['30-year-fixed'],
+            '15-year-fixed': uniqueRates[1] || FALLBACK_RATES['15-year-fixed'],
+            'fha-30-year': uniqueRates[2] || uniqueRates[0] || FALLBACK_RATES['fha-30-year'],
+            'va-30-year': uniqueRates[3] || uniqueRates[0] || FALLBACK_RATES['va-30-year'],
+            'arm-5-1': uniqueRates[4] || (uniqueRates[0] - 0.5) || FALLBACK_RATES['arm-5-1']
+          },
+          source: 'Mr. Cooper (filtered scrape)',
+          timestamp: new Date().toISOString()
+        };
+      }
     }
     
-    throw new Error('No rates found in HTML');
+    throw new Error('No valid rates found in HTML');
     
   } catch (error) {
     console.error('Rate scraping failed:', error);

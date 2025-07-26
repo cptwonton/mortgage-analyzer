@@ -15,7 +15,9 @@
     "test:all": "npm run build && npm run build:vercel && echo '🚀 All builds passed! Ready to deploy!'"
   },
   "dependencies": {
+    "jsdom": "^26.1.0",
     "next": "15.4.4",
+    "puppeteer": "^24.15.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "recharts": "^3.1.0"
