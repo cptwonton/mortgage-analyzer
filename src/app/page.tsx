@@ -8,6 +8,7 @@ import CurrentRatesDisplay from '@/components/CurrentRatesDisplay';
 import StandardInput from '@/components/ui/StandardInput';
 import SliderInput from '@/components/ui/SliderInput';
 import ToggleGroup from '@/components/ui/ToggleGroup';
+import Card from '@/components/ui/Card';
 
 export default function Home() {
   const [inputs, setInputs] = useState<MortgageInputs>({
@@ -92,7 +93,7 @@ export default function Home() {
 
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
             {/* Input Panel */}
-            <div className="bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl border border-white/20 p-8 physical-card">
+            <Card variant="section">
               <div className="flex items-center mb-6">
                 <div className="w-3 h-3 bg-gradient-to-r from-emerald-400 via-teal-500 to-cyan-500 rounded-full mr-3"></div>
                 <h2 className="text-2xl font-bold text-white">Property Details</h2>
@@ -544,10 +545,10 @@ export default function Home() {
                   </ul>
                 </div>
               )}
-            </div>
+            </Card>
 
             {/* Results Panel */}
-            <div className="bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl border border-white/20 p-8 physical-card">
+            <Card variant="section">
               <div className="flex items-center mb-6">
                 <div className="w-3 h-3 bg-gradient-to-r from-amber-400 via-orange-500 to-red-500 rounded-full mr-3"></div>
                 <h2 className="text-2xl font-bold text-white">Required Rental Income</h2>
@@ -740,13 +741,13 @@ export default function Home() {
                   <p className="text-slate-400 text-sm mt-2">Fix any validation errors above to continue</p>
                 </div>
               )}
-            </div>
+            </Card>
           </div>
 
           {/* Amortization Chart Section */}
           {analysis && (
             <div className="mt-8">
-              <div className="bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl border border-white/20 p-8 physical-card">
+              <Card variant="section">
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center">
                     <div className="w-3 h-3 bg-gradient-to-r from-cyan-400 via-teal-500 to-blue-500 rounded-full mr-3"></div>
@@ -814,7 +815,7 @@ export default function Home() {
                     </p>
                   </div>
                 </div>
-              </div>
+              </Card>
             </div>
           )}
         </div>
