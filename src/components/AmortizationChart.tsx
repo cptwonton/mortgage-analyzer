@@ -40,8 +40,25 @@ const AmortizationChart: React.FC<AmortizationChartProps> = ({ schedule, mortgag
     const data: ChartDataPoint[] = [];
     
     if (showMonthly) {
-      // Show monthly data (limited to first 5 years for performance)
-      const monthsToShow = Math.min(schedule.length, 60);
+      // Show monthly data (limited based on zoom level for performance and compatibility)
+      let monthsToShow: number;
+      switch (zoomLevel) {
+        case '5yr':
+          monthsToShow = Math.min(schedule.length, 60); // 5 years
+          break;
+        case '10yr':
+          monthsToShow = Math.min(schedule.length, 120); // 10 years
+          break;
+        case '15yr':
+          monthsToShow = Math.min(schedule.length, 180); // 15 years
+          break;
+        case 'full':
+          monthsToShow = schedule.length; // All months
+          break;
+        default:
+          monthsToShow = Math.min(schedule.length, 60);
+      }
+      
       schedule.slice(0, monthsToShow).forEach(payment => {
         data.push({
           year: payment.year + (payment.month % 12) / 12,
@@ -79,7 +96,43 @@ const AmortizationChart: React.FC<AmortizationChartProps> = ({ schedule, mortgag
     }
 
     return data;
-  }, [schedule, showMonthly]);
+  }, [schedule, showMonthly, zoomLevel]);
+
+  // Auto-adjust zoom when switching to monthly if current zoom is incompatible
+  const handleMonthlyToggle = () => {
+    const newShowMonthly = !showMonthly;
+    setShowMonthly(newShowMonthly);
+    
+    // If switching to monthly and zoom is full, auto-adjust to 5yr for better performance
+    if (newShowMonthly && zoomLevel === 'full') {
+      setZoomLevel('5yr');
+    }
+  };
+
+  // Get available zoom levels based on detail mode
+  const getAvailableZoomLevels = (): ZoomLevel[] => {
+    if (showMonthly) {
+      // In monthly mode, limit zoom options based on performance
+      const maxYears = Math.ceil(schedule.length / 12);
+      const levels: ZoomLevel[] = ['5yr'];
+      
+      if (maxYears >= 10) levels.push('10yr');
+      if (maxYears >= 15) levels.push('15yr');
+      if (maxYears > 15) levels.push('full');
+      
+      return levels;
+    }
+    return ['full', '5yr', '10yr', '15yr'];
+  };
+
+  const availableZoomLevels = getAvailableZoomLevels();
+
+  // Ensure current zoom level is available, auto-adjust if not
+  React.useEffect(() => {
+    if (!availableZoomLevels.includes(zoomLevel)) {
+      setZoomLevel(availableZoomLevels[0]);
+    }
+  }, [availableZoomLevels, zoomLevel]);
 
   // Filter data based on zoom level
   const filteredData = useMemo(() => {
@@ -167,7 +220,7 @@ const AmortizationChart: React.FC<AmortizationChartProps> = ({ schedule, mortgag
         {/* Zoom Controls */}
         <div className="flex items-center space-x-2">
           <span className="text-sm text-slate-300 mr-2">Zoom:</span>
-          {(['full', '5yr', '10yr', '15yr'] as ZoomLevel[]).map((level) => (
+          {availableZoomLevels.map((level) => (
             <button
               key={level}
               onClick={() => setZoomLevel(level)}
@@ -182,11 +235,11 @@ const AmortizationChart: React.FC<AmortizationChartProps> = ({ schedule, mortgag
           ))}
         </div>
 
-        {/* Monthly/Yearly Toggle */}
+        {/* Monthly/Yearly Toggle with Smart Indicator */}
         <div className="flex items-center space-x-2">
           <span className="text-sm text-slate-300">Detail:</span>
           <button
-            onClick={() => setShowMonthly(!showMonthly)}
+            onClick={handleMonthlyToggle}
             className={`px-3 py-1 rounded-lg text-xs font-medium transition-all duration-200 physical-button ${
               showMonthly
                 ? 'bg-purple-500/20 border border-purple-500/40 text-purple-300'
@@ -196,10 +249,30 @@ const AmortizationChart: React.FC<AmortizationChartProps> = ({ schedule, mortgag
             {showMonthly ? 'Monthly' : 'Yearly'}
           </button>
           {showMonthly && (
-            <span className="text-xs text-slate-400">(First 5 years)</span>
+            <span className="text-xs text-slate-400">
+              ({zoomLevel === 'full' ? 'All months' : `${zoomLevel} detail`})
+            </span>
           )}
         </div>
       </div>
+
+      {/* Data Range Indicator for Monthly Mode */}
+      {showMonthly && (
+        <div className="bg-purple-500/10 border border-purple-500/20 rounded-lg p-3">
+          <div className="flex items-center space-x-2">
+            <div className="w-2 h-2 bg-purple-400 rounded-full"></div>
+            <span className="text-sm text-purple-300 font-medium">Monthly Detail View</span>
+          </div>
+          <p className="text-xs text-purple-200 mt-1">
+            Showing month-by-month data for {
+              zoomLevel === 'full' ? 'the entire loan term' :
+              zoomLevel === '5yr' ? 'the first 5 years' :
+              zoomLevel === '10yr' ? 'the first 10 years' :
+              'the first 15 years'
+            }. Switch to "Yearly" for full loan overview.
+          </p>
+        </div>
+      )}
 
       {/* Chart */}
       <div className="w-full h-80 cursor-pointer">
