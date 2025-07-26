@@ -27,6 +27,7 @@ export interface MortgageBreakdown {
   maintenance: number;
   capEx: number;
   hoa: number;
+  propertyManagement: number; // Add property management to breakdown
   totalMonthlyExpenses: number;
 }
 
@@ -122,6 +123,31 @@ export function calculateBreakevenAnalysis(inputs: MortgageInputs): BreakevenAna
   // Other monthly costs
   const propertyTax = Math.round((inputs.purchasePrice * (inputs.propertyTaxRate / 100) / 12) * 100) / 100;
 
+  // Breakeven calculations
+  
+  // 1. Burned Money Breakeven: Cover everything except principal (equity building)
+  const burnedMoneyBreakeven = 
+    interest +
+    propertyTax +
+    inputs.monthlyInsurance +
+    pmi +
+    inputs.monthlyMaintenance +
+    inputs.monthlyCapEx +
+    inputs.monthlyHOA;
+
+  // 2. Full Breakeven: Cover all expenses including principal
+  const fullBreakeven = burnedMoneyBreakeven + principal;
+
+  // 3. Investment Viable: Account for vacancy and property management
+  // This is more complex because property management is a % of rent
+  // We need to solve: rent * (1 - vacancy%) * (1 - mgmt%) = fullBreakeven
+  const vacancyMultiplier = 1 - (inputs.vacancyRate / 100);
+  const managementMultiplier = 1 - (inputs.propertyManagementRate / 100);
+  const investmentViableBreakeven = fullBreakeven / (vacancyMultiplier * managementMultiplier);
+
+  // Calculate property management fee based on investment viable rent
+  const propertyManagement = Math.round((investmentViableBreakeven * (inputs.propertyManagementRate / 100)) * 100) / 100;
+
   // Create breakdown object
   const breakdown: MortgageBreakdown = {
     monthlyPayment,
@@ -133,38 +159,9 @@ export function calculateBreakevenAnalysis(inputs: MortgageInputs): BreakevenAna
     maintenance: inputs.monthlyMaintenance,
     capEx: inputs.monthlyCapEx,
     hoa: inputs.monthlyHOA,
-    totalMonthlyExpenses: 0 // Will calculate below
+    propertyManagement,
+    totalMonthlyExpenses: fullBreakeven
   };
-
-  // Calculate total monthly expenses
-  breakdown.totalMonthlyExpenses = 
-    breakdown.principal +
-    breakdown.interest +
-    breakdown.propertyTax +
-    breakdown.insurance +
-    breakdown.pmi +
-    breakdown.maintenance +
-    breakdown.capEx +
-    breakdown.hoa;
-
-  // Breakeven calculations
-  
-  // 1. Burned Money Breakeven: Cover everything except principal (equity building)
-  const burnedMoneyBreakeven = 
-    breakdown.interest +
-    breakdown.propertyTax +
-    breakdown.insurance +
-    breakdown.pmi +
-    breakdown.maintenance +
-    breakdown.capEx +
-    breakdown.hoa;
-
-  // 2. Full Breakeven: Cover all expenses including principal
-  const fullBreakeven = breakdown.totalMonthlyExpenses;
-
-  // 3. Investment Viable: Account for vacancy and property management
-  const grossRentNeeded = fullBreakeven / (1 - inputs.vacancyRate / 100);
-  const investmentViableBreakeven = grossRentNeeded / (1 - inputs.propertyManagementRate / 100);
 
   return {
     burnedMoneyBreakeven: Math.round(burnedMoneyBreakeven * 100) / 100,

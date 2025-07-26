@@ -385,16 +385,49 @@ export default function Home() {
                       Property Management Fee
                     </label>
                     <div className="relative">
-                      <input
-                        type="number"
-                        value={inputs.propertyManagementRate === 0 ? '' : inputs.propertyManagementRate}
-                        onChange={(e) => handleInputChange('propertyManagementRate', e.target.value)}
-                        placeholder="10"
-                        className="w-full px-4 py-4 bg-white/5 border border-white/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-white placeholder-slate-400 backdrop-blur-sm transition-all duration-200 hover:bg-white/10"
-                      />
-                      <span className="absolute right-4 top-1/2 transform -translate-y-1/2 text-slate-400 font-medium">% of rent</span>
+                      <div className="px-4 py-4 bg-white/5 border border-white/20 rounded-xl backdrop-blur-sm">
+                        <div className="flex items-center justify-between mb-3">
+                          <span className="text-white font-bold text-lg">
+                            {inputs.propertyManagementRate.toFixed(0)}%
+                          </span>
+                          <div className="flex space-x-1 text-xs text-slate-400">
+                            <span>0%</span>
+                            <span>•</span>
+                            <span>15%</span>
+                          </div>
+                        </div>
+                        <div className="relative">
+                          <input
+                            type="range"
+                            min="0"
+                            max="15"
+                            step="1"
+                            value={inputs.propertyManagementRate}
+                            onChange={(e) => handleInputChange('propertyManagementRate', e.target.value)}
+                            className="w-full h-2 bg-white/10 rounded-lg appearance-none cursor-pointer slider"
+                          />
+                          <div 
+                            className={`absolute top-0 left-0 h-2 rounded-lg pointer-events-none transition-all duration-300 ${
+                              inputs.propertyManagementRate === 0 
+                                ? 'bg-gradient-to-r from-green-400 to-blue-400'
+                                : 'bg-gradient-to-r from-blue-400 to-purple-400'
+                            }`}
+                            style={{ width: `${(inputs.propertyManagementRate / 15) * 100}%` }}
+                          ></div>
+                          <div 
+                            className={`absolute top-1/2 transform -translate-y-1/2 w-4 h-4 rounded-full shadow-lg border-2 pointer-events-none transition-all duration-300 ${
+                              inputs.propertyManagementRate === 0 
+                                ? 'bg-white border-green-500'
+                                : 'bg-white border-purple-500'
+                            }`}
+                            style={{ left: `calc(${(inputs.propertyManagementRate / 15) * 100}% - 8px)` }}
+                          ></div>
+                        </div>
+                      </div>
                     </div>
-                    <p className="text-xs text-slate-400 mt-1">Leave at 0 if self-managing</p>
+                    <p className="text-xs text-slate-400 mt-1">
+                      {inputs.propertyManagementRate === 0 ? 'Self-managing property' : 'Professional management fee'}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -543,6 +576,17 @@ export default function Home() {
                           ${analysis.breakdown.capEx.toLocaleString()}
                         </span>
                       </div>
+                      {analysis.breakdown.propertyManagement > 0 && (
+                        <div className="flex justify-between items-center py-2 border-b border-white/10">
+                          <span className="text-slate-300 flex items-center">
+                            <span className="w-3 h-3 bg-gradient-to-r from-indigo-400 to-purple-500 rounded-full mr-3"></span>
+                            Property Management
+                          </span>
+                          <span className="font-bold text-indigo-400">
+                            ${analysis.breakdown.propertyManagement.toLocaleString()}
+                          </span>
+                        </div>
+                      )}
                       <div className="flex justify-between items-center pt-4 border-t-2 border-gradient-to-r from-purple-500 to-blue-500">
                         <span className="font-bold text-white flex items-center">
                           <span className="w-4 h-4 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full mr-3"></span>
