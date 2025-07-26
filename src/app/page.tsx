@@ -6,6 +6,8 @@ import AmortizationChart from '@/components/AmortizationChart';
 import FloatingMortgageControls from '@/components/FloatingMortgageControls';
 import CurrentRatesDisplay from '@/components/CurrentRatesDisplay';
 import StandardInput from '@/components/ui/StandardInput';
+import SliderInput from '@/components/ui/SliderInput';
+import ToggleGroup from '@/components/ui/ToggleGroup';
 
 export default function Home() {
   const [inputs, setInputs] = useState<MortgageInputs>({
@@ -123,40 +125,25 @@ export default function Home() {
                 </div>
                 
                 <div className="space-y-4">
-                  <div className="group">
-                    <label className="block text-sm font-semibold text-slate-200 mb-2 group-focus-within:text-blue-300 transition-colors">
-                      Mortgage Type
-                    </label>
-                    <div className="grid grid-cols-2 gap-2">
-                      <button
-                        onClick={() => handleInputChange('mortgageType', 'fixed')}
-                        className={`px-4 py-4 rounded-xl border transition-all duration-200 physical-button ${
-                          inputs.mortgageType === 'fixed'
-                            ? 'bg-blue-500/20 border-blue-500/40 text-blue-300 shadow-lg shadow-blue-500/20'
-                            : 'bg-white/5 border-white/20 text-slate-300 hover:bg-white/10'
-                        }`}
-                      >
-                        <div className="text-center">
-                          <div className="font-semibold">Fixed Rate</div>
-                          <div className="text-xs opacity-80">Rate stays same</div>
-                        </div>
-                      </button>
-                      <button
-                        onClick={() => handleInputChange('mortgageType', 'arm')}
-                        className={`px-4 py-4 rounded-xl border transition-all duration-200 physical-button ${
-                          inputs.mortgageType === 'arm'
-                            ? 'bg-amber-500/20 border-amber-500/40 text-amber-300 shadow-lg shadow-amber-500/20'
-                            : 'bg-white/5 border-white/20 text-slate-300 hover:bg-white/10'
-                        }`}
-                      >
-                        <div className="text-center">
-                          <div className="font-semibold">ARM</div>
-                          <div className="text-xs opacity-80">Rate can change</div>
-                        </div>
-                      </button>
-                    </div>
-                    
-                  </div>
+                  <ToggleGroup
+                    label="Mortgage Type"
+                    value={inputs.mortgageType}
+                    onChange={(value) => handleInputChange('mortgageType', value)}
+                    options={[
+                      {
+                        value: 'fixed',
+                        label: 'Fixed Rate',
+                        subtitle: 'Rate stays same',
+                        colorScheme: 'blue'
+                      },
+                      {
+                        value: 'arm',
+                        label: 'ARM',
+                        subtitle: 'Rate can change',
+                        colorScheme: 'amber'
+                      }
+                    ]}
+                  />
 
                   {/* ARM Initial Period Slider - Only show for ARM */}
                   {inputs.mortgageType === 'arm' && (
@@ -358,50 +345,21 @@ export default function Home() {
                       </div>
                     </div>
 
-                    <div className="group">
-                      <label className="block text-sm font-semibold text-slate-200 mb-2 group-focus-within:text-blue-300 transition-colors">
-                        Loan Term
-                      </label>
-                      <div className="relative">
-                        <div className="px-4 py-4 bg-white/5 border border-white/20 rounded-xl backdrop-blur-sm">
-                          <div className="flex items-center justify-between mb-3">
-                            <span className="text-white font-bold text-lg">
-                              {inputs.loanTermYears} years
-                            </span>
-                            <div className="flex space-x-1 text-xs text-slate-400">
-                              <span>15</span>
-                              <span>•</span>
-                              <span>30</span>
-                            </div>
-                          </div>
-                          <div className="relative">
-                            <input
-                              type="range"
-                              min="15"
-                              max="30"
-                              step="5"
-                              value={inputs.loanTermYears}
-                              onChange={(e) => handleInputChange('loanTermYears', e.target.value)}
-                              className="w-full h-2 bg-white/10 rounded-lg appearance-none cursor-pointer slider"
-                            />
-                            <div 
-                              className={`absolute top-0 left-0 h-2 rounded-lg pointer-events-none transition-all duration-300 ${
-                                inputs.loanTermYears <= 20 
-                                  ? 'bg-gradient-to-r from-emerald-400 via-teal-500 to-cyan-500'
-                                  : 'bg-gradient-to-r from-blue-400 via-indigo-500 to-purple-500'
-                              }`}
-                              style={{ width: `${((inputs.loanTermYears - 15) / 15) * 100}%` }}
-                            ></div>
-                          </div>
-                        </div>
-                      </div>
-                      <p className="text-xs text-slate-400 mt-1">
-                        {inputs.mortgageType === 'fixed' 
+                    <SliderInput
+                      label="Loan Term"
+                      value={inputs.loanTermYears}
+                      onChange={(value) => handleInputChange('loanTermYears', value)}
+                      min={15}
+                      max={30}
+                      step={5}
+                      unit="years"
+                      colorScheme={inputs.loanTermYears <= 20 ? 'success' : 'default'}
+                      helpText={
+                        inputs.mortgageType === 'fixed' 
                           ? (inputs.loanTermYears <= 20 ? 'Lower interest, higher payments' : 'Higher interest, lower payments')
                           : `Total loan length. Rate is fixed for ${inputs.armInitialPeriod || 5} years, then adjusts for remaining ${inputs.loanTermYears - (inputs.armInitialPeriod || 5)} years.`
-                        }
-                      </p>
-                    </div>
+                      }
+                    />
                   </div>
 
                   {/* Current Market Rates */}
@@ -491,55 +449,34 @@ export default function Home() {
                 </div>
                 
                 <div className="space-y-4">
-                  <div className="group">
-                    <label className="block text-sm font-semibold text-slate-200 mb-2 group-focus-within:text-blue-300 transition-colors">
-                      Property Tax Rate (Annual)
-                    </label>
-                    <div className="relative">
-                      <input
-                        type="number"
-                        step="0.1"
-                        value={inputs.propertyTaxRate === 0 ? '' : inputs.propertyTaxRate}
-                        onChange={(e) => handleInputChange('propertyTaxRate', e.target.value)}
-                        placeholder="1.2"
-                        className="w-full px-4 py-4 bg-white/5 border border-white/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-white placeholder-slate-400 backdrop-blur-sm transition-all duration-200 hover:bg-white/10"
-                      />
-                      <span className="absolute right-4 top-1/2 transform -translate-y-1/2 text-slate-400 font-medium">%</span>
-                    </div>
-                  </div>
+                  <StandardInput
+                    label="Property Tax Rate (Annual)"
+                    type="number"
+                    value={inputs.propertyTaxRate === 0 ? '' : inputs.propertyTaxRate.toString()}
+                    onChange={(value) => handleInputChange('propertyTaxRate', value)}
+                    placeholder="1.2"
+                    suffix="%"
+                    step="0.1"
+                  />
 
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="group">
-                      <label className="block text-sm font-semibold text-slate-200 mb-2 group-focus-within:text-blue-300 transition-colors">
-                        Monthly Insurance
-                      </label>
-                      <div className="relative">
-                        <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 font-medium">$</span>
-                        <input
-                          type="number"
-                          value={inputs.monthlyInsurance === 0 ? '' : inputs.monthlyInsurance}
-                          onChange={(e) => handleInputChange('monthlyInsurance', e.target.value)}
-                          placeholder="150"
-                          className="w-full pl-8 pr-4 py-4 bg-white/5 border border-white/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-white placeholder-slate-400 backdrop-blur-sm transition-all duration-200 hover:bg-white/10"
-                        />
-                      </div>
-                    </div>
+                    <StandardInput
+                      label="Monthly Insurance"
+                      type="number"
+                      value={inputs.monthlyInsurance === 0 ? '' : inputs.monthlyInsurance.toString()}
+                      onChange={(value) => handleInputChange('monthlyInsurance', value)}
+                      placeholder="150"
+                      prefix="$"
+                    />
 
-                    <div className="group">
-                      <label className="block text-sm font-semibold text-slate-200 mb-2 group-focus-within:text-blue-300 transition-colors">
-                        Monthly Maintenance
-                      </label>
-                      <div className="relative">
-                        <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 font-medium">$</span>
-                        <input
-                          type="number"
-                          value={inputs.monthlyMaintenance === 0 ? '' : inputs.monthlyMaintenance}
-                          onChange={(e) => handleInputChange('monthlyMaintenance', e.target.value)}
-                          placeholder="200"
-                          className="w-full pl-8 pr-4 py-4 bg-white/5 border border-white/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-white placeholder-slate-400 backdrop-blur-sm transition-all duration-200 hover:bg-white/10"
-                        />
-                      </div>
-                    </div>
+                    <StandardInput
+                      label="Monthly Maintenance"
+                      type="number"
+                      value={inputs.monthlyMaintenance === 0 ? '' : inputs.monthlyMaintenance.toString()}
+                      onChange={(value) => handleInputChange('monthlyMaintenance', value)}
+                      placeholder="200"
+                      prefix="$"
+                    />
                   </div>
                 </div>
               </div>
@@ -556,82 +493,38 @@ export default function Home() {
                 
                 <div className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="group">
-                      <label className="block text-sm font-semibold text-slate-200 mb-2 group-focus-within:text-blue-300 transition-colors">
-                        CapEx Reserve
-                      </label>
-                      <div className="relative">
-                        <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 font-medium">$</span>
-                        <input
-                          type="number"
-                          value={inputs.monthlyCapEx === 0 ? '' : inputs.monthlyCapEx}
-                          onChange={(e) => handleInputChange('monthlyCapEx', e.target.value)}
-                          placeholder="150"
-                          className="w-full pl-8 pr-4 py-4 bg-white/5 border border-white/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-white placeholder-slate-400 backdrop-blur-sm transition-all duration-200 hover:bg-white/10"
-                        />
-                      </div>
-                      <p className="text-xs text-slate-400 mt-1">Major repairs & replacements</p>
-                    </div>
+                    <StandardInput
+                      label="CapEx Reserve"
+                      type="number"
+                      value={inputs.monthlyCapEx === 0 ? '' : inputs.monthlyCapEx.toString()}
+                      onChange={(value) => handleInputChange('monthlyCapEx', value)}
+                      placeholder="150"
+                      prefix="$"
+                      helpText="Major repairs & replacements"
+                    />
 
-                    <div className="group">
-                      <label className="block text-sm font-semibold text-slate-200 mb-2 group-focus-within:text-blue-300 transition-colors">
-                        Vacancy Rate
-                      </label>
-                      <div className="relative">
-                        <input
-                          type="number"
-                          value={inputs.vacancyRate === 0 ? '' : inputs.vacancyRate}
-                          onChange={(e) => handleInputChange('vacancyRate', e.target.value)}
-                          placeholder="8"
-                          className="w-full px-4 py-4 bg-white/5 border border-white/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-white placeholder-slate-400 backdrop-blur-sm transition-all duration-200 hover:bg-white/10"
-                        />
-                        <span className="absolute right-4 top-1/2 transform -translate-y-1/2 text-slate-400 font-medium">%</span>
-                      </div>
-                      <p className="text-xs text-slate-400 mt-1">Expected vacancy periods</p>
-                    </div>
+                    <StandardInput
+                      label="Vacancy Rate"
+                      type="number"
+                      value={inputs.vacancyRate === 0 ? '' : inputs.vacancyRate.toString()}
+                      onChange={(value) => handleInputChange('vacancyRate', value)}
+                      placeholder="8"
+                      suffix="%"
+                      helpText="Expected vacancy periods"
+                    />
                   </div>
 
-                  <div className="group">
-                    <label className="block text-sm font-semibold text-slate-200 mb-2 group-focus-within:text-blue-300 transition-colors">
-                      Property Management Fee
-                    </label>
-                    <div className="relative">
-                      <div className="px-4 py-4 bg-white/5 border border-white/20 rounded-xl backdrop-blur-sm">
-                        <div className="flex items-center justify-between mb-3">
-                          <span className="text-white font-bold text-lg">
-                            {inputs.propertyManagementRate.toFixed(0)}%
-                          </span>
-                          <div className="flex space-x-1 text-xs text-slate-400">
-                            <span>0%</span>
-                            <span>•</span>
-                            <span>15%</span>
-                          </div>
-                        </div>
-                        <div className="relative">
-                          <input
-                            type="range"
-                            min="0"
-                            max="15"
-                            step="1"
-                            value={inputs.propertyManagementRate}
-                            onChange={(e) => handleInputChange('propertyManagementRate', e.target.value)}
-                            className="w-full h-2 bg-white/10 rounded-lg appearance-none cursor-pointer slider"
-                          />
-                          <div 
-                            className={`absolute top-0 left-0 h-2 rounded-lg pointer-events-none transition-all duration-300 ${
-                              inputs.propertyManagementRate === 0 
-                                ? 'bg-gradient-to-r from-green-400 to-blue-400'
-                                : 'bg-gradient-to-r from-blue-400 to-purple-400'
-                            }`}
-                            style={{ width: `${(inputs.propertyManagementRate / 15) * 100}%` }}
-                          ></div>
-                        </div>
-                      </div>
-                    </div>
-                    <p className="text-xs text-slate-400 mt-1">
-                      {inputs.propertyManagementRate === 0 ? 'Self-managing property' : 'Professional management fee'}
-                    </p>
-                  </div>
+                  <SliderInput
+                    label="Property Management Fee"
+                    value={inputs.propertyManagementRate}
+                    onChange={(value) => handleInputChange('propertyManagementRate', value)}
+                    min={0}
+                    max={15}
+                    step={1}
+                    unit="%"
+                    colorScheme={inputs.propertyManagementRate === 0 ? 'success' : 'default'}
+                    helpText={inputs.propertyManagementRate === 0 ? 'Self-managing property' : 'Professional management fee'}
+                  />
                 </div>
               </div>
 
