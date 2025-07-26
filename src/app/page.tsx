@@ -482,6 +482,39 @@ export default function Home() {
                     suffix="%"
                     step="0.1"
                     helpText="Typical range varies by location"
+                    helpTooltip={{
+                      title: "Property Tax Rates by Location",
+                      content: (
+                        <div className="space-y-3">
+                          <div>
+                            <p className="font-medium text-blue-300 mb-2">🗺️ Typical Rates by State:</p>
+                            <div className="grid grid-cols-2 gap-2 text-xs">
+                              <div>
+                                <p className="text-green-300 font-medium">Low Tax States:</p>
+                                <ul className="text-slate-400 space-y-1">
+                                  <li>• Hawaii: 0.3%</li>
+                                  <li>• Alabama: 0.4%</li>
+                                  <li>• Delaware: 0.6%</li>
+                                  <li>• Tennessee: 0.7%</li>
+                                </ul>
+                              </div>
+                              <div>
+                                <p className="text-red-300 font-medium">High Tax States:</p>
+                                <ul className="text-slate-400 space-y-1">
+                                  <li>• New Jersey: 2.5%</li>
+                                  <li>• Illinois: 2.3%</li>
+                                  <li>• New Hampshire: 2.2%</li>
+                                  <li>• Connecticut: 2.1%</li>
+                                </ul>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="border-t border-slate-600/50 pt-2">
+                            <p className="text-xs text-amber-300">💡 <strong>Pro Tip:</strong> Check your county assessor's website for exact rates. They can vary significantly within states!</p>
+                          </div>
+                        </div>
+                      )
+                    }}
                     {...(() => {
                       const validation = validateField('propertyTaxRate', inputs.propertyTaxRate);
                       const ranges = getFieldRanges('propertyTaxRate');
@@ -525,6 +558,36 @@ export default function Home() {
                       placeholder="200"
                       prefix="$"
                       helpText="Ongoing repairs & upkeep"
+                      helpTooltip={{
+                        title: "Monthly Maintenance vs CapEx Reserve",
+                        content: (
+                          <div className="space-y-3">
+                            <div>
+                              <p className="font-medium text-blue-300 mb-1">🔧 Monthly Maintenance</p>
+                              <p className="text-xs mb-2">Ongoing, predictable repairs and upkeep</p>
+                              <ul className="text-xs space-y-1 text-slate-400">
+                                <li>• Lawn care and landscaping</li>
+                                <li>• HVAC tune-ups and filters</li>
+                                <li>• Minor plumbing repairs</li>
+                                <li>• Touch-up painting</li>
+                                <li>• Cleaning between tenants</li>
+                              </ul>
+                              <p className="text-xs mt-2 text-slate-300">Typical: $100-300/month</p>
+                            </div>
+                            <div className="border-t border-slate-600/50 pt-3">
+                              <p className="font-medium text-amber-300 mb-1">🏗️ CapEx Reserve (below)</p>
+                              <p className="text-xs mb-2">Major replacements you save for</p>
+                              <ul className="text-xs space-y-1 text-slate-400">
+                                <li>• Roof replacement (15-25 years)</li>
+                                <li>• HVAC system (10-15 years)</li>
+                                <li>• Water heater (8-12 years)</li>
+                                <li>• Flooring replacement</li>
+                              </ul>
+                              <p className="text-xs mt-2 text-slate-300">Typical: $100-200/month saved</p>
+                            </div>
+                          </div>
+                        )
+                      }}
                       {...(() => {
                         const validation = validateField('monthlyMaintenance', inputs.monthlyMaintenance);
                         const ranges = getFieldRanges('monthlyMaintenance');
@@ -561,6 +624,29 @@ export default function Home() {
                       placeholder="150"
                       prefix="$"
                       helpText="Major repairs & replacements"
+                      helpTooltip={{
+                        title: "CapEx Reserve - Capital Expenditures",
+                        content: (
+                          <div className="space-y-3">
+                            <div>
+                              <p className="font-medium text-amber-300 mb-1">🏗️ What is CapEx Reserve?</p>
+                              <p className="text-xs mb-2">Money you set aside each month for major replacements that will eventually happen</p>
+                            </div>
+                            <div>
+                              <p className="font-medium text-slate-200 mb-1">Common CapEx Items:</p>
+                              <ul className="text-xs space-y-1 text-slate-400">
+                                <li>• <span className="text-slate-300">Roof:</span> $15K every 20 years = $62/month</li>
+                                <li>• <span className="text-slate-300">HVAC:</span> $8K every 12 years = $55/month</li>
+                                <li>• <span className="text-slate-300">Water heater:</span> $1.2K every 10 years = $10/month</li>
+                                <li>• <span className="text-slate-300">Flooring:</span> $5K every 15 years = $28/month</li>
+                              </ul>
+                            </div>
+                            <div className="border-t border-slate-600/50 pt-2">
+                              <p className="text-xs text-green-300">💡 <strong>Smart Strategy:</strong> Set aside $100-200/month so you're prepared when these big expenses hit!</p>
+                            </div>
+                          </div>
+                        )
+                      }}
                       {...(() => {
                         const validation = validateField('monthlyCapEx', inputs.monthlyCapEx);
                         const ranges = getFieldRanges('monthlyCapEx');

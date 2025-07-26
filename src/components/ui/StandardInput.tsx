@@ -1,4 +1,5 @@
 import React from 'react';
+import HelpTooltip from './HelpTooltip';
 
 interface StandardInputProps {
   label: string;
@@ -11,6 +12,10 @@ interface StandardInputProps {
   step?: string;
   className?: string;
   helpText?: string;
+  helpTooltip?: {
+    title: string;
+    content: React.ReactNode;
+  };
   validationState?: 'default' | 'error' | 'warning' | 'success';
   errorMessage?: string;
   min?: number;
@@ -29,6 +34,7 @@ const StandardInput: React.FC<StandardInputProps> = ({
   step,
   className = '',
   helpText,
+  helpTooltip,
   validationState = 'default',
   errorMessage,
   min,
@@ -94,8 +100,13 @@ const StandardInput: React.FC<StandardInputProps> = ({
 
   return (
     <div className={`group ${className}`}>
-      <label className="block text-sm font-semibold text-slate-200 mb-2 group-focus-within:text-blue-300 transition-colors">
+      <label className="block text-sm font-semibold text-slate-200 mb-2 group-focus-within:text-blue-300 transition-colors flex items-center">
         {label}
+        {helpTooltip && (
+          <HelpTooltip title={helpTooltip.title}>
+            {helpTooltip.content}
+          </HelpTooltip>
+        )}
       </label>
       <div className="relative">
         {prefix && (
