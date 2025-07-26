@@ -241,7 +241,7 @@ const AmortizationChart: React.FC<AmortizationChartProps> = ({ schedule, mortgag
           ))}
         </div>
 
-        {/* Monthly/Yearly Toggle with Smart Indicator */}
+        {/* Monthly/Yearly Toggle */}
         <div className="flex items-center space-x-2">
           <span className="text-sm text-slate-300">Detail:</span>
           <button
@@ -254,11 +254,6 @@ const AmortizationChart: React.FC<AmortizationChartProps> = ({ schedule, mortgag
           >
             {showMonthly ? 'Monthly' : 'Yearly'}
           </button>
-          {showMonthly && (
-            <span className="text-xs text-slate-400">
-              ({zoomLevel === 'full' ? 'All months' : `${zoomLevel} detail`})
-            </span>
-          )}
         </div>
       </div>
 
