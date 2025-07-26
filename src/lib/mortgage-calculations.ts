@@ -9,6 +9,11 @@ export interface MortgageInputs {
   interestRate: number; // Annual percentage rate
   loanTermYears: number;
   mortgageType: 'fixed' | 'arm'; // Add mortgage type
+  armRateCaps?: { // Add ARM rate caps (optional for fixed mortgages)
+    initial: number; // First adjustment cap (e.g., 2%)
+    subsequent: number; // Subsequent adjustment cap (e.g., 2%) 
+    lifetime: number; // Lifetime cap (e.g., 5%)
+  };
   propertyTaxRate: number; // Annual percentage rate
   monthlyInsurance: number;
   monthlyMaintenance: number;
@@ -37,6 +42,13 @@ export interface BreakevenAnalysis {
   fullBreakeven: number; // Rent needed to cover all costs including principal
   investmentViableBreakeven: number; // Rent needed after vacancy/management
   breakdown: MortgageBreakdown;
+  armPaymentRange?: { // Add ARM payment range info
+    minPayment: number;
+    maxPayment: number;
+    currentPayment: number;
+    minBreakeven: number;
+    maxBreakeven: number;
+  };
 }
 
 /**
@@ -94,6 +106,40 @@ export function calculatePrincipalInterestSplit(
   const principal = Math.round((monthlyPayment - interest) * 100) / 100;
 
   return { principal, interest };
+}
+
+/**
+ * Calculate ARM payment range based on rate caps
+ */
+function calculateARMPaymentRange(inputs: MortgageInputs, loanAmount: number): {
+  minPayment: number;
+  maxPayment: number;
+  currentPayment: number;
+} {
+  if (inputs.mortgageType !== 'arm' || !inputs.armRateCaps) {
+    const payment = calculateMonthlyPayment(loanAmount, inputs.interestRate, 30); // Default to 30 years for calculation
+    return {
+      minPayment: payment,
+      maxPayment: payment,
+      currentPayment: payment
+    };
+  }
+
+  const currentPayment = calculateMonthlyPayment(loanAmount, inputs.interestRate, 30);
+  
+  // Calculate minimum possible rate (current rate could go down)
+  const minRate = Math.max(0, inputs.interestRate - inputs.armRateCaps.lifetime);
+  const minPayment = calculateMonthlyPayment(loanAmount, minRate, 30);
+  
+  // Calculate maximum possible rate (current rate + lifetime cap)
+  const maxRate = inputs.interestRate + inputs.armRateCaps.lifetime;
+  const maxPayment = calculateMonthlyPayment(loanAmount, maxRate, 30);
+  
+  return {
+    minPayment,
+    maxPayment,
+    currentPayment
+  };
 }
 
 /**
@@ -164,11 +210,30 @@ export function calculateBreakevenAnalysis(inputs: MortgageInputs): BreakevenAna
     totalMonthlyExpenses: fullBreakeven
   };
 
+  // Calculate ARM payment range if applicable
+  let armPaymentRange;
+  if (inputs.mortgageType === 'arm' && inputs.armRateCaps) {
+    const paymentRange = calculateARMPaymentRange(inputs, loanAmount);
+    
+    // Calculate breakeven ranges based on payment differences
+    const paymentDifference = paymentRange.maxPayment - paymentRange.currentPayment;
+    const minPaymentDifference = paymentRange.minPayment - paymentRange.currentPayment;
+    
+    armPaymentRange = {
+      minPayment: paymentRange.minPayment,
+      maxPayment: paymentRange.maxPayment,
+      currentPayment: paymentRange.currentPayment,
+      minBreakeven: Math.round((investmentViableBreakeven + minPaymentDifference) * 100) / 100,
+      maxBreakeven: Math.round((investmentViableBreakeven + paymentDifference) * 100) / 100
+    };
+  }
+
   return {
     burnedMoneyBreakeven: Math.round(burnedMoneyBreakeven * 100) / 100,
     fullBreakeven: Math.round(fullBreakeven * 100) / 100,
     investmentViableBreakeven: Math.round(investmentViableBreakeven * 100) / 100,
-    breakdown
+    breakdown,
+    armPaymentRange
   };
 }
 

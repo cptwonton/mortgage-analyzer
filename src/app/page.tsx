@@ -10,6 +10,11 @@ export default function Home() {
     interestRate: 7.0, // Start with a reasonable default
     loanTermYears: 30,
     mortgageType: 'fixed', // Default to fixed rate
+    armRateCaps: { // Default ARM rate caps (2/2/5 is common)
+      initial: 2,
+      subsequent: 2,
+      lifetime: 5
+    },
     propertyTaxRate: 1.2,
     monthlyInsurance: 150,
     monthlyMaintenance: 200,
@@ -393,15 +398,41 @@ export default function Home() {
                       </div>
                     </div>
                     {inputs.mortgageType === 'arm' && (
-                      <div className="mt-3 p-3 bg-orange-500/20 border border-orange-500/30 rounded-lg">
-                        <div className="flex items-center space-x-2 mb-2">
-                          <div className="w-2 h-2 bg-orange-400 rounded-full"></div>
-                          <span className="text-xs font-medium text-orange-300">Rate Adjustment Notice</span>
+                      <div className="mt-3 space-y-3">
+                        <div className="p-3 bg-orange-500/20 border border-orange-500/30 rounded-lg">
+                          <div className="flex items-center space-x-2 mb-2">
+                            <div className="w-2 h-2 bg-orange-400 rounded-full"></div>
+                            <span className="text-xs font-medium text-orange-300">Rate Adjustment Notice</span>
+                          </div>
+                          <p className="text-xs text-orange-200">
+                            After the initial {inputs.loanTermYears}-year period, your interest rate will adjust annually based on market conditions. 
+                            Your actual payments may increase or decrease.
+                          </p>
                         </div>
-                        <p className="text-xs text-orange-200">
-                          After the initial {inputs.loanTermYears}-year period, your interest rate will adjust annually based on market conditions. 
-                          Your actual payments may increase or decrease.
-                        </p>
+                        
+                        <div className="p-3 bg-white/5 border border-white/20 rounded-lg">
+                          <div className="flex items-center space-x-2 mb-3">
+                            <div className="w-2 h-2 bg-purple-400 rounded-full"></div>
+                            <span className="text-xs font-medium text-purple-300">Rate Caps</span>
+                          </div>
+                          <div className="grid grid-cols-3 gap-3 text-xs">
+                            <div className="text-center">
+                              <div className="text-white font-bold text-lg">{inputs.armRateCaps?.initial}%</div>
+                              <div className="text-slate-400">First Adj.</div>
+                            </div>
+                            <div className="text-center">
+                              <div className="text-white font-bold text-lg">{inputs.armRateCaps?.subsequent}%</div>
+                              <div className="text-slate-400">Annual</div>
+                            </div>
+                            <div className="text-center">
+                              <div className="text-white font-bold text-lg">{inputs.armRateCaps?.lifetime}%</div>
+                              <div className="text-slate-400">Lifetime</div>
+                            </div>
+                          </div>
+                          <p className="text-xs text-slate-400 mt-2">
+                            Maximum rate increases: {inputs.armRateCaps?.initial}% first adjustment, {inputs.armRateCaps?.subsequent}% annually, {inputs.armRateCaps?.lifetime}% total
+                          </p>
+                        </div>
                       </div>
                     )}
                   </div>
@@ -630,6 +661,42 @@ export default function Home() {
                       </p>
                       <p className="text-sm text-green-200">Accounts for vacancy & property management</p>
                     </div>
+                    
+                    {/* ARM Payment Range */}
+                    {inputs.mortgageType === 'arm' && analysis.armPaymentRange && (
+                      <div className="group relative overflow-hidden bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-500/30 rounded-xl p-6 hover:from-purple-500/30 hover:to-pink-500/30 transition-all duration-300 physical-card">
+                        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 to-pink-500"></div>
+                        <div className="flex items-center justify-between mb-2">
+                          <h3 className="font-bold text-purple-200 flex items-center">
+                            <span className="mr-2">📊</span>
+                            ARM Payment Range
+                          </h3>
+                        </div>
+                        <div className="space-y-2">
+                          <div className="flex justify-between items-center">
+                            <span className="text-sm text-purple-200">Current (Initial Rate):</span>
+                            <span className="text-xl font-bold text-white">
+                              ${analysis.armPaymentRange.currentPayment.toLocaleString()}
+                            </span>
+                          </div>
+                          <div className="flex justify-between items-center">
+                            <span className="text-sm text-purple-200">Potential Range:</span>
+                            <span className="text-lg font-bold text-purple-200">
+                              ${analysis.armPaymentRange.minPayment.toLocaleString()} - ${analysis.armPaymentRange.maxPayment.toLocaleString()}
+                            </span>
+                          </div>
+                          <div className="flex justify-between items-center pt-2 border-t border-purple-500/30">
+                            <span className="text-sm text-purple-200">Rent Range Needed:</span>
+                            <span className="text-lg font-bold text-purple-200">
+                              ${analysis.armPaymentRange.minBreakeven.toLocaleString()} - ${analysis.armPaymentRange.maxBreakeven.toLocaleString()}
+                            </span>
+                          </div>
+                        </div>
+                        <p className="text-xs text-purple-300 mt-3">
+                          Based on {inputs.armRateCaps?.initial}%/{inputs.armRateCaps?.subsequent}%/{inputs.armRateCaps?.lifetime}% rate caps
+                        </p>
+                      </div>
+                    )}
                   </div>
 
                   {/* Expense Breakdown */}
