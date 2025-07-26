@@ -90,23 +90,31 @@ async function scrapeRatesSimple(): Promise<RateResponse> {
 
 // Alternative: Use a rate API service (if available)
 async function getRatesFromAPI(): Promise<RateResponse> {
-  // For now, return fallback rates with proper labeling
+  // Return fallback rates with proper labeling
   return {
     success: false, // Mark as failed so UI shows correct status
-    error: 'Live rate scraping not available on Vercel',
+    error: 'Using fallback rates - live scraping unavailable',
     fallback: FALLBACK_RATES
   };
 }
 
 export async function GET(request: NextRequest) {
   try {
-    // Try scraping first, fall back to API rates
+    // Try scraping first
+    console.log('Attempting to scrape rates from Mr. Cooper...');
     let result = await scrapeRatesSimple();
     
-    // If scraping failed, use fallback rates with proper error indication
+    // If scraping failed, use fallback rates with the actual error
     if (!result.success) {
-      result = await getRatesFromAPI();
+      console.log('Scraping failed:', result.error);
+      return NextResponse.json({
+        success: false,
+        error: `Scraping failed: ${result.error}`,
+        fallback: FALLBACK_RATES
+      });
     }
+    
+    console.log('Successfully scraped rates!');
     
     // Add cache headers (cache for 1 hour)
     const response = NextResponse.json(result);
@@ -117,9 +125,9 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error('API error:', error);
     
-    return NextResponse.json({ // Return 200 with error info instead of 500
+    return NextResponse.json({
       success: false,
-      error: 'Rate scraping failed on serverless environment',
+      error: `API error: ${error instanceof Error ? error.message : 'Unknown error'}`,
       fallback: FALLBACK_RATES
     });
   }
