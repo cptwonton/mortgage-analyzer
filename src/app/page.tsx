@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { calculateBreakevenAnalysis, MortgageInputs, validateMortgageInputs } from '@/lib/mortgage-calculations';
 import AmortizationChart from '@/components/AmortizationChart';
 import FloatingMortgageControls from '@/components/FloatingMortgageControls';
+import CurrentRatesDisplay from '@/components/CurrentRatesDisplay';
 
 export default function Home() {
   const [inputs, setInputs] = useState<MortgageInputs>({
@@ -432,6 +433,16 @@ export default function Home() {
                         }
                       </p>
                     </div>
+                  </div>
+
+                  {/* Current Market Rates */}
+                  <div className="mb-6">
+                    <CurrentRatesDisplay 
+                      mortgageType={inputs.mortgageType}
+                      loanTermYears={inputs.loanTermYears}
+                      onRateSelect={(rate) => setInputs({...inputs, interestRate: rate})}
+                      compact={true}
+                    />
                   </div>
 
                   <div className="group">
