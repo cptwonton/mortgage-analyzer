@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { calculateBreakevenAnalysis, MortgageInputs, validateMortgageInputs } from '@/lib/mortgage-calculations';
+import { calculateBreakevenAnalysis, MortgageInputs, validateMortgageInputs, validateField, getFieldRanges } from '@/lib/mortgage-calculations';
 import AmortizationChart from '@/components/AmortizationChart';
 import FloatingMortgageControls from '@/components/FloatingMortgageControls';
 import CurrentRatesDisplay from '@/components/CurrentRatesDisplay';
@@ -116,6 +116,17 @@ export default function Home() {
                     type="number"
                     prefix="$"
                     placeholder="450,000"
+                    {...(() => {
+                      const validation = validateField('purchasePrice', inputs.purchasePrice);
+                      const ranges = getFieldRanges('purchasePrice');
+                      return {
+                        validationState: validation.state,
+                        errorMessage: validation.message,
+                        min: ranges.min,
+                        max: ranges.max,
+                        allowZero: ranges.allowZero
+                      };
+                    })()}
                   />
                 </div>
               </div>
@@ -460,6 +471,18 @@ export default function Home() {
                     placeholder="1.2"
                     suffix="%"
                     step="0.1"
+                    helpText="Typical range varies by location"
+                    {...(() => {
+                      const validation = validateField('propertyTaxRate', inputs.propertyTaxRate);
+                      const ranges = getFieldRanges('propertyTaxRate');
+                      return {
+                        validationState: validation.state,
+                        errorMessage: validation.message,
+                        min: ranges.min,
+                        max: ranges.max,
+                        allowZero: ranges.allowZero
+                      };
+                    })()}
                   />
 
                   <div className="grid grid-cols-2 gap-4">
@@ -470,6 +493,18 @@ export default function Home() {
                       onChange={(value) => handleInputChange('monthlyInsurance', value)}
                       placeholder="150"
                       prefix="$"
+                      helpText="Homeowner's insurance cost"
+                      {...(() => {
+                        const validation = validateField('monthlyInsurance', inputs.monthlyInsurance);
+                        const ranges = getFieldRanges('monthlyInsurance');
+                        return {
+                          validationState: validation.state,
+                          errorMessage: validation.message,
+                          min: ranges.min,
+                          max: ranges.max,
+                          allowZero: ranges.allowZero
+                        };
+                      })()}
                     />
 
                     <StandardInput
@@ -479,6 +514,18 @@ export default function Home() {
                       onChange={(value) => handleInputChange('monthlyMaintenance', value)}
                       placeholder="200"
                       prefix="$"
+                      helpText="Ongoing repairs & upkeep"
+                      {...(() => {
+                        const validation = validateField('monthlyMaintenance', inputs.monthlyMaintenance);
+                        const ranges = getFieldRanges('monthlyMaintenance');
+                        return {
+                          validationState: validation.state,
+                          errorMessage: validation.message,
+                          min: ranges.min,
+                          max: ranges.max,
+                          allowZero: ranges.allowZero
+                        };
+                      })()}
                     />
                   </div>
                 </div>
@@ -504,6 +551,17 @@ export default function Home() {
                       placeholder="150"
                       prefix="$"
                       helpText="Major repairs & replacements"
+                      {...(() => {
+                        const validation = validateField('monthlyCapEx', inputs.monthlyCapEx);
+                        const ranges = getFieldRanges('monthlyCapEx');
+                        return {
+                          validationState: validation.state,
+                          errorMessage: validation.message,
+                          min: ranges.min,
+                          max: ranges.max,
+                          allowZero: ranges.allowZero
+                        };
+                      })()}
                     />
 
                     <StandardInput
@@ -514,6 +572,17 @@ export default function Home() {
                       placeholder="8"
                       suffix="%"
                       helpText="Expected vacancy periods"
+                      {...(() => {
+                        const validation = validateField('vacancyRate', inputs.vacancyRate);
+                        const ranges = getFieldRanges('vacancyRate');
+                        return {
+                          validationState: validation.state,
+                          errorMessage: validation.message,
+                          min: ranges.min,
+                          max: ranges.max,
+                          allowZero: ranges.allowZero
+                        };
+                      })()}
                     />
                   </div>
 

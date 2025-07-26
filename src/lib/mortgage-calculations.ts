@@ -322,6 +322,83 @@ export function calculateBreakevenAnalysis(inputs: MortgageInputs): BreakevenAna
 }
 
 /**
+ * Field-specific validation for individual inputs
+ */
+export function validateField(field: keyof MortgageInputs, value: number): {
+  isValid: boolean;
+  state: 'default' | 'error' | 'warning' | 'success';
+  message?: string;
+} {
+  switch (field) {
+    case 'purchasePrice':
+      if (value <= 0) return { isValid: false, state: 'error', message: 'Purchase price is required' };
+      if (value < 50000) return { isValid: true, state: 'warning', message: 'Very low for typical investment property' };
+      if (value > 2000000) return { isValid: true, state: 'warning', message: 'High-end property - ensure rent projections are realistic' };
+      return { isValid: true, state: 'success' };
+
+    case 'propertyTaxRate':
+      if (value < 0) return { isValid: false, state: 'error', message: 'Cannot be negative' };
+      if (value > 10) return { isValid: false, state: 'error', message: 'Unusually high tax rate' };
+      if (value === 0) return { isValid: true, state: 'warning', message: 'No property tax? Verify this is correct' };
+      if (value < 0.5) return { isValid: true, state: 'success', message: 'Low tax area' };
+      if (value > 3) return { isValid: true, state: 'warning', message: 'High tax area - impacts cash flow' };
+      return { isValid: true, state: 'success' };
+
+    case 'monthlyInsurance':
+      if (value < 0) return { isValid: false, state: 'error', message: 'Cannot be negative' };
+      if (value === 0) return { isValid: true, state: 'warning', message: 'No insurance? This is risky for investment property' };
+      if (value < 50) return { isValid: true, state: 'warning', message: 'Seems low - verify coverage is adequate' };
+      if (value > 1000) return { isValid: true, state: 'warning', message: 'High insurance cost - check if this includes flood/special coverage' };
+      return { isValid: true, state: 'success' };
+
+    case 'monthlyMaintenance':
+      if (value < 0) return { isValid: false, state: 'error', message: 'Cannot be negative' };
+      if (value === 0) return { isValid: true, state: 'warning', message: 'No maintenance budget? Properties require ongoing upkeep' };
+      if (value < 100) return { isValid: true, state: 'warning', message: 'Low maintenance budget - may be insufficient' };
+      return { isValid: true, state: 'success' };
+
+    case 'monthlyCapEx':
+      if (value < 0) return { isValid: false, state: 'error', message: 'Cannot be negative' };
+      if (value === 0) return { isValid: true, state: 'warning', message: 'No CapEx reserve? Major repairs are inevitable' };
+      if (value < 50) return { isValid: true, state: 'warning', message: 'Low CapEx reserve - consider increasing' };
+      return { isValid: true, state: 'success' };
+
+    case 'vacancyRate':
+      if (value < 0) return { isValid: false, state: 'error', message: 'Cannot be negative' };
+      if (value > 100) return { isValid: false, state: 'error', message: 'Cannot exceed 100%' };
+      if (value === 0) return { isValid: true, state: 'warning', message: 'No vacancy buffer? This is optimistic' };
+      if (value < 5) return { isValid: true, state: 'warning', message: 'Low vacancy rate - ensure this matches your market' };
+      if (value > 20) return { isValid: true, state: 'warning', message: 'High vacancy rate - impacts profitability significantly' };
+      return { isValid: true, state: 'success' };
+
+    default:
+      return { isValid: true, state: 'default' };
+  }
+}
+
+/**
+ * Get reasonable ranges for input fields
+ */
+export function getFieldRanges(field: keyof MortgageInputs): { min?: number; max?: number; allowZero: boolean } {
+  switch (field) {
+    case 'purchasePrice':
+      return { min: 1, max: 5000000, allowZero: false };
+    case 'propertyTaxRate':
+      return { min: 0, max: 10, allowZero: true };
+    case 'monthlyInsurance':
+      return { min: 0, max: 2000, allowZero: true };
+    case 'monthlyMaintenance':
+      return { min: 0, max: 1000, allowZero: true };
+    case 'monthlyCapEx':
+      return { min: 0, max: 1000, allowZero: true };
+    case 'vacancyRate':
+      return { min: 0, max: 50, allowZero: true };
+    default:
+      return { allowZero: true };
+  }
+}
+
+/**
  * Utility function to validate inputs
  */
 export function validateMortgageInputs(inputs: MortgageInputs): string[] {
