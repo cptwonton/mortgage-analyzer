@@ -25,7 +25,18 @@ export default function Home() {
   const handleInputChange = (field: keyof MortgageInputs, value: string) => {
     // Handle mortgage type separately since it's not a number
     if (field === 'mortgageType') {
-      const newInputs = { ...inputs, [field]: value as 'fixed' | 'arm' };
+      const newMortgageType = value as 'fixed' | 'arm';
+      let newInputs = { ...inputs, [field]: newMortgageType };
+      
+      // Adjust loan term when switching mortgage types
+      if (newMortgageType === 'arm' && inputs.loanTermYears > 10) {
+        // If switching to ARM and current term > 10, set to 5 (common 5/1 ARM)
+        newInputs.loanTermYears = 5;
+      } else if (newMortgageType === 'fixed' && inputs.loanTermYears < 15) {
+        // If switching to Fixed and current term < 15, set to 30 (most common)
+        newInputs.loanTermYears = 30;
+      }
+      
       setInputs(newInputs);
       
       // Validate inputs
@@ -286,7 +297,7 @@ export default function Home() {
 
                     <div className="group">
                       <label className="block text-sm font-semibold text-slate-200 mb-2 group-focus-within:text-purple-300 transition-colors">
-                        Loan Term
+                        {inputs.mortgageType === 'fixed' ? 'Loan Term' : 'Initial Fixed Period'}
                       </label>
                       <div className="relative">
                         <div className="px-4 py-4 bg-white/5 border border-white/20 rounded-xl backdrop-blur-sm">
@@ -295,41 +306,62 @@ export default function Home() {
                               {inputs.loanTermYears} years
                             </span>
                             <div className="flex space-x-1 text-xs text-slate-400">
-                              <span>15</span>
-                              <span>•</span>
-                              <span>30</span>
+                              {inputs.mortgageType === 'fixed' ? (
+                                <>
+                                  <span>15</span>
+                                  <span>•</span>
+                                  <span>30</span>
+                                </>
+                              ) : (
+                                <>
+                                  <span>3</span>
+                                  <span>•</span>
+                                  <span>10</span>
+                                </>
+                              )}
                             </div>
                           </div>
                           <div className="relative">
                             <input
                               type="range"
-                              min="15"
-                              max="30"
-                              step="5"
+                              min={inputs.mortgageType === 'fixed' ? '15' : '3'}
+                              max={inputs.mortgageType === 'fixed' ? '30' : '10'}
+                              step={inputs.mortgageType === 'fixed' ? '5' : '1'}
                               value={inputs.loanTermYears}
                               onChange={(e) => handleInputChange('loanTermYears', e.target.value)}
                               className="w-full h-2 bg-white/10 rounded-lg appearance-none cursor-pointer slider"
                             />
                             <div 
                               className={`absolute top-0 left-0 h-2 rounded-lg pointer-events-none transition-all duration-300 ${
-                                inputs.loanTermYears <= 20 
-                                  ? 'bg-gradient-to-r from-green-400 to-blue-400'
-                                  : 'bg-gradient-to-r from-blue-400 to-purple-400'
+                                inputs.mortgageType === 'fixed' 
+                                  ? (inputs.loanTermYears <= 20 
+                                      ? 'bg-gradient-to-r from-green-400 to-blue-400'
+                                      : 'bg-gradient-to-r from-blue-400 to-purple-400')
+                                  : (inputs.loanTermYears <= 5
+                                      ? 'bg-gradient-to-r from-orange-400 to-red-400'
+                                      : 'bg-gradient-to-r from-yellow-400 to-orange-400')
                               }`}
-                              style={{ width: `${((inputs.loanTermYears - 15) / 15) * 100}%` }}
+                              style={{ 
+                                width: inputs.mortgageType === 'fixed' 
+                                  ? `${((inputs.loanTermYears - 15) / 15) * 100}%`
+                                  : `${((inputs.loanTermYears - 3) / 7) * 100}%`
+                              }}
                             ></div>
                           </div>
                         </div>
                       </div>
                       <p className="text-xs text-slate-400 mt-1">
-                        {inputs.loanTermYears <= 20 ? 'Lower interest, higher payments' : 'Higher interest, lower payments'}
+                        {inputs.mortgageType === 'fixed' 
+                          ? (inputs.loanTermYears <= 20 ? 'Lower interest, higher payments' : 'Higher interest, lower payments')
+                          : (inputs.loanTermYears <= 5 ? 'Shorter fixed period, sooner adjustments' : 'Longer fixed period, later adjustments')
+                        }
                       </p>
                     </div>
                   </div>
 
                   <div className="group">
                     <label className="block text-sm font-semibold text-slate-200 mb-2 group-focus-within:text-purple-300 transition-colors">
-                      Interest Rate
+                      {inputs.mortgageType === 'fixed' ? 'Interest Rate' : 'Initial Interest Rate'}
                     </label>
                     <div className="relative">
                       <div className="px-4 py-4 bg-white/5 border border-white/20 rounded-xl backdrop-blur-sm">
@@ -360,6 +392,18 @@ export default function Home() {
                         </div>
                       </div>
                     </div>
+                    {inputs.mortgageType === 'arm' && (
+                      <div className="mt-3 p-3 bg-orange-500/20 border border-orange-500/30 rounded-lg">
+                        <div className="flex items-center space-x-2 mb-2">
+                          <div className="w-2 h-2 bg-orange-400 rounded-full"></div>
+                          <span className="text-xs font-medium text-orange-300">Rate Adjustment Notice</span>
+                        </div>
+                        <p className="text-xs text-orange-200">
+                          After the initial {inputs.loanTermYears}-year period, your interest rate will adjust annually based on market conditions. 
+                          Your actual payments may increase or decrease.
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
