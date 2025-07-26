@@ -1,103 +1,271 @@
-import Image from "next/image";
+'use client';
+
+import { useState } from 'react';
+import { calculateBreakevenAnalysis, MortgageInputs, validateMortgageInputs } from '@/lib/mortgage-calculations';
 
 export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [inputs, setInputs] = useState<MortgageInputs>({
+    purchasePrice: 0,
+    downPaymentPercent: 20,
+    interestRate: 7.5,
+    loanTermYears: 30,
+    propertyTaxRate: 1.2,
+    monthlyInsurance: 150,
+    monthlyMaintenance: 200,
+    monthlyCapEx: 150,
+    vacancyRate: 8,
+    propertyManagementRate: 10,
+    monthlyHOA: 0
+  });
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  const [errors, setErrors] = useState<string[]>([]);
+
+  const handleInputChange = (field: keyof MortgageInputs, value: string) => {
+    // Convert string to number, but handle empty strings
+    const numericValue = value === '' ? 0 : Number(value);
+    const newInputs = { ...inputs, [field]: numericValue };
+    setInputs(newInputs);
+    
+    // Validate inputs
+    const validationErrors = validateMortgageInputs(newInputs);
+    setErrors(validationErrors);
+  };
+
+  const analysis = errors.length === 0 ? calculateBreakevenAnalysis(inputs) : null;
+
+  return (
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            🏠 Home Mortgage Analyzer
+          </h1>
+          <p className="text-lg text-gray-600">
+            Investment Property Evaluator - Find the rental income you need
+          </p>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Input Panel */}
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <h2 className="text-xl font-semibold mb-4">Property Details</h2>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Purchase Price
+                </label>
+                <input
+                  type="number"
+                  value={inputs.purchasePrice === 0 ? '' : inputs.purchasePrice}
+                  onChange={(e) => handleInputChange('purchasePrice', e.target.value)}
+                  placeholder="Enter purchase price"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder-gray-400"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Down Payment (%)
+                </label>
+                <input
+                  type="number"
+                  value={inputs.downPaymentPercent === 0 ? '' : inputs.downPaymentPercent}
+                  onChange={(e) => handleInputChange('downPaymentPercent', e.target.value)}
+                  placeholder="e.g., 20"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder-gray-400"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Interest Rate (%)
+                </label>
+                <input
+                  type="number"
+                  step="0.1"
+                  value={inputs.interestRate === 0 ? '' : inputs.interestRate}
+                  onChange={(e) => handleInputChange('interestRate', e.target.value)}
+                  placeholder="e.g., 7.5"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder-gray-400"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Property Tax Rate (% annually)
+                </label>
+                <input
+                  type="number"
+                  step="0.1"
+                  value={inputs.propertyTaxRate === 0 ? '' : inputs.propertyTaxRate}
+                  onChange={(e) => handleInputChange('propertyTaxRate', e.target.value)}
+                  placeholder="e.g., 1.2"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder-gray-400"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Monthly Insurance
+                </label>
+                <input
+                  type="number"
+                  value={inputs.monthlyInsurance === 0 ? '' : inputs.monthlyInsurance}
+                  onChange={(e) => handleInputChange('monthlyInsurance', e.target.value)}
+                  placeholder="e.g., 150"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder-gray-400"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Monthly Maintenance
+                </label>
+                <input
+                  type="number"
+                  value={inputs.monthlyMaintenance === 0 ? '' : inputs.monthlyMaintenance}
+                  onChange={(e) => handleInputChange('monthlyMaintenance', e.target.value)}
+                  placeholder="e.g., 200"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder-gray-400"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Monthly CapEx Reserve
+                </label>
+                <input
+                  type="number"
+                  value={inputs.monthlyCapEx === 0 ? '' : inputs.monthlyCapEx}
+                  onChange={(e) => handleInputChange('monthlyCapEx', e.target.value)}
+                  placeholder="e.g., 150"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder-gray-400"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Vacancy Rate (%)
+                </label>
+                <input
+                  type="number"
+                  value={inputs.vacancyRate === 0 ? '' : inputs.vacancyRate}
+                  onChange={(e) => handleInputChange('vacancyRate', e.target.value)}
+                  placeholder="e.g., 8"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder-gray-400"
+                />
+              </div>
+            </div>
+
+            {errors.length > 0 && (
+              <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-md">
+                <h3 className="text-sm font-medium text-red-800">Validation Errors:</h3>
+                <ul className="mt-1 text-sm text-red-700">
+                  {errors.map((error, index) => (
+                    <li key={index}>• {error}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+
+          {/* Results Panel */}
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <h2 className="text-xl font-semibold mb-4">Required Rental Income</h2>
+            
+            {analysis ? (
+              <div className="space-y-6">
+                {/* Breakeven Points */}
+                <div className="space-y-3">
+                  <div className="p-4 bg-red-50 border border-red-200 rounded-md">
+                    <h3 className="font-medium text-red-800">💰 Burned Money Breakeven</h3>
+                    <p className="text-2xl font-bold text-red-900">
+                      ${analysis.burnedMoneyBreakeven.toLocaleString()}/month
+                    </p>
+                    <p className="text-sm text-red-700">Covers carrying costs (non-equity expenses)</p>
+                  </div>
+
+                  <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-md">
+                    <h3 className="font-medium text-yellow-800">💰 Full Breakeven</h3>
+                    <p className="text-2xl font-bold text-yellow-900">
+                      ${analysis.fullBreakeven.toLocaleString()}/month
+                    </p>
+                    <p className="text-sm text-yellow-700">Covers all expenses including principal</p>
+                  </div>
+
+                  <div className="p-4 bg-green-50 border border-green-200 rounded-md">
+                    <h3 className="font-medium text-green-800">💰 Investment Viable</h3>
+                    <p className="text-2xl font-bold text-green-900">
+                      ${analysis.investmentViableBreakeven.toLocaleString()}/month
+                    </p>
+                    <p className="text-sm text-green-700">Accounts for vacancy & property management</p>
+                  </div>
+                </div>
+
+                {/* Expense Breakdown */}
+                <div>
+                  <h3 className="font-medium text-gray-800 mb-3">Monthly Expense Breakdown</h3>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-gray-700">Principal (equity building):</span>
+                      <span className="font-medium text-green-600">
+                        ${analysis.breakdown.principal.toLocaleString()}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-700">Interest:</span>
+                      <span className="font-medium text-red-600">
+                        ${analysis.breakdown.interest.toLocaleString()}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-700">Property Tax:</span>
+                      <span className="font-medium text-red-600">
+                        ${analysis.breakdown.propertyTax.toLocaleString()}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-700">Insurance:</span>
+                      <span className="font-medium text-red-600">
+                        ${analysis.breakdown.insurance.toLocaleString()}
+                      </span>
+                    </div>
+                    {analysis.breakdown.pmi > 0 && (
+                      <div className="flex justify-between">
+                        <span className="text-gray-700">PMI:</span>
+                        <span className="font-medium text-red-600">
+                          ${analysis.breakdown.pmi.toLocaleString()}
+                        </span>
+                      </div>
+                    )}
+                    <div className="flex justify-between">
+                      <span className="text-gray-700">Maintenance:</span>
+                      <span className="font-medium text-red-600">
+                        ${analysis.breakdown.maintenance.toLocaleString()}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-700">CapEx Reserve:</span>
+                      <span className="font-medium text-red-600">
+                        ${analysis.breakdown.capEx.toLocaleString()}
+                      </span>
+                    </div>
+                    <div className="border-t pt-2 flex justify-between font-medium">
+                      <span className="text-gray-800">Total Monthly Expenses:</span>
+                      <span className="text-gray-800">${analysis.breakdown.totalMonthlyExpenses.toLocaleString()}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="text-center text-gray-500 py-8">
+                <p>Fix validation errors to see analysis</p>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

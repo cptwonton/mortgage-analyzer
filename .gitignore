@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# development logs
+dev-server.log
+
+# test files
+test-mortgage.js
