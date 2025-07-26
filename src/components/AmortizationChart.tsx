@@ -15,6 +15,7 @@ import { AmortizationPayment } from '@/lib/mortgage-calculations';
 interface AmortizationChartProps {
   schedule: AmortizationPayment[];
   mortgageType: 'fixed' | 'arm';
+  armInitialPeriod?: number; // For ARM visualization
 }
 
 interface ChartDataPoint {
@@ -26,11 +27,16 @@ interface ChartDataPoint {
   remainingBalance: number;
   cumulativeInterest: number;
   cumulativePrincipal: number;
+  isArmAdjustmentPeriod?: boolean; // New field for ARM visualization
 }
 
 type ZoomLevel = 'full' | '5yr' | '10yr' | '15yr';
 
-const AmortizationChart: React.FC<AmortizationChartProps> = ({ schedule, mortgageType }) => {
+const AmortizationChart: React.FC<AmortizationChartProps> = ({ 
+  schedule, 
+  mortgageType, 
+  armInitialPeriod = 5 
+}) => {
   const [zoomLevel, setZoomLevel] = useState<ZoomLevel>('full');
   const [selectedPoint, setSelectedPoint] = useState<ChartDataPoint | null>(null);
   const [showMonthly, setShowMonthly] = useState(false);
@@ -61,6 +67,8 @@ const AmortizationChart: React.FC<AmortizationChartProps> = ({ schedule, mortgag
       }
       
       schedule.slice(0, monthsToShow).forEach(payment => {
+        const isArmAdjustmentPeriod = mortgageType === 'arm' && payment.year > armInitialPeriod;
+        
         data.push({
           year: payment.year + (payment.month % 12) / 12,
           month: payment.month,
@@ -69,7 +77,8 @@ const AmortizationChart: React.FC<AmortizationChartProps> = ({ schedule, mortgag
           totalPayment: Math.round(payment.payment),
           remainingBalance: Math.round(payment.remainingBalance),
           cumulativeInterest: Math.round(payment.cumulativeInterest),
-          cumulativePrincipal: Math.round(payment.cumulativePrincipal)
+          cumulativePrincipal: Math.round(payment.cumulativePrincipal),
+          isArmAdjustmentPeriod
         });
       });
     } else {
@@ -83,6 +92,8 @@ const AmortizationChart: React.FC<AmortizationChartProps> = ({ schedule, mortgag
       });
 
       Object.values(yearlyData).forEach(payment => {
+        const isArmAdjustmentPeriod = mortgageType === 'arm' && payment.year > armInitialPeriod;
+        
         data.push({
           year: payment.year,
           month: payment.month,
@@ -91,13 +102,14 @@ const AmortizationChart: React.FC<AmortizationChartProps> = ({ schedule, mortgag
           totalPayment: Math.round(payment.payment),
           remainingBalance: Math.round(payment.remainingBalance),
           cumulativeInterest: Math.round(payment.cumulativeInterest),
-          cumulativePrincipal: Math.round(payment.cumulativePrincipal)
+          cumulativePrincipal: Math.round(payment.cumulativePrincipal),
+          isArmAdjustmentPeriod
         });
       });
     }
 
     return data;
-  }, [schedule, showMonthly, zoomLevel]);
+  }, [schedule, showMonthly, zoomLevel, mortgageType, armInitialPeriod]);
 
   // Auto-adjust zoom when switching to monthly if current zoom is incompatible
   const handleMonthlyToggle = () => {
@@ -134,15 +146,28 @@ const AmortizationChart: React.FC<AmortizationChartProps> = ({ schedule, mortgag
     return chartData.find(d => d.principal > d.interest);
   }, [chartData]);
 
-  // Custom tooltip with enhanced information
+  // Custom tooltip with enhanced information and ARM awareness
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload as ChartDataPoint;
+      const isArmPeriod = data.isArmAdjustmentPeriod;
+      
       return (
         <div className="bg-slate-800/95 backdrop-blur-sm border border-white/20 rounded-lg p-4 shadow-xl min-w-64">
-          <p className="text-white font-semibold mb-3">
-            {showMonthly ? `Month ${data.month}` : `Year ${Math.floor(data.year)}`}
-          </p>
+          <div className="flex items-center justify-between mb-3">
+            <p className="text-white font-semibold">
+              {showMonthly ? `Month ${data.month}` : `Year ${Math.floor(data.year)}`}
+            </p>
+            {mortgageType === 'arm' && (
+              <div className={`px-2 py-1 rounded text-xs font-medium ${
+                isArmPeriod 
+                  ? 'bg-orange-500/20 text-orange-300 border border-orange-500/30'
+                  : 'bg-blue-500/20 text-blue-300 border border-blue-500/30'
+              }`}>
+                {isArmPeriod ? 'Adjustable Period' : 'Fixed Period'}
+              </div>
+            )}
+          </div>
           
           <div className="space-y-2 text-sm">
             <div className="flex justify-between items-center">
@@ -181,6 +206,19 @@ const AmortizationChart: React.FC<AmortizationChartProps> = ({ schedule, mortgag
                 <span className="text-green-200">${data.cumulativePrincipal.toLocaleString()}</span>
               </div>
             </div>
+
+            {/* ARM-specific warning */}
+            {mortgageType === 'arm' && isArmPeriod && (
+              <div className="pt-2 border-t border-orange-500/30">
+                <div className="flex items-center space-x-1 text-orange-300">
+                  <span className="text-xs">⚠️</span>
+                  <span className="text-xs font-medium">Rate Adjustment Period</span>
+                </div>
+                <p className="text-xs text-orange-200 mt-1">
+                  Payments shown are based on initial rate. Actual payments may vary with rate adjustments.
+                </p>
+              </div>
+            )}
           </div>
         </div>
       );
@@ -239,6 +277,12 @@ const AmortizationChart: React.FC<AmortizationChartProps> = ({ schedule, mortgag
           <span className={`text-sm font-medium ${showMonthly ? 'text-purple-300' : 'text-cyan-300'}`}>
             {showMonthly ? 'Monthly Detail View' : 'Yearly Overview'}
           </span>
+          {mortgageType === 'arm' && (
+            <div className="flex items-center space-x-1 ml-2">
+              <div className="w-2 h-2 bg-orange-400 rounded-full"></div>
+              <span className="text-xs text-orange-300 font-medium">ARM</span>
+            </div>
+          )}
         </div>
         <p className="text-xs text-slate-300 mt-1">
           {showMonthly ? (
@@ -249,6 +293,9 @@ const AmortizationChart: React.FC<AmortizationChartProps> = ({ schedule, mortgag
                 zoomLevel === '10yr' ? 'the first 10 years (120 months)' :
                 'the first 15 years (180 months)'
               }. Switch to "Yearly" for full loan overview.
+              {mortgageType === 'arm' && (
+                <> <strong className="text-orange-300">ARM Note:</strong> Rate adjustments begin after year {armInitialPeriod}.</>
+              )}
             </>
           ) : (
             <>
@@ -258,6 +305,9 @@ const AmortizationChart: React.FC<AmortizationChartProps> = ({ schedule, mortgag
                 zoomLevel === '10yr' ? 'the first 10 years' :
                 'the first 15 years'
               }. Switch to "Monthly" for detailed month-by-month analysis.
+              {mortgageType === 'arm' && (
+                <> <strong className="text-orange-300">ARM Note:</strong> Orange line marks when rate adjustments begin (year {armInitialPeriod}).</>
+              )}
             </>
           )}
         </p>
@@ -277,6 +327,7 @@ const AmortizationChart: React.FC<AmortizationChartProps> = ({ schedule, mortgag
             onClick={handleChartClick}
           >
             <defs>
+              {/* Fixed Rate Gradients */}
               <linearGradient id="principalGradient" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="#10b981" stopOpacity={0.8}/>
                 <stop offset="95%" stopColor="#10b981" stopOpacity={0.2}/>
@@ -284,6 +335,16 @@ const AmortizationChart: React.FC<AmortizationChartProps> = ({ schedule, mortgag
               <linearGradient id="interestGradient" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="#ef4444" stopOpacity={0.8}/>
                 <stop offset="95%" stopColor="#ef4444" stopOpacity={0.2}/>
+              </linearGradient>
+              
+              {/* ARM Adjustment Period Gradients (More Vibrant/Warning Colors) */}
+              <linearGradient id="principalGradientArm" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.8}/>
+                <stop offset="95%" stopColor="#f59e0b" stopOpacity={0.3}/>
+              </linearGradient>
+              <linearGradient id="interestGradientArm" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#dc2626" stopOpacity={0.9}/>
+                <stop offset="95%" stopColor="#dc2626" stopOpacity={0.3}/>
               </linearGradient>
             </defs>
             
@@ -327,6 +388,22 @@ const AmortizationChart: React.FC<AmortizationChartProps> = ({ schedule, mortgag
                   value: "Crossover Point", 
                   position: "top",
                   style: { fill: '#06b6d4', fontSize: '12px' }
+                }}
+              />
+            )}
+
+            {/* ARM Rate Adjustment Period Reference Line */}
+            {mortgageType === 'arm' && (
+              <ReferenceLine 
+                x={armInitialPeriod} 
+                stroke="#f59e0b" 
+                strokeDasharray="8 4"
+                strokeOpacity={0.8}
+                strokeWidth={2}
+                label={{ 
+                  value: "Rate Adjustments Begin", 
+                  position: "topLeft",
+                  style: { fill: '#f59e0b', fontSize: '12px', fontWeight: 'bold' }
                 }}
               />
             )}
