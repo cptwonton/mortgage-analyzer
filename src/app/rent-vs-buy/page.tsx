@@ -178,6 +178,7 @@ export default function RentVsBuyCalculator() {
                         placeholder="2500"
                         formatCurrency={true}
                         helpText="Your current monthly rent payment"
+                        min={200}
                         max={15000}
                         helpTooltip={
                           Number(monthlyRent) === 0 ? {
@@ -188,6 +189,17 @@ export default function RentVsBuyCalculator() {
                                 <p className="text-sm text-slate-400">
                                   Maybe you're living with family, house-sitting, or found the deal of the century. 
                                   In any case, buying will definitely cost more than $0/month! 😄
+                                </p>
+                              </div>
+                            )
+                          } : Number(monthlyRent) < 200 && Number(monthlyRent) > 0 ? {
+                            title: "Unicorn Deal Alert! 🦄",
+                            content: (
+                              <div>
+                                <p className="mb-2">Under $200/month? That's a ridiculous homie deal! 🤯</p>
+                                <p className="text-sm text-slate-400">
+                                  You've either found the deal of the century, live in a very unique situation, 
+                                  or there might be a typo. Either way, definitely keep renting! 😂
                                 </p>
                               </div>
                             )
