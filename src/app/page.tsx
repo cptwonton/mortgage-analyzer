@@ -537,6 +537,7 @@ export default function Home() {
                       onChange={(value) => handleInputChange('monthlyInsurance', value)}
                       placeholder="150"
                       prefix="$"
+                      formatCurrency={true}
                       helpText="Homeowner's insurance cost"
                       {...(() => {
                         const validation = validateField('monthlyInsurance', inputs.monthlyInsurance);
@@ -558,6 +559,7 @@ export default function Home() {
                       onChange={(value) => handleInputChange('monthlyMaintenance', value)}
                       placeholder="200"
                       prefix="$"
+                      formatCurrency={true}
                       helpText="Ongoing repairs & upkeep"
                       helpTooltip={{
                         title: "Monthly Maintenance vs CapEx Reserve",
@@ -624,6 +626,7 @@ export default function Home() {
                       onChange={(value) => handleInputChange('monthlyCapEx', value)}
                       placeholder="150"
                       prefix="$"
+                      formatCurrency={true}
                       helpText="Major repairs & replacements"
                       helpTooltip={{
                         title: "CapEx Reserve - Capital Expenditures",
