@@ -339,13 +339,15 @@ export function validateField(field: keyof MortgageInputs, value: number): {
       if (value > 10) return { isValid: false, state: 'error', message: 'Unusually high tax rate' };
       if (value === 0) return { isValid: true, state: 'warning', message: 'No property tax? Verify this is correct' };
       if (value < 0.5) return { isValid: true, state: 'success', message: 'Low tax area' };
-      if (value > 3) return { isValid: true, state: 'warning', message: 'High tax area - impacts cash flow' };
+      if (value > 4) return { isValid: true, state: 'warning', message: 'Extremely high tax area - verify rate is correct' };
+      if (value > 3) return { isValid: true, state: 'warning', message: 'High tax area - impacts cash flow significantly' };
       return { isValid: true, state: 'success' };
 
     case 'monthlyInsurance':
       if (value < 0) return { isValid: false, state: 'error', message: 'Cannot be negative' };
       if (value === 0) return { isValid: true, state: 'warning', message: 'No insurance? This is risky for investment property' };
       if (value < 50) return { isValid: true, state: 'warning', message: 'Seems low - verify coverage is adequate' };
+      if (value > 5000) return { isValid: true, state: 'warning', message: 'Ultra-luxury insurance - verify coverage details' };
       if (value > 1000) return { isValid: true, state: 'warning', message: 'High insurance cost - check if this includes flood/special coverage' };
       return { isValid: true, state: 'success' };
 
@@ -353,12 +355,16 @@ export function validateField(field: keyof MortgageInputs, value: number): {
       if (value < 0) return { isValid: false, state: 'error', message: 'Cannot be negative' };
       if (value === 0) return { isValid: true, state: 'warning', message: 'No maintenance budget? Properties require ongoing upkeep' };
       if (value < 100) return { isValid: true, state: 'warning', message: 'Low maintenance budget - may be insufficient' };
+      if (value > 25000) return { isValid: true, state: 'warning', message: 'Ultra-luxury maintenance - ensure budget is realistic' };
+      if (value > 2000) return { isValid: true, state: 'warning', message: 'High maintenance budget - luxury property or comprehensive coverage' };
       return { isValid: true, state: 'success' };
 
     case 'monthlyCapEx':
       if (value < 0) return { isValid: false, state: 'error', message: 'Cannot be negative' };
       if (value === 0) return { isValid: true, state: 'warning', message: 'No CapEx reserve? Major repairs are inevitable' };
       if (value < 50) return { isValid: true, state: 'warning', message: 'Low CapEx reserve - consider increasing' };
+      if (value > 50000) return { isValid: true, state: 'warning', message: 'Ultra-luxury CapEx - verify reserve calculations' };
+      if (value > 5000) return { isValid: true, state: 'warning', message: 'High CapEx reserve - luxury property or comprehensive planning' };
       return { isValid: true, state: 'success' };
 
     case 'vacancyRate':
@@ -382,13 +388,13 @@ export function getFieldRanges(field: keyof MortgageInputs): { min?: number; max
     case 'purchasePrice':
       return { min: 1, max: 1000000000, allowZero: false };
     case 'propertyTaxRate':
-      return { min: 0, max: 10, allowZero: true };
+      return { min: 0, max: 6, allowZero: true };
     case 'monthlyInsurance':
-      return { min: 0, max: 2000, allowZero: true };
+      return { min: 0, max: 10000, allowZero: true };
     case 'monthlyMaintenance':
-      return { min: 0, max: 1000, allowZero: true };
+      return { min: 0, max: 50000, allowZero: true };
     case 'monthlyCapEx':
-      return { min: 0, max: 1000, allowZero: true };
+      return { min: 0, max: 100000, allowZero: true };
     case 'vacancyRate':
       return { min: 0, max: 50, allowZero: true };
     default:
