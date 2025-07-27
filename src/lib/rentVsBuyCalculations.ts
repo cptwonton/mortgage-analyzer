@@ -392,6 +392,11 @@ function findBreakEvenPoint(projections: CostProjection[]): number {
 export function calculateRentVsBuyAnalysis(inputs: RentVsBuyInputs, downPaymentSelections?: Record<string, number>): RentVsBuyAnalysis {
   const equivalentHousePrices = calculateLoanScenarios(inputs.monthlyRent, downPaymentSelections);
   
+  // Market reality constraints
+  const MIN_VIABLE_HOUSE_PRICE = 150000; // $150k minimum in 2025 market
+  const MIN_RENT_FOR_BUYING = 1200; // Below $1,200/month rent, buying rarely makes sense
+  const MAX_REASONABLE_HOUSE_PRICE = 2000000; // $2M+ is luxury market with different dynamics
+  
   // Use the average house price from the first scenario for cost projections
   const primaryScenario = equivalentHousePrices[0];
   const avgHousePrice = (primaryScenario.housePriceForTotalHousing + primaryScenario.housePriceForBurnableMoney) / 2;
@@ -399,25 +404,58 @@ export function calculateRentVsBuyAnalysis(inputs: RentVsBuyInputs, downPaymentS
   const costProjections = calculateCostProjections(inputs, avgHousePrice);
   const breakEvenMonths = findBreakEvenPoint(costProjections);
   
-  // Determine recommendation
+  // Determine recommendation with market reality checks
   const finalProjection = costProjections[costProjections.length - 1];
-  const recommendation = finalProjection.difference <= 0 ? 'buy' : 'rent';
+  let recommendation: 'buy' | 'rent' = finalProjection.difference <= 0 ? 'buy' : 'rent';
   const totalCostDifference = finalProjection.difference;
   
-  // Generate reasoning
+  // Override recommendation based on market realities
   const reasoning = [];
-  if (recommendation === 'buy') {
-    reasoning.push(`Buying saves $${Math.abs(totalCostDifference).toLocaleString()} over ${inputs.timeHorizon} years`);
-    reasoning.push(`Break-even point at ${(breakEvenMonths / 12).toFixed(1)} years`);
-    reasoning.push('Building equity vs. paying rent to landlord');
+  
+  if (inputs.monthlyRent < MIN_RENT_FOR_BUYING) {
+    recommendation = 'rent';
+    reasoning.push(`At $${inputs.monthlyRent.toLocaleString()}/month rent, you're getting an amazing deal`);
+    reasoning.push('House prices in your budget range are extremely limited in 2025');
+    reasoning.push('Transaction costs and maintenance would exceed your rent savings');
+    reasoning.push('Keep renting and invest the difference for better returns');
+  } else if (avgHousePrice < MIN_VIABLE_HOUSE_PRICE) {
+    recommendation = 'rent';
+    reasoning.push(`Houses under $${MIN_VIABLE_HOUSE_PRICE.toLocaleString()} are rare and often problematic in 2025`);
+    reasoning.push('Limited inventory in this price range across most US markets');
+    reasoning.push('Your rent is low enough that buying doesn\'t make financial sense');
+    reasoning.push('Continue renting and save for a larger down payment');
+  } else if (avgHousePrice > MAX_REASONABLE_HOUSE_PRICE) {
+    recommendation = 'rent';
+    reasoning.push(`At $${inputs.monthlyRent.toLocaleString()}/month rent, you're in luxury territory`);
+    reasoning.push('Luxury real estate has different dynamics and higher volatility');
+    reasoning.push('Renting provides flexibility without massive capital commitment');
+    reasoning.push('Consider investing the down payment in diversified assets');
+  } else if (recommendation === 'buy') {
+    reasoning.push(`Your $${inputs.monthlyRent.toLocaleString()}/month rent can support homeownership`);
+    reasoning.push(`Break-even point at ${(breakEvenMonths / 12).toFixed(1)} years is reasonable`);
+    reasoning.push(`Building equity vs. paying $${(inputs.monthlyRent * 12).toLocaleString()}/year to landlord`);
+    if (totalCostDifference < 0) {
+      reasoning.push(`Buying saves $${Math.abs(totalCostDifference).toLocaleString()} over ${inputs.timeHorizon} years`);
+    }
   } else {
     reasoning.push(`Renting saves $${Math.abs(totalCostDifference).toLocaleString()} over ${inputs.timeHorizon} years`);
-    reasoning.push('Flexibility to move without selling costs');
-    reasoning.push('Investment returns on down payment exceed housing costs');
+    reasoning.push('Flexibility to move without selling costs and realtor fees');
+    reasoning.push('Investment returns on down payment may exceed housing appreciation');
+    if (breakEvenMonths > 60) { // 5+ years
+      reasoning.push('Long break-even period makes renting more attractive');
+    }
   }
   
-  if (inputs.timeHorizon < 5) {
-    reasoning.push('Short time horizon favors renting due to transaction costs');
+  // Add time horizon considerations
+  if (inputs.timeHorizon < 3) {
+    if (recommendation === 'buy') {
+      recommendation = 'rent';
+      reasoning.unshift('Short time horizon (under 3 years) strongly favors renting');
+    } else {
+      reasoning.push('Short time horizon avoids transaction costs of buying/selling');
+    }
+  } else if (inputs.timeHorizon < 5 && recommendation === 'buy') {
+    reasoning.push('Consider your mobility needs - buying works best if staying 5+ years');
   }
   
   return {
