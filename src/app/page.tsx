@@ -96,7 +96,7 @@ export default function LandingPage() {
                 animate={{ scale: 1 }}
                 transition={{ duration: 0.5, delay: 0.3 }}
               >
-                Financial Calculators
+                Money Math
               </motion.h1>
               <motion.p 
                 className="text-2xl text-slate-300 max-w-3xl mx-auto leading-relaxed mb-8"
@@ -104,7 +104,7 @@ export default function LandingPage() {
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.5, delay: 0.5 }}
               >
-                Some tools I built to help with the kind of financial math I find myself doing in my head
+                A couple tools I made to help with the housing math I was always doing in my head
               </motion.p>
               <motion.div 
                 className="flex justify-center"

@@ -13,10 +13,10 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Mortgage Analyzer - Smart Real Estate Investment Analysis",
-  description: "Professional mortgage analysis tool with interactive charts, ARM visualization, and real-time payment breakdowns. Optimize your real estate investments with comprehensive breakeven analysis.",
-  keywords: "mortgage calculator, real estate investment, ARM analysis, amortization chart, property investment, mortgage comparison, breakeven analysis",
-  authors: [{ name: "Mortgage Analyzer" }],
+  title: "Money Math - Housing Calculators",
+  description: "A couple tools I made to help with mortgage and rent vs buy calculations. Useful for when you're browsing Zillow and want to do the math.",
+  keywords: "mortgage calculator, rent vs buy, housing math, mortgage payment, real estate calculator",
+  authors: [{ name: "Jeff" }],
   openGraph: {
     title: "Mortgage Analyzer - Smart Real Estate Investment Analysis",
     description: "Professional mortgage analysis tool with interactive charts, ARM visualization, and real-time payment breakdowns.",
