@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import HelpTooltip from './HelpTooltip';
 
 interface StandardInputProps {
@@ -43,6 +43,41 @@ const StandardInput: React.FC<StandardInputProps> = ({
   allowZero = true,
   formatCurrency = false
 }) => {
+  const [easterEggMessage, setEasterEggMessage] = useState<string>('');
+  const [showEasterEgg, setShowEasterEgg] = useState(false);
+
+  // Easter egg messages for different scenarios
+  const getEasterEggMessage = (numericValue: number, limit: number, isMax: boolean): string => {
+    if (isMax) {
+      if (label === 'Purchase Price' && limit === 1000000000) {
+        const messages = [
+          "🤔 Trying to buy Manhattan? The creator of this app is a certified genius who saw this coming.",
+          "💡 Nice try! But this app's creator anticipated your billionaire dreams.",
+          "🎯 The app's brilliant creator set reasonable limits. You're not buying the moon today.",
+          "🧠 Plot twist: The genius who built this app already thought of everything.",
+          "🏰 Easy there, Bezos! The app's creator was smart enough to add guardrails.",
+          "💰 The mastermind behind this app knew someone would try this. Not today, friend!"
+        ];
+        return messages[Math.floor(Math.random() * messages.length)];
+      } else {
+        return `🤓 The app's creator was too smart to let you enter $${limit.toLocaleString()}+. Nice try though!`;
+      }
+    } else {
+      return `🤨 The brilliant mind behind this app won't let you go below $${limit}. Quality control!`;
+    }
+  };
+
+  // Clear easter egg after a few seconds
+  useEffect(() => {
+    if (showEasterEgg) {
+      const timer = setTimeout(() => {
+        setShowEasterEgg(false);
+        setEasterEggMessage('');
+      }, 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [showEasterEgg]);
+
   // Format number with commas for currency display
   const formatCurrencyValue = (num: number): string => {
     if (num === 0) return '';
@@ -64,11 +99,19 @@ const StandardInput: React.FC<StandardInputProps> = ({
       
       // Enforce max limit if provided
       if (max !== undefined && numericValue > max) {
+        // Trigger easter egg
+        const message = getEasterEggMessage(numericValue, max, true);
+        setEasterEggMessage(message);
+        setShowEasterEgg(true);
         return; // Don't update if over max
       }
       
       // Enforce min limit if provided
       if (min !== undefined && numericValue < min && numericValue !== 0) {
+        // Trigger easter egg
+        const message = getEasterEggMessage(numericValue, min, false);
+        setEasterEggMessage(message);
+        setShowEasterEgg(true);
         return; // Don't update if under min (allow 0 for clearing)
       }
       
@@ -202,6 +245,15 @@ const StandardInput: React.FC<StandardInputProps> = ({
       ) : combinedHelpText ? (
         <p className="text-xs text-slate-400 mt-1">{combinedHelpText}</p>
       ) : null}
+      
+      {/* Easter egg message */}
+      {showEasterEgg && (
+        <div className="mt-2 p-3 bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-400/30 rounded-lg animate-pulse">
+          <p className="text-xs text-purple-200 font-medium">
+            {easterEggMessage}
+          </p>
+        </div>
+      )}
     </div>
   );
 };
