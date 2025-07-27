@@ -9,15 +9,73 @@ import StandardInput from '@/components/ui/StandardInput';
 import SliderInput from '@/components/ui/SliderInput';
 import { RentVsBuyAnalysis, calculateRentVsBuyAnalysis } from '@/lib/rentVsBuyCalculations';
 
+// Default values
+const DEFAULT_VALUES = {
+  monthlyRent: '2500',
+  timeHorizon: '7',
+  downPayment: '50000'
+};
+
+// localStorage keys
+const STORAGE_KEYS = {
+  monthlyRent: 'rentVsBuy_monthlyRent',
+  timeHorizon: 'rentVsBuy_timeHorizon',
+  downPayment: 'rentVsBuy_downPayment'
+};
+
 export default function RentVsBuyCalculator() {
-  // Simplified input states - removed investmentReturn and rentIncrease
-  const [monthlyRent, setMonthlyRent] = useState<string>('2500');
-  const [timeHorizon, setTimeHorizon] = useState<string>('7');
-  const [downPayment, setDownPayment] = useState<string>('50000');
+  // State with default values
+  const [monthlyRent, setMonthlyRent] = useState<string>(DEFAULT_VALUES.monthlyRent);
+  const [timeHorizon, setTimeHorizon] = useState<string>(DEFAULT_VALUES.timeHorizon);
+  const [downPayment, setDownPayment] = useState<string>(DEFAULT_VALUES.downPayment);
   
   // Analysis results
   const [analysis, setAnalysis] = useState<RentVsBuyAnalysis | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
+
+  // Load values from localStorage on mount
+  useEffect(() => {
+    const loadFromStorage = () => {
+      try {
+        const savedMonthlyRent = localStorage.getItem(STORAGE_KEYS.monthlyRent);
+        const savedTimeHorizon = localStorage.getItem(STORAGE_KEYS.timeHorizon);
+        const savedDownPayment = localStorage.getItem(STORAGE_KEYS.downPayment);
+
+        if (savedMonthlyRent) setMonthlyRent(savedMonthlyRent);
+        if (savedTimeHorizon) setTimeHorizon(savedTimeHorizon);
+        if (savedDownPayment) setDownPayment(savedDownPayment);
+      } catch (error) {
+        console.warn('Failed to load rent vs buy data from localStorage:', error);
+      }
+    };
+
+    loadFromStorage();
+  }, []);
+
+  // Save to localStorage when values change
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEYS.monthlyRent, monthlyRent);
+    } catch (error) {
+      console.warn('Failed to save monthly rent to localStorage:', error);
+    }
+  }, [monthlyRent]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEYS.timeHorizon, timeHorizon);
+    } catch (error) {
+      console.warn('Failed to save time horizon to localStorage:', error);
+    }
+  }, [timeHorizon]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEYS.downPayment, downPayment);
+    } catch (error) {
+      console.warn('Failed to save down payment to localStorage:', error);
+    }
+  }, [downPayment]);
 
   // Calculate analysis when inputs change
   useEffect(() => {
