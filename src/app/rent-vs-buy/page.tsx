@@ -78,12 +78,12 @@ export default function RentVsBuyCalculator() {
     }
   }, [monthlyRent]);
 
-  // Calculate analysis when inputs change
+  // Calculate analysis when monthly rent changes (with loading)
   useEffect(() => {
     const calculateAnalysis = async () => {
       setIsCalculating(true);
       
-      // Add small delay to show loading state
+      // Add small delay to show loading state for rent changes
       await new Promise(resolve => setTimeout(resolve, 300));
       
       const result = calculateRentVsBuyAnalysis({
@@ -92,14 +92,29 @@ export default function RentVsBuyCalculator() {
         downPayment: 0, // Ignore down payment - show all scenarios
         investmentReturn: 0.07, // Fixed at 7% (S&P 500 average)
         rentIncrease: 0.03 // Fixed at 3% annual increase
-      }, downPayments); // Pass down payment selections
+      }, downPayments);
       
       setAnalysis(result);
       setIsCalculating(false);
     };
 
     calculateAnalysis();
-  }, [monthlyRent, downPayments]); // Add downPayments to dependencies
+  }, [monthlyRent]); // Only trigger loading for rent changes
+
+  // Update analysis instantly when down payments change (no loading)
+  useEffect(() => {
+    if (analysis) { // Only update if we already have an analysis
+      const result = calculateRentVsBuyAnalysis({
+        monthlyRent: Number(monthlyRent) || 0,
+        timeHorizon: 7,
+        downPayment: 0,
+        investmentReturn: 0.07,
+        rentIncrease: 0.03
+      }, downPayments);
+      
+      setAnalysis(result);
+    }
+  }, [downPayments, monthlyRent, analysis]); // Add dependencies
 
   return (
     <>
