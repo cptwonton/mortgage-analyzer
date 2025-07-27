@@ -173,8 +173,8 @@ export default function Home() {
                   <div className="text-center text-sm text-slate-300 space-y-1">
                     <div>
                       <strong>${rentVsBuyData.housePrice.toLocaleString()}</strong> house price • 
-                      <strong> {rentVsBuyData.downPayment}%</strong> down • 
-                      <strong> {rentVsBuyData.interestRate}%</strong> APR • 
+                      <strong> {rentVsBuyData.downPayment.toFixed(0)}%</strong> down • 
+                      <strong> {rentVsBuyData.interestRate.toFixed(2)}%</strong> APR • 
                       <strong> {rentVsBuyData.loanTerm}</strong> years
                     </div>
                     <div className="text-xs text-slate-400">
