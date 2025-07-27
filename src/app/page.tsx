@@ -35,7 +35,6 @@ export default function Home() {
 
     // Convert string to number, but handle empty strings
     const numericValue = value === '' ? 0 : Number(value);
-    console.log('handleInputChange:', { field, value, numericValue });
     updateInput(field, numericValue);
     
     // Create temporary inputs object for validation

@@ -47,9 +47,7 @@ const StandardInput: React.FC<StandardInputProps> = ({
 
   // Format number with commas for currency display
   const formatCurrencyValue = (num: number): string => {
-    const result = num.toLocaleString('en-US');
-    console.log('formatCurrencyValue:', { num, result, label });
-    return result;
+    return num.toLocaleString('en-US');
   };
 
   const handleFocus = () => {
@@ -66,7 +64,6 @@ const StandardInput: React.FC<StandardInputProps> = ({
     if (formatCurrency && type === 'number') {
       // For currency fields, clean the input and pass the raw number
       const cleaned = inputValue.replace(/[^\d]/g, '');
-      console.log('Currency input change:', { inputValue, cleaned, label });
       onChange(cleaned);
     } else {
       onChange(inputValue);
@@ -96,26 +93,17 @@ const StandardInput: React.FC<StandardInputProps> = ({
     if (formatCurrency && type === 'number' && !isFocused) {
       // When not focused, show formatted value with commas
       const numValue = typeof value === 'number' ? value : (typeof value === 'string' ? parseFloat(value) || 0 : 0);
-      console.log('Currency display (unfocused):', { value, numValue, label });
       if (numValue === 0) {
         return ''; // Let placeholder show
       }
       return formatCurrencyValue(numValue);
     } else {
       // When focused or non-currency, show raw value
-      const result = typeof value === 'number' ? value.toString() : value.toString();
-      if (formatCurrency) {
-        console.log('Currency display (focused):', { value, result, isFocused, label });
-      }
-      return result;
+      return typeof value === 'number' ? value.toString() : value.toString();
     }
   };
 
   const inputValue = getDisplayValue();
-  
-  if (formatCurrency && label === 'Purchase Price') {
-    console.log('Final inputValue for render:', { inputValue, isFocused, label });
-  }
 
   // Generate range hint for help text
   const getRangeHint = () => {
@@ -183,7 +171,7 @@ const StandardInput: React.FC<StandardInputProps> = ({
           </span>
         )}
         <input
-          type={type}
+          type={formatCurrency && !isFocused ? "text" : type}
           step={step}
           min={min}
           max={max}
