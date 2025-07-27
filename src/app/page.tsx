@@ -668,11 +668,11 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* Investment Analysis Section */}
+              {/* Investment Expenses Section */}
               <div className="mb-8">
                 <div className="flex items-center mb-4">
                   <span className="text-lg font-semibold text-green-300 mr-2">💰</span>
-                  <h3 className="text-lg font-semibold text-green-300">Investment Analysis</h3>
+                  <h3 className="text-lg font-semibold text-green-300">Investment Expenses</h3>
                   <div className="ml-2 px-2 py-1 bg-green-500/20 border border-green-500/30 rounded-full">
                     <span className="text-xs text-green-300 font-medium">For Investors</span>
                   </div>
