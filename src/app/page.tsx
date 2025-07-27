@@ -527,60 +527,75 @@ export default function Home() {
                 </div>
                 
                 <div className="space-y-4">
-                  <StandardInput
-                    label="Property Tax Rate (Annual)"
-                    type="number"
-                    value={inputs.propertyTaxRate.toString()}
-                    onChange={(value) => handleInputChange('propertyTaxRate', value)}
-                    placeholder="1.2"
-                    suffix="%"
-                    step="0.1"
-                    helpText="Typical range varies by location"
-                    helpTooltip={{
-                      title: "Property Tax Rates by Location",
-                      content: (
-                        <div className="space-y-3">
-                          <div>
-                            <p className="font-medium text-blue-300 mb-2">🗺️ Typical Rates by State:</p>
-                            <div className="grid grid-cols-2 gap-2 text-xs">
-                              <div>
-                                <p className="text-green-300 font-medium">Low Tax States:</p>
-                                <ul className="text-slate-400 space-y-1">
-                                  <li>• Hawaii: 0.3%</li>
-                                  <li>• Alabama: 0.4%</li>
-                                  <li>• Delaware: 0.6%</li>
-                                  <li>• Tennessee: 0.7%</li>
-                                </ul>
+                  <div className="group">
+                    <label className="block text-sm font-semibold text-slate-200 mb-2 group-focus-within:text-blue-300 transition-colors">
+                      Property Tax Rate (Annual)
+                    </label>
+                    <div className="relative">
+                      <div className="px-4 py-4 bg-white/5 border border-white/20 rounded-xl backdrop-blur-sm">
+                        <div className="flex items-center justify-between mb-3">
+                          <span className="text-white font-bold text-lg">
+                            {inputs.propertyTaxRate.toFixed(2)}%
+                          </span>
+                          <div className="flex space-x-1 text-xs text-slate-400">
+                            <span>0%</span>
+                            <span>•</span>
+                            <span>6%</span>
+                          </div>
+                        </div>
+                        <div className="relative mb-4">
+                          <input
+                            type="range"
+                            min="0"
+                            max="6"
+                            step="0.05"
+                            value={inputs.propertyTaxRate}
+                            onChange={(e) => handleInputChange('propertyTaxRate', e.target.value)}
+                            className="w-full h-2 bg-white/10 rounded-lg appearance-none cursor-pointer slider"
+                          />
+                          <div 
+                            className="absolute top-0 left-0 h-2 bg-gradient-to-r from-green-400 via-yellow-500 via-orange-500 to-red-500 rounded-lg pointer-events-none"
+                            style={{ width: `${(inputs.propertyTaxRate / 6) * 100}%` }}
+                          ></div>
+                        </div>
+                        
+                        {/* Integrated Property Tax Information */}
+                        <div className="border-t border-white/10 pt-3">
+                          <div className="flex items-center space-x-2 mb-2">
+                            <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
+                            <span className="text-xs font-medium text-blue-300">Tax Rates by Location</span>
+                          </div>
+                          
+                          <div className="grid grid-cols-2 gap-3 mb-3">
+                            <div>
+                              <p className="text-xs font-medium text-green-300 mb-1">Low Tax States:</p>
+                              <div className="text-xs text-slate-400 space-y-0.5">
+                                <div>Hawaii: 0.3%</div>
+                                <div>Alabama: 0.4%</div>
+                                <div>Delaware: 0.6%</div>
+                                <div>Tennessee: 0.7%</div>
                               </div>
-                              <div>
-                                <p className="text-red-300 font-medium">High Tax States:</p>
-                                <ul className="text-slate-400 space-y-1">
-                                  <li>• New Jersey: 2.5%</li>
-                                  <li>• Illinois: 2.3%</li>
-                                  <li>• New Hampshire: 2.2%</li>
-                                  <li>• Connecticut: 2.1%</li>
-                                </ul>
+                            </div>
+                            <div>
+                              <p className="text-xs font-medium text-red-300 mb-1">High Tax States:</p>
+                              <div className="text-xs text-slate-400 space-y-0.5">
+                                <div>New Jersey: 2.5%</div>
+                                <div>Illinois: 2.3%</div>
+                                <div>New Hampshire: 2.2%</div>
+                                <div>Connecticut: 2.1%</div>
                               </div>
                             </div>
                           </div>
-                          <div className="border-t border-slate-600/50 pt-2">
-                            <p className="text-xs text-amber-300">💡 <strong>Pro Tip:</strong> Check your county assessor's website for exact rates. They can vary significantly within states!</p>
+                          
+                          <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-2">
+                            <p className="text-xs text-amber-300">
+                              💡 <strong>Pro Tip:</strong> Check your county assessor's website for exact rates. They can vary significantly within states!
+                            </p>
                           </div>
                         </div>
-                      )
-                    }}
-                    {...(() => {
-                      const validation = validateField('propertyTaxRate', inputs.propertyTaxRate);
-                      const ranges = getFieldRanges('propertyTaxRate');
-                      return {
-                        validationState: validation.state,
-                        errorMessage: validation.message,
-                        min: ranges.min,
-                        max: ranges.max,
-                        allowZero: ranges.allowZero
-                      };
-                    })()}
-                  />
+                      </div>
+                    </div>
+                  </div>
 
                   <div className="grid grid-cols-2 gap-4">
                     <StandardInput
