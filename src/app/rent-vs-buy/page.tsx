@@ -312,20 +312,54 @@ export default function RentVsBuyCalculator() {
                             </div>
                             
                             <div className="space-y-4">
-                              {/* House Price Options */}
+                              {/* House Price Options with Breakdowns */}
                               <div className="space-y-3">
-                                <div className="text-center bg-gradient-to-r from-green-500/10 to-blue-500/10 rounded-lg p-3">
-                                  <div className="text-lg font-bold text-green-400">
-                                    ${scenario.housePriceForPIOnly.toLocaleString()}
+                                {/* P&I Only Mode */}
+                                <div className="bg-gradient-to-r from-green-500/10 to-blue-500/10 rounded-lg p-3">
+                                  <div className="text-center mb-2">
+                                    <div className="text-lg font-bold text-green-400">
+                                      ${scenario.housePriceForPIOnly.toLocaleString()}
+                                    </div>
+                                    <div className="text-xs text-slate-400">If rent = P&I only</div>
                                   </div>
-                                  <div className="text-xs text-slate-400">If rent = P&I only</div>
+                                  <div className="grid grid-cols-2 gap-2 text-xs">
+                                    <div className="text-center">
+                                      <div className="text-green-300 font-medium">
+                                        ${Math.round(scenario.housePriceForPIOnly * downPayment).toLocaleString()}
+                                      </div>
+                                      <div className="text-slate-500">Down Payment</div>
+                                    </div>
+                                    <div className="text-center">
+                                      <div className="text-blue-300 font-medium">
+                                        ${Math.round(scenario.housePriceForPIOnly * (1 - downPayment)).toLocaleString()}
+                                      </div>
+                                      <div className="text-slate-500">Mortgage</div>
+                                    </div>
+                                  </div>
                                 </div>
                                 
-                                <div className="text-center bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-lg p-3">
-                                  <div className="text-lg font-bold text-blue-400">
-                                    ${scenario.housePriceForTotalHousing.toLocaleString()}
+                                {/* Total Housing Mode */}
+                                <div className="bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-lg p-3">
+                                  <div className="text-center mb-2">
+                                    <div className="text-lg font-bold text-blue-400">
+                                      ${scenario.housePriceForTotalHousing.toLocaleString()}
+                                    </div>
+                                    <div className="text-xs text-slate-400">If rent = total housing</div>
                                   </div>
-                                  <div className="text-xs text-slate-400">If rent = total housing</div>
+                                  <div className="grid grid-cols-2 gap-2 text-xs">
+                                    <div className="text-center">
+                                      <div className="text-blue-300 font-medium">
+                                        ${Math.round(scenario.housePriceForTotalHousing * downPayment).toLocaleString()}
+                                      </div>
+                                      <div className="text-slate-500">Down Payment</div>
+                                    </div>
+                                    <div className="text-center">
+                                      <div className="text-purple-300 font-medium">
+                                        ${Math.round(scenario.housePriceForTotalHousing * (1 - downPayment)).toLocaleString()}
+                                      </div>
+                                      <div className="text-slate-500">Mortgage</div>
+                                    </div>
+                                  </div>
                                 </div>
                               </div>
                               
