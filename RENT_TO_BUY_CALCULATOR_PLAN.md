@@ -1,280 +1,131 @@
-# ⚖️ Rent vs Buy Calculator Planning Document
+# ⚖️ Rent vs Buy Calculator - Development Plan
 
-## 📋 Project Overview
+## 🚧 Current Status: DISABLED
 
-**Goal**: Help users decide whether to rent or buy by analyzing the financial trade-offs between the two options.
+the eternal question. should you keep throwing money at rent or buy something? this was gonna help figure out the break-even math but it's not ready yet.
 
-**Core Concept**: Given a monthly rent amount, show the equivalent house purchase scenarios and provide decision-making analysis to determine which option makes more financial sense.
+**Why Disabled:**
+- Complex calculation logic needs more refinement
+- User experience needs improvement  
+- Better to launch when fully polished
+- Prevents user confusion with incomplete features
 
-## 🎯 User Journey & Value Proposition
+## 🎯 Original Vision
 
-### Target Users
-1. **Current Renters** - "I pay $2,500/month rent, should I buy instead?"
-2. **First-time Buyers** - "Is buying actually better than renting for my situation?"
-3. **Financial Planners** - "What's the break-even point for rent vs buy?"
+### What It Was Supposed To Do
+- Take your current rent amount
+- Show what house price would be equivalent
+- Calculate break-even timeline
+- Compare long-term costs
+- Give simple recommendation: rent or buy
 
-### Key Questions Answered
-- "Should I rent or buy in my current situation?"
-- "If I'm paying $X in rent, what house could I buy for equivalent cost?"
-- "How long until buying becomes cheaper than renting?"
-- "What are the total costs over 5/10 years for each option?"
-- "What if I invested my down payment instead of buying?"
+### Key Questions To Answer
+- "I pay $2,500/month rent, should I buy instead?"
+- "What house could I afford with my rent payment?"
+- "When does buying become cheaper than renting?"
+- "What if I invested my down payment instead?"
 
-## 🔄 Calculation Logic
+## 🧮 Calculation Challenges
 
-### Primary Analysis Flow
-```
-Monthly Rent → Equivalent House Purchase → Decision Analysis
-```
+### Calculation Mode Complexity
+Two different ways to interpret rent input:
+1. **Total Housing Mode**: Rent = total monthly housing budget
+2. **Burnable Money Mode**: Rent = only money "burned" (excludes principal)
 
-### Core Calculations
-1. **Rent-to-Purchase Equivalency**: What house price has similar monthly costs to current rent
-2. **Break-Even Analysis**: Timeline when buying becomes cheaper than renting
-3. **Opportunity Cost**: Investment returns vs equity building
-4. **Total Cost Projections**: 5-year, 10-year comparisons
+This affects the entire analysis since principal builds equity.
 
-## 📊 Analysis Components
+### Market Variables
+- Property appreciation rates
+- Investment return assumptions  
+- Maintenance cost estimates
+- Transaction cost calculations
+- Tax benefit modeling
 
-### 1. Rent-to-Purchase Equivalency
-- **Input**: Current monthly rent ($2,500)
-- **Output**: Equivalent house prices under different loan scenarios
-- **Scenarios**: Same as original plan (FHA 3.5%, Conventional 5%, 10%, 20%, 15-year)
+### Break-Even Analysis
+- Opportunity cost of down payment
+- Rent increases over time
+- Home value appreciation
+- Tax deductions for homeowners
+- Transaction costs when selling
 
-### 2. Break-Even Timeline
-- **Calculation**: When total buying costs < total renting costs
-- **Factors**: Closing costs, maintenance, opportunity cost, rent increases
-- **Output**: "Buying becomes cheaper after X months/years"
+## 🎨 UI/UX Considerations
 
-### 3. Long-Term Cost Comparison
-- **Time Horizons**: 1, 3, 5, 10 years
-- **Rent Path**: Current rent + annual increases + opportunity cost of down payment
-- **Buy Path**: Down payment + monthly payments + maintenance + taxes - equity building
-- **Output**: Total cost comparison charts
+### Input Complexity
+- Rent amount interpretation (total vs burnable)
+- Down payment scenarios
+- Local market assumptions
+- Time horizon selection
 
-### 4. Decision Recommendation
-- **Inputs**: Time horizon, risk tolerance, mobility needs
-- **Analysis**: Financial + lifestyle factors
-- **Output**: "Rent" or "Buy" recommendation with reasoning
+### Results Display
+- Clear recommendation (rent vs buy)
+- Break-even timeline visualization
+- Cost comparison charts
+- Sensitivity analysis
 
-## 🎨 UI/UX Design Plan
+### Educational Component
+- Explain opportunity cost concept
+- Clarify burnable money vs equity building
+- Show assumptions behind calculations
+- Help users understand trade-offs
 
-### Page Layout
-```
-┌─────────────────────────────────────────┐
-│ Header: "Rent vs Buy Calculator"        │
-├─────────────────────────────────────────┤
-│ Input Section:                          │
-│ • Current Monthly Rent                  │
-│ • Expected Time in Area                 │
-│ • Down Payment Available               │
-│ • Investment Return Assumption         │
-├─────────────────────────────────────────┤
-│ Results Section:                        │
-│ ┌─────────────────────────────────────┐ │
-│ │ 🎯 RECOMMENDATION: RENT/BUY        │ │
-│ └─────────────────────────────────────┘ │
-│ ┌─────────────────────────────────────┐ │
-│ │ 📊 Break-Even: X Years             │ │
-│ └─────────────────────────────────────┘ │
-│ ┌─────────────────────────────────────┐ │
-│ │ 💰 Equivalent House Prices         │ │
-│ │ [5 loan scenario cards]            │ │
-│ └─────────────────────────────────────┘ │
-│ ┌─────────────────────────────────────┐ │
-│ │ 📈 Cost Comparison Chart           │ │
-│ └─────────────────────────────────────┘ │
-└─────────────────────────────────────────┘
-```
+## 🔮 When To Re-Enable
 
-### Key Components
+### Prerequisites
+1. **Calculation Accuracy**: Verify all formulas and assumptions
+2. **Edge Case Handling**: Test with unusual rent amounts and scenarios
+3. **User Testing**: Ensure intuitive and educational experience
+4. **Mobile Optimization**: Works well on all devices
+5. **Performance**: Fast calculations and smooth interactions
 
-#### 1. Recommendation Card (Primary)
-```
-┌─────────────────────────────────┐
-│ 🎯 RECOMMENDATION: BUY          │
-│                                 │
-│ Based on your 7-year timeline   │
-│ and $2,500/month rent:          │
-│                                 │
-│ • Buying saves $45,000          │
-│ • Break-even at 4.2 years      │
-│ • Builds $89,000 equity         │
-└─────────────────────────────────┘
-```
+### Implementation Approach
+1. Start with simple rent-to-house-price equivalency
+2. Add break-even timeline analysis
+3. Include opportunity cost calculations
+4. Add sensitivity analysis and scenarios
+5. Polish UI and educational content
 
-#### 2. Break-Even Analysis
-```
-┌─────────────────────────────────┐
-│ 📊 Break-Even Analysis          │
-│                                 │
-│ Buying becomes cheaper after:   │
-│ 4 years, 3 months              │
-│                                 │
-│ Timeline visualization          │
-│ [Progress bar showing timeline] │
-└─────────────────────────────────┘
-```
+## 📊 Technical Architecture
 
-#### 3. Equivalent House Prices (Reuse existing cards)
-- Same 5-card layout as originally planned
-- FHA 3.5%, Conventional 5%, 10%, 20%, 15-year
-- Shows what house you could buy for equivalent monthly cost
+### Current State
+- Basic calculation functions exist in `lib/rentVsBuyCalculations.ts`
+- UI components built but disabled
+- Landing page shows "under development"
+- Coming soon page with feature preview
 
-#### 4. Cost Comparison Chart
-```
-┌─────────────────────────────────┐
-│ 📈 Total Cost Over Time         │
-│                                 │
-│ [Line chart showing:]           │
-│ - Rent costs (increasing)       │
-│ - Buy costs (decreasing)        │
-│ - Break-even intersection       │
-└─────────────────────────────────┘
-```
+### When Re-Enabling
+- Remove overlay from landing page card
+- Replace coming soon page with actual calculator
+- Add back Link wrapper and hover effects
+- Test all calculation paths
 
-## 🔧 Technical Implementation Plan
+## 🎯 Success Metrics
 
-### 1. New Calculation Functions
-```typescript
-// Main decision analysis
-function analyzeRentVsBuy(
-  monthlyRent: number,
-  timeHorizon: number,
-  downPayment: number,
-  investmentReturn: number,
-  rentIncrease: number
-): RentVsBuyAnalysis
+### User Experience
+- Users understand the recommendation
+- Clear about assumptions and limitations
+- Educational value beyond just numbers
+- Helps with actual rent vs buy decisions
 
-// Break-even calculation
-function calculateBreakEven(
-  rentCosts: number[],
-  buyCosts: number[]
-): number
+### Technical Quality
+- Accurate calculations
+- Fast performance
+- Mobile responsive
+- Error handling
 
-// Equivalent house price (reuse existing logic)
-function calculateEquivalentHousePrice(
-  monthlyRent: number,
-  loanScenario: LoanScenario
-): number
-```
+## 💭 Lessons Learned
 
-### 2. New Interfaces
-```typescript
-interface RentVsBuyAnalysis {
-  recommendation: 'rent' | 'buy';
-  breakEvenMonths: number;
-  totalCostDifference: number;
-  equivalentHousePrices: HousePriceScenario[];
-  costProjections: CostProjection[];
-  reasoning: string[];
-}
+### Complexity Underestimated
+- Rent vs buy involves many variables
+- Different users interpret "rent" differently
+- Market assumptions significantly affect results
+- Educational component is crucial
 
-interface CostProjection {
-  year: number;
-  rentTotalCost: number;
-  buyTotalCost: number;
-  difference: number;
-}
-```
-
-### 3. Component Structure
-```
-pages/rent-vs-buy.tsx
-├── RecommendationCard
-├── BreakEvenAnalysis  
-├── EquivalentHousePrices (reuse existing)
-├── CostComparisonChart
-└── InputSection
-```
-
-## 📱 User Experience Flow
-
-### 1. Input Phase
-1. User enters current monthly rent ($2,500)
-2. Expected time in area (5 years)
-3. Available down payment ($50,000)
-4. Investment return assumption (7%)
-
-### 2. Analysis Phase
-1. Calculate equivalent house prices for rent amount
-2. Project rent costs over time (with increases)
-3. Project buy costs over time (with equity building)
-4. Determine break-even point
-5. Generate recommendation
-
-### 3. Results Phase
-1. **Primary**: Clear recommendation (Rent or Buy)
-2. **Supporting**: Break-even timeline
-3. **Options**: Equivalent house price scenarios
-4. **Validation**: Cost comparison chart over time
-
-## 🎓 Educational Content Strategy
-
-### Decision Factors Explained
-- **Break-even timeline** and why it matters
-- **Opportunity cost** of down payment investment
-- **Hidden costs** of homeownership
-- **Flexibility value** of renting
-- **Equity building** benefits of buying
-
-### Key Insights to Highlight
-- **Time horizon** is the most important factor
-- **Down payment size** affects the analysis significantly
-- **Rent increases** vs **home appreciation**
-- **Transaction costs** impact short-term decisions
-
-## 🔗 Integration with Existing Site
-
-### Navigation
-- Update to "Rent vs Buy Calculator"
-- Cross-link with mortgage analyzer
-- Shared rate data and calculations
-
-### URL Structure
-- Current: `/` (landing), `/mortgage-analyzer`
-- New: `/rent-vs-buy` (decision calculator)
-
-## 📊 Success Metrics
-
-### User Engagement
-- Decision confidence (survey)
-- Time spent analyzing scenarios
-- Cross-tool usage
-
-### Educational Impact
-- Understanding of break-even concept
-- Awareness of opportunity costs
-- Improved decision-making process
-
-## 🚀 Implementation Phases
-
-### Phase 1: Core Decision Logic
-- [ ] Rent vs buy calculation engine
-- [ ] Break-even analysis
-- [ ] Basic recommendation system
-
-### Phase 2: Equivalent House Analysis
-- [ ] Reuse existing house price calculations
-- [ ] 5-scenario card display
-- [ ] Integration with current rates
-
-### Phase 3: Advanced Visualizations
-- [ ] Cost comparison charts
-- [ ] Timeline visualizations
-- [ ] Sensitivity analysis
+### Better To Disable Than Confuse
+- Incomplete features frustrate users
+- Professional "coming soon" maintains credibility
+- Users appreciate transparency about development status
+- Can take time to get calculations right
 
 ---
 
-## ❓ Key Implementation Questions
-
-1. **Default Assumptions**: What defaults for rent increases, investment returns, maintenance costs?
-
-2. **Time Horizons**: What time periods to analyze (1, 3, 5, 10 years)?
-
-3. **Recommendation Logic**: What factors determine rent vs buy recommendation?
-
-4. **Chart Complexity**: How detailed should cost projections be?
-
-5. **Mobile Experience**: How to present complex analysis on mobile?
-
-**Ready to proceed with this rent vs buy decision-focused approach?** 🎯
+*Will return when truly ready for prime time*

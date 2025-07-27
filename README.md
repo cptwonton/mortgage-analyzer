@@ -1,189 +1,104 @@
-# 🏠 Home Mortgage Analyzer
+# 🏠 Money Math
 
-A sophisticated **investment property evaluation tool** that answers the strategic question: **"What rental income do I need to break even?"** instead of the typical "What's my cash flow with X rent?"
+ok so i kept doing mortgage math in my head while looking at houses online and it was annoying so i built these
 
 ## 🚀 Live Demo
 
 **[View Live Application](https://mortgage-analyzer-lac.vercel.app/)**
 
-## ✨ Key Features
+## 🛠️ What's Here
 
-### 💰 **Breakeven Analysis**
-- **Burned Money Breakeven**: Covers non-equity expenses (interest, taxes, insurance, maintenance)
-- **Full Breakeven**: Covers all expenses including principal payments
-- **Investment Viable**: Accounts for vacancy and property management fees
-- **ARM Payment Range**: Shows min/max scenarios for adjustable-rate mortgages
+### 🏠 **Mortgage Analyzer**
+so you want to buy a house to rent out? this tells you what rent you need to break even. also shows you what money you actually "burn" each month vs what builds equity. (important: principal payments aren't burned money - you get that back when you sell)
 
-### 🎯 **Professional Input System**
-- **Smart Validation**: Field-specific validation with contextual guidance
-- **Range Hints**: Automatic display of reasonable value ranges
-- **Visual Feedback**: Color-coded validation states (error, warning, success)
-- **localStorage Persistence**: Never lose your work - automatic save/restore
+**Features:**
+- shows what money you actually "burn" (hint: not the principal)
+- tells you exactly what rent you need to not lose money
+- breaks down where your payment actually goes
+- amortization table because why not
+- handles ARM loans with payment ranges
+- saves your inputs so you don't lose them
 
-### 📊 **Interactive Visualizations**
-- **Amortization Chart**: Principal vs interest breakdown over time
-- **Expense Breakdown**: Color-coded monthly expense components
-- **Real-time Updates**: Immediate recalculation on input changes
-- **Mobile Responsive**: Touch-friendly interactions
+### ⚖️ **Rent vs Buy Calculator** 
+🚧 **Under Development**
 
-### 🎨 **Modern Design**
-- **Glass-morphism UI**: Beautiful backdrop blur effects
-- **Smooth Animations**: Professional transitions and hover effects
-- **Dark Theme**: Elegant gradient background with floating elements
-- **Component Library**: Consistent, reusable UI components
+the eternal question. should you keep throwing money at rent or buy something? this was gonna help figure out the break-even math but it's not ready yet.
 
-## 🛠️ Technical Stack
+## 🎯 Why I Built These
 
-- **Framework**: Next.js 15 with TypeScript
-- **Styling**: Tailwind CSS with custom glass-morphism effects
-- **Charts**: Recharts for interactive data visualization
-- **State**: Custom localStorage persistence with version management
-- **Validation**: Comprehensive input validation with visual feedback
-- **Deployment**: Vercel with automatic CI/CD
+### 😴 **lazy**
+was browsing zillow and kept trying to figure out payments in my head. got tired of it.
 
-## 🏗️ Architecture
+### 🎮 **for funsies**
+wanted to mess around with some ui stuff and see what this "vibe coding" thing was about.
 
-### Component Library
-- **StandardInput**: Enhanced inputs with validation states and range hints
-- **SliderInput**: Interactive sliders with color coding and help text
-- **ToggleGroup**: Button group selections with contextual information
-- **InfoCard**: Standardized info cards with variants and sizes
+### ✨ **w0w**
+actually ended up being pretty useful for real decisions. who knew.
 
-### State Management
-- **usePersistedInputs**: Custom hook with localStorage persistence
-- **Version Management**: Graceful handling of breaking changes
-- **Loading States**: Prevents flash of default values
-- **Error Resilience**: Automatic fallback for corrupted data
+## 🔧 Tech Stack
 
-### Calculation Engine
-- **Bank-level Precision**: Accurate mortgage calculations
-- **Investment Analysis**: Vacancy rates, property management, CapEx reserves
-- **ARM Support**: Complex adjustable-rate mortgage calculations
-- **Real-time Updates**: Immediate recalculation on input changes
+- **Next.js 15** - React framework
+- **TypeScript** - Type safety (when it matters)
+- **Tailwind CSS** - Styling
+- **Framer Motion** - Animations
+- **Vercel** - Deployment
 
-## 📋 Getting Started
-
-### Prerequisites
-- Node.js 18+ 
-- npm or yarn
-
-### Installation
+## 🚀 Getting Started
 
 ```bash
-# Clone the repository
+# Clone the repo
 git clone https://github.com/cptwonton/mortgage-analyzer.git
-
-# Navigate to project directory
 cd mortgage-analyzer
 
 # Install dependencies
 npm install
 
-# Start development server
+# Run development server
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to view the application.
+Open [http://localhost:3000](http://localhost:3000) to see it in action.
 
-### Build for Production
+## 📊 Key Concepts
 
-```bash
-# Create production build
-npm run build
+### 🔥 **Burnable Money**
+This is money you "burn" each month - you never get it back. Includes:
+- Interest payments
+- Property taxes
+- Insurance
+- Maintenance/repairs
+- PMI (if down payment < 20%)
 
-# Start production server
-npm start
-```
+### 💎 **Equity Building**
+Principal payments aren't "burned" - they build equity. When you sell the house, you get this money back (minus transaction costs).
 
-## 📚 Documentation
+### ⚖️ **Break-Even Analysis**
+- **Burnable Money Break-Even**: Rent covers all the money you "burn"
+- **Full Break-Even**: Rent covers everything including principal
+- **Investment Viable**: Rent covers everything plus vacancy/management buffer
 
-Comprehensive documentation is available in the `/docs` folder:
+## 🎨 Design Philosophy
 
-- **[Project Plan](docs/mortgage-analyzer-plan.md)**: Original vision and implementation phases
-- **[Website Architecture](docs/WEBSITE_ARCHITECTURE.md)**: Technical architecture and component design
-- **[Styling Improvements](docs/STYLING_IMPROVEMENTS_TRACKER.md)**: Design system and UI improvements
-- **[UX Analysis](docs/UX_ANALYSIS_AND_IMPROVEMENTS.md)**: User experience enhancements and recommendations
+- **Authentic voice** - sounds like actual thoughts, not marketing copy
+- **Educational** - explains the "why" behind the numbers
+- **Practical** - solves real problems people have
+- **No bullshit** - direct and honest about what it does
 
-## 🎯 Use Cases
+## 📝 Development Notes
 
-### Real Estate Investors
-- Evaluate potential investment properties
-- Understand true carrying costs vs equity building
-- Plan for vacancy and management expenses
-- Compare ARM vs fixed-rate scenarios
-
-### Property Analysis
-- Determine minimum viable rental income
-- Assess market rent requirements
-- Calculate investment viability thresholds
-- Plan for capital expenditure reserves
-
-## 🔧 Development
-
-### Project Structure
-```
-src/
-├── app/                 # Next.js app router
-├── components/          # React components
-│   └── ui/             # Reusable UI component library
-├── lib/                # Utilities and calculations
-├── hooks/              # Custom React hooks
-└── styles/             # Global styles and design system
-```
-
-### Key Scripts
-```bash
-npm run dev          # Start development server
-npm run build        # Create production build
-npm run start        # Start production server
-npm run lint         # Run ESLint
-npm run type-check   # Run TypeScript compiler
-```
-
-## 🚀 Recent Improvements
-
-### ✅ State Persistence (Latest)
-- Automatic localStorage persistence with version management
-- Loading states to prevent flash of default values
-- Reset functionality with storage info
-- Graceful handling of data structure changes
-
-### ✅ Input Validation System
-- Field-specific validation with contextual messages
-- Visual feedback with colored borders and focus rings
-- Range hints for all number inputs
-- Professional error handling and user guidance
-
-### ✅ Component Standardization
-- Reusable StandardInput, SliderInput, ToggleGroup, and InfoCard components
-- Consistent styling patterns across the application
-- Enhanced maintainability and code quality
-
-## 📈 Performance
-
-- **Lighthouse Score**: 95+ across all metrics
-- **Bundle Size**: Optimized with Next.js automatic code splitting
-- **Real-time Updates**: Debounced calculations for smooth UX
-- **Mobile Optimized**: Touch-friendly interactions and responsive design
+- TypeScript/ESLint checks disabled for faster iteration
+- Focus on functionality over perfect code
+- Vibe coding approach - build what feels right
+- Personal project, not trying to be a startup
 
 ## 🤝 Contributing
 
-This is a personal project, but feedback and suggestions are welcome! Feel free to:
-
-1. Open issues for bugs or feature requests
-2. Submit pull requests for improvements
-3. Share feedback on the user experience
+This is a personal learning project, but if you find bugs or have ideas, feel free to open an issue or PR.
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- Built with modern web technologies and best practices
-- Inspired by the need for better real estate investment analysis tools
-- Designed with user experience and accessibility in mind
+MIT License - do whatever you want with it.
 
 ---
 
-**Made with ❤️ for real estate investors and property analysts**
+*Built with ☕ and late-night Zillow browsing sessions*
