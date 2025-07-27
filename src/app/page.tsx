@@ -295,7 +295,7 @@ export default function LandingPage() {
                   {
                     icon: '🎓',
                     title: 'Educational Focus',
-                    description: 'Learn while you calculate. Understand the &apos;why&apos; behind every number.',
+                    description: 'Learn while you calculate. Understand the "why" behind every number.',
                     color: 'blue'
                   },
                   {
@@ -307,7 +307,7 @@ export default function LandingPage() {
                   {
                     icon: '📊',
                     title: 'Real-Time Data',
-                    description: 'Current market rates and realistic calculations for today&apos;s market.',
+                    description: 'Current market rates and realistic calculations for today\'s market.',
                     color: 'purple'
                   }
                 ].map((feature, index) => (
