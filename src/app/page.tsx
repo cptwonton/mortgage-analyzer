@@ -540,14 +540,14 @@ export default function Home() {
                           <div className="flex space-x-1 text-xs text-slate-400">
                             <span>0%</span>
                             <span>•</span>
-                            <span>6%</span>
+                            <span>4%</span>
                           </div>
                         </div>
                         <div className="relative mb-4">
                           <input
                             type="range"
                             min="0"
-                            max="6"
+                            max="4"
                             step="0.05"
                             value={inputs.propertyTaxRate}
                             onChange={(e) => handleInputChange('propertyTaxRate', e.target.value)}
@@ -555,7 +555,7 @@ export default function Home() {
                           />
                           <div 
                             className="absolute top-0 left-0 h-2 bg-gradient-to-r from-green-400 via-yellow-500 via-orange-500 to-red-500 rounded-lg pointer-events-none"
-                            style={{ width: `${(inputs.propertyTaxRate / 6) * 100}%` }}
+                            style={{ width: `${(inputs.propertyTaxRate / 4) * 100}%` }}
                           ></div>
                         </div>
                         

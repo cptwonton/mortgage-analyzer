@@ -388,7 +388,7 @@ export function getFieldRanges(field: keyof MortgageInputs): { min?: number; max
     case 'purchasePrice':
       return { min: 1, max: 1000000000, allowZero: false };
     case 'propertyTaxRate':
-      return { min: 0, max: 6, allowZero: true };
+      return { min: 0, max: 4, allowZero: true };
     case 'monthlyInsurance':
       return { min: 0, max: 10000, allowZero: true };
     case 'monthlyMaintenance':
