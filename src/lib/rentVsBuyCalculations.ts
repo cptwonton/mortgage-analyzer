@@ -313,36 +313,40 @@ function calculateLoanScenarios(monthlyRent: number, downPaymentSelections?: Rec
       scenario.loanTermYears
     );
 
-    // Calculate monthly payments for total housing scenario
+    // Calculate monthly payments for TOTAL HOUSING scenario
     const loanAmountTotal = housePriceForTotalHousing * (1 - downPayment);
-    const monthlyPI = calculateMonthlyPayment(loanAmountTotal, scenario.interestRate, scenario.loanTermYears);
+    const monthlyPITotal = calculateMonthlyPayment(loanAmountTotal, scenario.interestRate, scenario.loanTermYears);
     const monthlyInterestTotal = calculateMonthlyInterest(loanAmountTotal, scenario.interestRate);
-    const monthlyPrincipalTotal = monthlyPI - monthlyInterestTotal;
+    const monthlyPrincipalTotal = monthlyPITotal - monthlyInterestTotal;
 
-    // Calculate monthly payments for burnable money scenario
+    // Calculate monthly payments for BURNABLE MONEY scenario
     const loanAmountBurnable = housePriceForBurnableMoney * (1 - downPayment);
+    const monthlyPIBurnable = calculateMonthlyPayment(loanAmountBurnable, scenario.interestRate, scenario.loanTermYears);
     const monthlyInterestBurnable = calculateMonthlyInterest(loanAmountBurnable, scenario.interestRate);
+    const monthlyPrincipalBurnable = monthlyPIBurnable - monthlyInterestBurnable;
 
-    // Calculate additional housing costs for both scenarios
+    // Calculate additional housing costs for total housing scenario
     const propertyTaxTotal = (housePriceForTotalHousing * HOUSING_ASSUMPTIONS.propertyTax) / 12;
     const insuranceTotal = (housePriceForTotalHousing * HOUSING_ASSUMPTIONS.homeInsurance) / 12;
     const maintenanceTotal = (housePriceForTotalHousing * HOUSING_ASSUMPTIONS.maintenance) / 12;
     const pmiTotal = downPayment < 0.2 ? (housePriceForTotalHousing * HOUSING_ASSUMPTIONS.pmi) / 12 : 0;
 
+    // Calculate additional housing costs for burnable money scenario
     const propertyTaxBurnable = (housePriceForBurnableMoney * HOUSING_ASSUMPTIONS.propertyTax) / 12;
     const insuranceBurnable = (housePriceForBurnableMoney * HOUSING_ASSUMPTIONS.homeInsurance) / 12;
     const pmiBurnable = downPayment < 0.2 ? (housePriceForBurnableMoney * HOUSING_ASSUMPTIONS.pmi) / 12 : 0;
 
-    const totalMonthlyHousing = monthlyPI + propertyTaxTotal + insuranceTotal + maintenanceTotal + pmiTotal;
+    // Total monthly costs
+    const totalMonthlyHousing = monthlyPITotal + propertyTaxTotal + insuranceTotal + maintenanceTotal + pmiTotal;
     const totalBurnableMoney = monthlyInterestBurnable + propertyTaxBurnable + insuranceBurnable + pmiBurnable;
 
     return {
       ...scenario,
       housePriceForTotalHousing: Math.round(housePriceForTotalHousing),
       housePriceForBurnableMoney: Math.round(housePriceForBurnableMoney),
-      monthlyPI: Math.round(monthlyPI),
-      monthlyInterestOnly: Math.round(monthlyInterestTotal),
-      monthlyPrincipalOnly: Math.round(monthlyPrincipalTotal),
+      monthlyPI: Math.round(monthlyPITotal), // Use total housing P&I for display
+      monthlyInterestOnly: Math.round(monthlyInterestTotal), // Use total housing interest for display
+      monthlyPrincipalOnly: Math.round(monthlyPrincipalTotal), // Use total housing principal for display
       totalMonthlyHousing: Math.round(totalMonthlyHousing),
       totalBurnableMoney: Math.round(totalBurnableMoney)
     };
