@@ -486,31 +486,67 @@ export default function RentVsBuyCalculator() {
                                   </>
                                 ) : (
                                   <>
-                                    <div className="flex justify-between items-center mb-2">
-                                      <span className="text-slate-400">Interest (burnable):</span>
-                                      <span className="text-orange-400">${Math.round(((scenario.housePriceForBurnableMoney * (1 - downPayment)) * scenario.interestRate) / 12).toLocaleString()}</span>
+                                    {/* Burnable Money Section */}
+                                    <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-3 mb-3">
+                                      <div className="text-xs text-red-300 font-medium mb-2 flex items-center">
+                                        <span className="mr-1">🔥</span>
+                                        Burnable Money (Lost Forever)
+                                      </div>
+                                      <div className="space-y-1">
+                                        <div className="flex justify-between items-center">
+                                          <span className="text-slate-400 text-sm">Interest:</span>
+                                          <span className="text-orange-400">${Math.round(((scenario.housePriceForBurnableMoney * (1 - downPayment)) * scenario.interestRate) / 12).toLocaleString()}</span>
+                                        </div>
+                                        <div className="flex justify-between items-center">
+                                          <span className="text-slate-400 text-sm">Property Tax:</span>
+                                          <span className="text-red-400">${Math.round((scenario.housePriceForBurnableMoney * 0.012) / 12).toLocaleString()}</span>
+                                        </div>
+                                        <div className="flex justify-between items-center">
+                                          <span className="text-slate-400 text-sm">Insurance:</span>
+                                          <span className="text-red-400">${Math.round((scenario.housePriceForBurnableMoney * 0.004) / 12).toLocaleString()}</span>
+                                        </div>
+                                        {downPayment < 0.2 && (
+                                          <div className="flex justify-between items-center">
+                                            <span className="text-slate-400 text-sm">PMI:</span>
+                                            <span className="text-amber-400">
+                                              ${Math.round((scenario.housePriceForBurnableMoney * 0.005) / 12).toLocaleString()}
+                                            </span>
+                                          </div>
+                                        )}
+                                        <div className="border-t border-red-500/20 pt-2 mt-2">
+                                          <div className="flex justify-between items-center">
+                                            <span className="text-red-300 font-medium">Total Burnable:</span>
+                                            <span className="text-red-400 font-medium">
+                                              ${scenario.totalBurnableMoney.toLocaleString()}
+                                            </span>
+                                          </div>
+                                        </div>
+                                      </div>
                                     </div>
-                                    <div className="flex justify-between items-center mb-2">
-                                      <span className="text-slate-400">Property Tax (burnable):</span>
-                                      <span className="text-red-400">${Math.round((scenario.housePriceForBurnableMoney * 0.012) / 12).toLocaleString()}</span>
-                                    </div>
-                                    <div className="flex justify-between items-center mb-2">
-                                      <span className="text-slate-400">Insurance (burnable):</span>
-                                      <span className="text-red-400">${Math.round((scenario.housePriceForBurnableMoney * 0.004) / 12).toLocaleString()}</span>
-                                    </div>
-                                    {downPayment < 0.2 && (
-                                      <div className="flex justify-between items-center mb-2">
-                                        <span className="text-slate-400">PMI (burnable):</span>
-                                        <span className="text-amber-400">
-                                          ${Math.round((scenario.housePriceForBurnableMoney * 0.005) / 12).toLocaleString()}
+
+                                    {/* Principal Section - Visually Separated */}
+                                    <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-3">
+                                      <div className="text-xs text-green-300 font-medium mb-2 flex items-center">
+                                        <span className="mr-1">💰</span>
+                                        Equity Building (You Get Back)
+                                      </div>
+                                      <div className="flex justify-between items-center">
+                                        <span className="text-slate-400 text-sm">Principal Payment:</span>
+                                        <span className="text-green-400 font-medium">
+                                          ${(() => {
+                                            const loanAmount = scenario.housePriceForBurnableMoney * (1 - downPayment);
+                                            const monthlyRate = scenario.interestRate / 12;
+                                            const numPayments = scenario.loanTermYears * 12;
+                                            const monthlyPI = loanAmount * (monthlyRate * Math.pow(1 + monthlyRate, numPayments)) / (Math.pow(1 + monthlyRate, numPayments) - 1);
+                                            const monthlyInterest = (loanAmount * scenario.interestRate) / 12;
+                                            const monthlyPrincipal = monthlyPI - monthlyInterest;
+                                            return Math.round(monthlyPrincipal).toLocaleString();
+                                          })()}
                                         </span>
                                       </div>
-                                    )}
-                                    <div className="flex justify-between items-center">
-                                      <span className="text-slate-400">Total Burnable Money:</span>
-                                      <span className="text-red-400 font-medium">
-                                        ${scenario.totalBurnableMoney.toLocaleString()}
-                                      </span>
+                                      <div className="text-xs text-green-300 mt-1">
+                                        This builds equity - recoverable when you sell
+                                      </div>
                                     </div>
                                   </>
                                 )}
