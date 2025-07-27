@@ -217,7 +217,7 @@ const StandardInput: React.FC<StandardInputProps> = ({
       </label>
       <div className="relative">
         {prefix && (
-          <span className={`absolute left-4 top-1/2 transform -translate-y-1/2 font-medium ${styles.text}`}>
+          <span className="absolute left-4 top-1/2 transform -translate-y-1/2 font-medium text-white">
             {prefix}
           </span>
         )}
@@ -235,7 +235,7 @@ const StandardInput: React.FC<StandardInputProps> = ({
           }`}
         />
         {suffix && (
-          <span className={`absolute right-4 top-1/2 transform -translate-y-1/2 font-medium ${styles.text}`}>
+          <span className="absolute right-4 top-1/2 transform -translate-y-1/2 font-medium text-white">
             {suffix}
           </span>
         )}
