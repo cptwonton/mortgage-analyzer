@@ -199,7 +199,7 @@ export default function LandingPage() {
                 </Link>
               </motion.div>
 
-              {/* Rent-to-Buy Calculator Tool */}
+              {/* Rent vs Buy Calculator Tool */}
               <motion.div variants={itemVariants}>
                 <div className="group relative">
                   <motion.div
@@ -210,27 +210,27 @@ export default function LandingPage() {
                       <div className="p-8">
                         <div className="flex items-center mb-6">
                           <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center mr-4">
-                            <span className="text-3xl">🔄</span>
+                            <span className="text-3xl">⚖️</span>
                           </div>
                           <div>
                             <h2 className="text-2xl font-bold text-white">
-                              Rent-to-Buy Calculator
+                              Rent vs Buy Calculator
                             </h2>
-                            <p className="text-purple-400 font-medium">Reverse Affordability Analysis</p>
+                            <p className="text-purple-400 font-medium">Decision Analysis Tool</p>
                           </div>
                         </div>
                         
                         <p className="text-slate-300 text-lg leading-relaxed mb-6">
-                          Enter your monthly rent budget and see what house you could afford under different 
-                          loan scenarios. Compare FHA, conventional, and 15-year options.
+                          Should you rent or buy? Enter your current rent and see what equivalent house 
+                          you could purchase, with break-even analysis and long-term cost comparisons.
                         </p>
                         
                         <div className="space-y-3 mb-6">
                           {[
-                            { icon: '🏦', text: 'FHA 3.5% Down Analysis', color: 'text-purple-400' },
-                            { icon: '🏛️', text: 'Conventional Loan Options', color: 'text-blue-400' },
-                            { icon: '⚡', text: '15-Year vs 30-Year Comparison', color: 'text-green-400' },
-                            { icon: '💰', text: 'Down Payment Impact Analysis', color: 'text-amber-400' }
+                            { icon: '💰', text: 'Rent-to-Purchase Equivalency Analysis', color: 'text-purple-400' },
+                            { icon: '📊', text: 'Break-Even Timeline Calculation', color: 'text-blue-400' },
+                            { icon: '⏱️', text: 'Long-Term Cost Projections', color: 'text-green-400' },
+                            { icon: '🎯', text: 'Personalized Rent vs Buy Recommendation', color: 'text-amber-400' }
                           ].map((feature, index) => (
                             <div key={index} className="flex items-center text-slate-400">
                               <span className={`${feature.color} mr-3`}>{feature.icon}</span>

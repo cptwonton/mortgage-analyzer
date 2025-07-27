@@ -10,7 +10,7 @@ const Header: React.FC = () => {
 
   const navItems = [
     { href: '/mortgage-analyzer', label: 'Mortgage Analyzer', icon: '🏠' },
-    { href: '/rent-to-buy', label: 'Rent-to-Buy', icon: '🔄', comingSoon: true },
+    { href: '/rent-vs-buy', label: 'Rent vs Buy', icon: '⚖️', comingSoon: true },
   ];
 
   return (

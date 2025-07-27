@@ -1,268 +1,280 @@
-# 🏠 Rent-to-Buy Calculator Planning Document
+# ⚖️ Rent vs Buy Calculator Planning Document
 
 ## 📋 Project Overview
 
-**Goal**: Create a reverse mortgage calculator that takes a monthly rent amount and shows what house price you could afford under different loan scenarios.
+**Goal**: Help users decide whether to rent or buy by analyzing the financial trade-offs between the two options.
 
-**Core Concept**: Instead of "given a house price, what's the breakeven rent?", we want "given a rent amount, what house can I afford?"
+**Core Concept**: Given a monthly rent amount, show the equivalent house purchase scenarios and provide decision-making analysis to determine which option makes more financial sense.
 
 ## 🎯 User Journey & Value Proposition
 
 ### Target Users
-1. **Current Renters** - "I pay $2,500/month rent, what house could I buy instead?"
-2. **First-time Buyers** - "What are my options with different down payment scenarios?"
-3. **Financial Planners** - "Let me compare loan products for my budget"
+1. **Current Renters** - "I pay $2,500/month rent, should I buy instead?"
+2. **First-time Buyers** - "Is buying actually better than renting for my situation?"
+3. **Financial Planners** - "What's the break-even point for rent vs buy?"
 
 ### Key Questions Answered
-- "If I'm paying $X in rent, what house price could I afford?"
-- "How do different loan types affect my buying power?"
-- "What's the impact of down payment amount on affordability?"
-- "Should I go FHA 3.5% down or save for 20% conventional?"
+- "Should I rent or buy in my current situation?"
+- "If I'm paying $X in rent, what house could I buy for equivalent cost?"
+- "How long until buying becomes cheaper than renting?"
+- "What are the total costs over 5/10 years for each option?"
+- "What if I invested my down payment instead of buying?"
 
-## 🔄 Reverse Calculation Logic
+## 🔄 Calculation Logic
 
-### Input → Output Flow
+### Primary Analysis Flow
 ```
-Monthly Rent Budget → House Price Scenarios
-```
-
-### Mathematical Approach
-Instead of: `House Price → Monthly Payment`
-We need: `Monthly Payment → House Price`
-
-This requires **solving for purchase price** in the mortgage payment equation:
-```
-Rent Budget = Principal + Interest + Taxes + Insurance + PMI + Maintenance
+Monthly Rent → Equivalent House Purchase → Decision Analysis
 ```
 
-## 📊 Loan Scenarios to Include
+### Core Calculations
+1. **Rent-to-Purchase Equivalency**: What house price has similar monthly costs to current rent
+2. **Break-Even Analysis**: Timeline when buying becomes cheaper than renting
+3. **Opportunity Cost**: Investment returns vs equity building
+4. **Total Cost Projections**: 5-year, 10-year comparisons
 
-### 1. FHA 3.5% Down (30-year)
-- **Down Payment**: 3.5%
-- **PMI**: FHA mortgage insurance (0.85% annually)
-- **Interest Rate**: Typically 0.25% higher than conventional
-- **Target User**: First-time buyers, lower savings
+## 📊 Analysis Components
 
-### 2. Conventional 5% Down (30-year)
-- **Down Payment**: 5%
-- **PMI**: Private mortgage insurance until 20% equity
-- **Interest Rate**: Standard conventional rates
-- **Target User**: Buyers with some savings
+### 1. Rent-to-Purchase Equivalency
+- **Input**: Current monthly rent ($2,500)
+- **Output**: Equivalent house prices under different loan scenarios
+- **Scenarios**: Same as original plan (FHA 3.5%, Conventional 5%, 10%, 20%, 15-year)
 
-### 3. Conventional 10% Down (30-year)
-- **Down Payment**: 10%
-- **PMI**: Lower PMI than 5% down
-- **Interest Rate**: Standard conventional rates
-- **Target User**: Buyers with moderate savings
+### 2. Break-Even Timeline
+- **Calculation**: When total buying costs < total renting costs
+- **Factors**: Closing costs, maintenance, opportunity cost, rent increases
+- **Output**: "Buying becomes cheaper after X months/years"
 
-### 4. Conventional 20% Down (30-year)
-- **Down Payment**: 20%
-- **PMI**: None
-- **Interest Rate**: Best conventional rates
-- **Target User**: Traditional buyers, no PMI
+### 3. Long-Term Cost Comparison
+- **Time Horizons**: 1, 3, 5, 10 years
+- **Rent Path**: Current rent + annual increases + opportunity cost of down payment
+- **Buy Path**: Down payment + monthly payments + maintenance + taxes - equity building
+- **Output**: Total cost comparison charts
 
-### 5. Conventional 20% Down (15-year)
-- **Down Payment**: 20%
-- **PMI**: None
-- **Interest Rate**: Lower than 30-year (typically -0.5%)
-- **Target User**: Higher income, wealth building focused
+### 4. Decision Recommendation
+- **Inputs**: Time horizon, risk tolerance, mobility needs
+- **Analysis**: Financial + lifestyle factors
+- **Output**: "Rent" or "Buy" recommendation with reasoning
 
 ## 🎨 UI/UX Design Plan
 
 ### Page Layout
 ```
 ┌─────────────────────────────────────────┐
-│ Header: "Rent-to-Buy Calculator"        │
+│ Header: "Rent vs Buy Calculator"        │
 ├─────────────────────────────────────────┤
 │ Input Section:                          │
-│ • Monthly Rent Budget                   │
-│ • Location (for taxes/insurance est.)   │
-│ • Current Interest Rates Display        │
+│ • Current Monthly Rent                  │
+│ • Expected Time in Area                 │
+│ • Down Payment Available               │
+│ • Investment Return Assumption         │
 ├─────────────────────────────────────────┤
-│ Results Grid (5 cards):                 │
-│ ┌─────────┐ ┌─────────┐ ┌─────────┐    │
-│ │FHA 3.5% │ │Conv 5%  │ │Conv 10% │    │
-│ └─────────┘ └─────────┘ └─────────┘    │
-│ ┌─────────┐ ┌─────────┐                │
-│ │Conv 20% │ │15-yr    │                │
-│ │30-yr    │ │20%      │                │
-│ └─────────┘ └─────────┘                │
+│ Results Section:                        │
+│ ┌─────────────────────────────────────┐ │
+│ │ 🎯 RECOMMENDATION: RENT/BUY        │ │
+│ └─────────────────────────────────────┘ │
+│ ┌─────────────────────────────────────┐ │
+│ │ 📊 Break-Even: X Years             │ │
+│ └─────────────────────────────────────┘ │
+│ ┌─────────────────────────────────────┐ │
+│ │ 💰 Equivalent House Prices         │ │
+│ │ [5 loan scenario cards]            │ │
+│ └─────────────────────────────────────┘ │
+│ ┌─────────────────────────────────────┐ │
+│ │ 📈 Cost Comparison Chart           │ │
+│ └─────────────────────────────────────┘ │
 └─────────────────────────────────────────┘
 ```
 
-### Card Design (Reuse BreakevenCard)
+### Key Components
+
+#### 1. Recommendation Card (Primary)
 ```
 ┌─────────────────────────────────┐
-│ 🏠 FHA 3.5% Down               │
+│ 🎯 RECOMMENDATION: BUY          │
 │                                 │
-│ $425,000                       │
-│ House Price                     │
+│ Based on your 7-year timeline   │
+│ and $2,500/month rent:          │
 │                                 │
-│ Down Payment: $14,875          │
-│ Monthly Payment: $2,500        │
-│ PMI: $302/month                │
+│ • Buying saves $45,000          │
+│ • Break-even at 4.2 years      │
+│ • Builds $89,000 equity         │
+└─────────────────────────────────┘
+```
+
+#### 2. Break-Even Analysis
+```
+┌─────────────────────────────────┐
+│ 📊 Break-Even Analysis          │
 │                                 │
-│ Educational Footer:             │
-│ "Best for first-time buyers    │
-│ with limited savings..."        │
+│ Buying becomes cheaper after:   │
+│ 4 years, 3 months              │
+│                                 │
+│ Timeline visualization          │
+│ [Progress bar showing timeline] │
+└─────────────────────────────────┘
+```
+
+#### 3. Equivalent House Prices (Reuse existing cards)
+- Same 5-card layout as originally planned
+- FHA 3.5%, Conventional 5%, 10%, 20%, 15-year
+- Shows what house you could buy for equivalent monthly cost
+
+#### 4. Cost Comparison Chart
+```
+┌─────────────────────────────────┐
+│ 📈 Total Cost Over Time         │
+│                                 │
+│ [Line chart showing:]           │
+│ - Rent costs (increasing)       │
+│ - Buy costs (decreasing)        │
+│ - Break-even intersection       │
 └─────────────────────────────────┘
 ```
 
 ## 🔧 Technical Implementation Plan
 
-### 1. Code Reuse Strategy
-- **Reuse**: `mortgage-calculations.ts` functions
-- **Reuse**: `BreakevenCard` component
-- **Reuse**: Interest rate fetching logic
-- **Reuse**: Input validation patterns
-- **New**: Reverse calculation solver function
-
-### 2. New Components Needed
+### 1. New Calculation Functions
 ```typescript
-// New page component
-pages/rent-to-buy.tsx
+// Main decision analysis
+function analyzeRentVsBuy(
+  monthlyRent: number,
+  timeHorizon: number,
+  downPayment: number,
+  investmentReturn: number,
+  rentIncrease: number
+): RentVsBuyAnalysis
 
-// New calculation function
-function calculateAffordableHousePrice(
-  monthlyBudget: number,
-  downPaymentPercent: number,
-  interestRate: number,
-  loanTermYears: number,
-  propertyTaxRate: number,
-  insuranceRate: number,
-  pmiRate?: number
-): HousePriceScenario
+// Break-even calculation
+function calculateBreakEven(
+  rentCosts: number[],
+  buyCosts: number[]
+): number
 
-// New result interface
-interface HousePriceScenario {
-  housePrice: number;
-  downPayment: number;
-  loanAmount: number;
-  monthlyPayment: number;
-  monthlyPMI: number;
-  monthlyTaxes: number;
-  monthlyInsurance: number;
-  totalMonthly: number;
+// Equivalent house price (reuse existing logic)
+function calculateEquivalentHousePrice(
+  monthlyRent: number,
+  loanScenario: LoanScenario
+): number
+```
+
+### 2. New Interfaces
+```typescript
+interface RentVsBuyAnalysis {
+  recommendation: 'rent' | 'buy';
+  breakEvenMonths: number;
+  totalCostDifference: number;
+  equivalentHousePrices: HousePriceScenario[];
+  costProjections: CostProjection[];
+  reasoning: string[];
+}
+
+interface CostProjection {
+  year: number;
+  rentTotalCost: number;
+  buyTotalCost: number;
+  difference: number;
 }
 ```
 
-### 3. Reverse Calculation Algorithm
-```typescript
-// Iterative solver approach
-function solveForHousePrice(targetPayment: number, params: LoanParams): number {
-  let low = 50000;
-  let high = 2000000;
-  let tolerance = 100;
-  
-  while (high - low > tolerance) {
-    let mid = (low + high) / 2;
-    let calculatedPayment = calculateMonthlyPayment(mid, params);
-    
-    if (calculatedPayment < targetPayment) {
-      low = mid;
-    } else {
-      high = mid;
-    }
-  }
-  
-  return (low + high) / 2;
-}
+### 3. Component Structure
+```
+pages/rent-vs-buy.tsx
+├── RecommendationCard
+├── BreakEvenAnalysis  
+├── EquivalentHousePrices (reuse existing)
+├── CostComparisonChart
+└── InputSection
 ```
 
 ## 📱 User Experience Flow
 
 ### 1. Input Phase
-1. User enters monthly rent budget ($2,500)
-2. Optional: Location for tax/insurance estimates
-3. Current rates display (reuse existing component)
+1. User enters current monthly rent ($2,500)
+2. Expected time in area (5 years)
+3. Available down payment ($50,000)
+4. Investment return assumption (7%)
 
-### 2. Calculation Phase
-1. System calculates 5 different scenarios
-2. Each scenario shows max house price for that budget
-3. Educational content explains trade-offs
+### 2. Analysis Phase
+1. Calculate equivalent house prices for rent amount
+2. Project rent costs over time (with increases)
+3. Project buy costs over time (with equity building)
+4. Determine break-even point
+5. Generate recommendation
 
 ### 3. Results Phase
-1. 5 cards showing different loan options
-2. Each card shows:
-   - Max house price
-   - Down payment required
-   - Monthly breakdown
-   - Educational explanation
-3. Clear comparison of options
+1. **Primary**: Clear recommendation (Rent or Buy)
+2. **Supporting**: Break-even timeline
+3. **Options**: Equivalent house price scenarios
+4. **Validation**: Cost comparison chart over time
 
 ## 🎓 Educational Content Strategy
 
-### Card-Level Education (Baked In)
-- **FHA 3.5%**: "Best for first-time buyers with limited savings. Lower down payment but higher monthly costs due to PMI."
-- **Conventional 5%**: "Good middle ground. Higher down payment than FHA but better rates and lower PMI."
-- **Conventional 10%**: "Lower PMI costs. Good option if you can save a bit more for down payment."
-- **Conventional 20% (30-year)**: "No PMI, best rates. Traditional choice for established buyers."
-- **Conventional 20% (15-year)**: "Highest monthly payment but massive interest savings. Best for wealth building."
+### Decision Factors Explained
+- **Break-even timeline** and why it matters
+- **Opportunity cost** of down payment investment
+- **Hidden costs** of homeownership
+- **Flexibility value** of renting
+- **Equity building** benefits of buying
 
 ### Key Insights to Highlight
-- **Down payment impact** on buying power
-- **PMI costs** and when they disappear
-- **15-year vs 30-year** trade-offs
-- **Total interest paid** over loan life
+- **Time horizon** is the most important factor
+- **Down payment size** affects the analysis significantly
+- **Rent increases** vs **home appreciation**
+- **Transaction costs** impact short-term decisions
 
 ## 🔗 Integration with Existing Site
 
 ### Navigation
-- Add "Rent-to-Buy Calculator" to main navigation
-- Cross-link between the two calculators
-- "Reverse calculation" link on current mortgage analyzer
-
-### Shared Components
-- Header/footer
-- Interest rate display
-- Card components
-- Educational styling patterns
+- Update to "Rent vs Buy Calculator"
+- Cross-link with mortgage analyzer
+- Shared rate data and calculations
 
 ### URL Structure
-- Current: `/` (mortgage analyzer)
-- New: `/rent-to-buy` (reverse calculator)
+- Current: `/` (landing), `/mortgage-analyzer`
+- New: `/rent-vs-buy` (decision calculator)
 
 ## 📊 Success Metrics
 
 ### User Engagement
-- Time spent on page
-- Scenario comparisons viewed
-- Cross-navigation between calculators
+- Decision confidence (survey)
+- Time spent analyzing scenarios
+- Cross-tool usage
 
 ### Educational Impact
-- Understanding of loan product differences
-- Down payment planning insights
-- PMI awareness
+- Understanding of break-even concept
+- Awareness of opportunity costs
+- Improved decision-making process
 
 ## 🚀 Implementation Phases
 
-### Phase 1: Core Functionality
-- [ ] Reverse calculation algorithm
-- [ ] Basic 5-scenario display
-- [ ] Input validation
+### Phase 1: Core Decision Logic
+- [ ] Rent vs buy calculation engine
+- [ ] Break-even analysis
+- [ ] Basic recommendation system
 
-### Phase 2: Polish & Education
-- [ ] Educational content in cards
-- [ ] Visual enhancements
-- [ ] Cross-linking with main calculator
+### Phase 2: Equivalent House Analysis
+- [ ] Reuse existing house price calculations
+- [ ] 5-scenario card display
+- [ ] Integration with current rates
 
-### Phase 3: Advanced Features
-- [ ] Location-based tax/insurance estimates
-- [ ] Loan comparison table view
-- [ ] Save/share scenarios
+### Phase 3: Advanced Visualizations
+- [ ] Cost comparison charts
+- [ ] Timeline visualizations
+- [ ] Sensitivity analysis
 
 ---
 
-## ❓ Questions for Confirmation
+## ❓ Key Implementation Questions
 
-1. **Scenarios**: Are these 5 loan scenarios the right mix? Should we add/remove any?
+1. **Default Assumptions**: What defaults for rent increases, investment returns, maintenance costs?
 
-2. **Input Simplicity**: Should we keep it simple with just "monthly budget" or add location/tax rate inputs?
+2. **Time Horizons**: What time periods to analyze (1, 3, 5, 10 years)?
 
-3. **Educational Balance**: How detailed should the card explanations be? More or less than current mortgage analyzer?
+3. **Recommendation Logic**: What factors determine rent vs buy recommendation?
 
-4. **Integration**: Should this be a separate page or integrated into the existing calculator somehow?
+4. **Chart Complexity**: How detailed should cost projections be?
 
-5. **Calculation Accuracy**: Should we use iterative solver or try to solve the equation algebraically?
+5. **Mobile Experience**: How to present complex analysis on mobile?
 
-**Ready to proceed with this plan?** 🎯
+**Ready to proceed with this rent vs buy decision-focused approach?** 🎯
