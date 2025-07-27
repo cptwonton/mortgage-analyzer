@@ -310,7 +310,7 @@ export default function RentVsBuyCalculator() {
                             <div className="space-y-4">
                               {/* House Price Options with Breakdowns */}
                               <div className="space-y-3">
-                                {/* Total Housing Mode (was P&I only) */}
+                                {/* Total Housing Cost */}
                                 <div className="bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-lg p-3">
                                   <div className="text-center mb-2">
                                     <div className="text-lg font-bold text-blue-400">
@@ -341,33 +341,31 @@ export default function RentVsBuyCalculator() {
                                   </div>
                                 </div>
                                 
-                                {/* P&I Only Mode (was total housing) */}
+                                {/* Burnable Money Only */}
                                 <div className="bg-gradient-to-r from-green-500/10 to-blue-500/10 rounded-lg p-3">
                                   <div className="text-center mb-2">
                                     <div className="text-lg font-bold text-green-400">
-                                      ${scenario.housePriceForPIOnly.toLocaleString()}
+                                      ${scenario.housePriceForBurnableMoney.toLocaleString()}
                                     </div>
-                                    <div className="text-xs text-slate-400">If rent = P&I only</div>
+                                    <div className="text-xs text-slate-400">If rent = burnable money only</div>
+                                    <div className="text-xs text-slate-500 mt-1">
+                                      (Interest + taxes + insurance{downPayment < 0.2 ? ' + PMI' : ''}, no principal)
+                                    </div>
                                   </div>
                                   <div className="grid grid-cols-2 gap-2 text-xs">
                                     <div className="text-center">
                                       <div className="text-green-300 font-medium">
-                                        ${Math.round(scenario.housePriceForPIOnly * downPayment).toLocaleString()}
+                                        ${Math.round(scenario.housePriceForBurnableMoney * downPayment).toLocaleString()}
                                       </div>
                                       <div className="text-slate-500">Down Payment</div>
                                     </div>
                                     <div className="text-center">
                                       <div className="text-blue-300 font-medium">
-                                        ${Math.round(scenario.housePriceForPIOnly * (1 - downPayment)).toLocaleString()}
+                                        ${Math.round(scenario.housePriceForBurnableMoney * (1 - downPayment)).toLocaleString()}
                                       </div>
                                       <div className="text-slate-500">Mortgage</div>
                                     </div>
                                   </div>
-                                  {downPayment < 0.2 && (
-                                    <div className="text-center mt-2 text-xs text-amber-400">
-                                      + Property tax, insurance, PMI not included
-                                    </div>
-                                  )}
                                 </div>
                               </div>
                               
@@ -414,19 +412,29 @@ export default function RentVsBuyCalculator() {
                               {/* Monthly Payment Breakdown */}
                               <div className="border-t border-slate-600/30 pt-4">
                                 <div className="flex justify-between items-center mb-2">
-                                  <span className="text-slate-400">Principal & Interest:</span>
-                                  <span className="text-white">${scenario.monthlyPI.toLocaleString()}</span>
+                                  <span className="text-slate-400">Principal (equity building):</span>
+                                  <span className="text-green-400">${scenario.monthlyPrincipalOnly.toLocaleString()}</span>
+                                </div>
+                                <div className="flex justify-between items-center mb-2">
+                                  <span className="text-slate-400">Interest (burnable):</span>
+                                  <span className="text-orange-400">${scenario.monthlyInterestOnly.toLocaleString()}</span>
                                 </div>
                                 {downPayment < 0.2 && (
                                   <div className="flex justify-between items-center mb-2">
-                                    <span className="text-slate-400">PMI (Private Mortgage Insurance):</span>
+                                    <span className="text-slate-400">PMI (burnable):</span>
                                     <span className="text-amber-400">
                                       ${Math.round((scenario.housePriceForTotalHousing * 0.005) / 12).toLocaleString()}
                                     </span>
                                   </div>
                                 )}
+                                <div className="flex justify-between items-center mb-2">
+                                  <span className="text-slate-400">Total Burnable Money:</span>
+                                  <span className="text-red-400 font-medium">
+                                    ${scenario.totalBurnableMoney.toLocaleString()}
+                                  </span>
+                                </div>
                                 <div className="flex justify-between items-center">
-                                  <span className="text-slate-400">Total Monthly (w/ taxes, insurance{downPayment < 0.2 ? ', PMI' : ''}):</span>
+                                  <span className="text-slate-400">Total Monthly Payment:</span>
                                   <span className="text-blue-400 font-medium">
                                     ${scenario.totalMonthlyHousing.toLocaleString()}
                                   </span>
@@ -440,7 +448,10 @@ export default function RentVsBuyCalculator() {
                                   {scenario.loanTermYears}-year term at {(scenario.interestRate * 100).toFixed(2)}% APR
                                 </div>
                                 <div className="text-xs text-slate-400 mt-1">
-                                  Two calculation modes: Total housing cost vs P&I only
+                                  Burnable money = money you don&apos;t get back (like rent)
+                                </div>
+                                <div className="text-xs text-slate-400">
+                                  Principal builds equity - you get it back when you sell
                                 </div>
                                 {downPayment < 0.2 && (
                                   <div className="text-xs text-amber-400 mt-1">

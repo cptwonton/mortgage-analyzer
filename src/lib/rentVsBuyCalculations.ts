@@ -21,11 +21,14 @@ export interface LoanScenario {
       default: number;
     };
   };
-  housePriceForPIOnly: number; // Treating rent as P&I only
-  housePriceForTotalHousing: number; // Treating rent as total housing cost
+  housePriceForTotalHousing: number; // Treating rent as total housing cost (P&I + taxes + insurance + PMI)
+  housePriceForBurnableMoney: number; // Treating rent as burnable money only (Interest + taxes + insurance + PMI, NO principal)
   selectedDownPayment?: number; // For variable down payment loans
   monthlyPI: number; // Principal & Interest
+  monthlyInterestOnly: number; // Interest portion only (burnable)
+  monthlyPrincipalOnly: number; // Principal portion only (equity building)
   totalMonthlyHousing: number; // P&I + taxes + insurance + maintenance + PMI
+  totalBurnableMoney: number; // Interest + taxes + insurance + PMI (no principal)
 }
 
 export interface CostProjection {
@@ -75,6 +78,49 @@ function calculateMonthlyPayment(principal: number, rate: number, years: number)
   
   return principal * (monthlyRate * Math.pow(1 + monthlyRate, numPayments)) / 
          (Math.pow(1 + monthlyRate, numPayments) - 1);
+}
+
+// Calculate the interest portion of the first payment (approximation for average)
+function calculateMonthlyInterest(principal: number, rate: number): number {
+  return (principal * rate) / 12;
+}
+
+// Calculate house price given monthly "burnable money" payment
+function calculateHousePriceFromBurnableMoney(
+  monthlyBurnableMoney: number,
+  downPaymentPercent: number,
+  interestRate: number,
+  loanTermYears: number
+): number {
+  // Burnable money = Interest + Property Tax + Insurance + PMI (no principal)
+  // We need to solve iteratively since interest depends on loan amount
+  
+  let housePrice = monthlyBurnableMoney * 12 * 25; // Initial guess (25x annual payment)
+  let iterations = 0;
+  const maxIterations = 100;
+  const tolerance = 1;
+  
+  while (iterations < maxIterations) {
+    const loanAmount = housePrice * (1 - downPaymentPercent);
+    const monthlyInterest = calculateMonthlyInterest(loanAmount, interestRate);
+    
+    const propertyTax = (housePrice * HOUSING_ASSUMPTIONS.propertyTax) / 12;
+    const insurance = (housePrice * HOUSING_ASSUMPTIONS.homeInsurance) / 12;
+    const pmi = downPaymentPercent < 0.2 ? (housePrice * HOUSING_ASSUMPTIONS.pmi) / 12 : 0;
+    
+    const totalBurnable = monthlyInterest + propertyTax + insurance + pmi;
+    const difference = totalBurnable - monthlyBurnableMoney;
+    
+    if (Math.abs(difference) < tolerance) {
+      break;
+    }
+    
+    // Adjust house price based on difference
+    housePrice = housePrice * (monthlyBurnableMoney / totalBurnable);
+    iterations++;
+  }
+  
+  return housePrice;
 }
 
 // Calculate loan amount from monthly payment (reverse of calculateMonthlyPayment)
@@ -150,10 +196,13 @@ function calculateLoanScenarios(monthlyRent: number, downPaymentSelections?: Rec
         isFixed: true,
         fixedPercent: 0.035 // 3.5%
       },
-      housePriceForPIOnly: 0,
       housePriceForTotalHousing: 0,
+      housePriceForBurnableMoney: 0,
       monthlyPI: 0,
-      totalMonthlyHousing: 0
+      monthlyInterestOnly: 0,
+      monthlyPrincipalOnly: 0,
+      totalMonthlyHousing: 0,
+      totalBurnableMoney: 0
     },
     {
       loanType: 'Conventional 30-Year',
@@ -167,11 +216,14 @@ function calculateLoanScenarios(monthlyRent: number, downPaymentSelections?: Rec
           default: 0.20 // 20%
         }
       },
-      housePriceForPIOnly: 0,
       housePriceForTotalHousing: 0,
+      housePriceForBurnableMoney: 0,
       selectedDownPayment: downPaymentSelections?.['Conventional 30-Year'] || 0.20,
       monthlyPI: 0,
-      totalMonthlyHousing: 0
+      monthlyInterestOnly: 0,
+      monthlyPrincipalOnly: 0,
+      totalMonthlyHousing: 0,
+      totalBurnableMoney: 0
     },
     {
       loanType: 'Conventional 15-Year',
@@ -185,11 +237,14 @@ function calculateLoanScenarios(monthlyRent: number, downPaymentSelections?: Rec
           default: 0.20 // 20%
         }
       },
-      housePriceForPIOnly: 0,
       housePriceForTotalHousing: 0,
+      housePriceForBurnableMoney: 0,
       selectedDownPayment: downPaymentSelections?.['Conventional 15-Year'] || 0.20,
       monthlyPI: 0,
-      totalMonthlyHousing: 0
+      monthlyInterestOnly: 0,
+      monthlyPrincipalOnly: 0,
+      totalMonthlyHousing: 0,
+      totalBurnableMoney: 0
     },
     {
       loanType: '5/1 ARM',
@@ -203,11 +258,14 @@ function calculateLoanScenarios(monthlyRent: number, downPaymentSelections?: Rec
           default: 0.20 // 20%
         }
       },
-      housePriceForPIOnly: 0,
       housePriceForTotalHousing: 0,
+      housePriceForBurnableMoney: 0,
       selectedDownPayment: downPaymentSelections?.['5/1 ARM'] || 0.20,
       monthlyPI: 0,
-      totalMonthlyHousing: 0
+      monthlyInterestOnly: 0,
+      monthlyPrincipalOnly: 0,
+      totalMonthlyHousing: 0,
+      totalBurnableMoney: 0
     },
     {
       loanType: '7/1 ARM',
@@ -221,11 +279,14 @@ function calculateLoanScenarios(monthlyRent: number, downPaymentSelections?: Rec
           default: 0.20 // 20%
         }
       },
-      housePriceForPIOnly: 0,
       housePriceForTotalHousing: 0,
+      housePriceForBurnableMoney: 0,
       selectedDownPayment: downPaymentSelections?.['7/1 ARM'] || 0.20,
       monthlyPI: 0,
-      totalMonthlyHousing: 0
+      monthlyInterestOnly: 0,
+      monthlyPrincipalOnly: 0,
+      totalMonthlyHousing: 0,
+      totalBurnableMoney: 0
     }
   ];
 
@@ -235,38 +296,55 @@ function calculateLoanScenarios(monthlyRent: number, downPaymentSelections?: Rec
       ? scenario.downPaymentOptions.fixedPercent!
       : scenario.selectedDownPayment!;
 
-    const housePriceForPIOnly = calculateHousePriceFromPayment(
-      monthlyRent,
-      downPayment,
-      scenario.interestRate,
-      scenario.loanTermYears,
-      false
-    );
-
+    // Calculate house price for total housing cost (P&I + taxes + insurance + PMI)
     const housePriceForTotalHousing = calculateHousePriceFromPayment(
       monthlyRent,
       downPayment,
       scenario.interestRate,
       scenario.loanTermYears,
-      true
+      true // isForTotalHousing = true
     );
 
-    // Calculate monthly P&I and total housing costs
-    const loanAmountPI = housePriceForPIOnly * (1 - downPayment);
-    const monthlyPI = calculateMonthlyPayment(loanAmountPI, scenario.interestRate, scenario.loanTermYears);
+    // Calculate house price for burnable money only (Interest + taxes + insurance + PMI, NO principal)
+    const housePriceForBurnableMoney = calculateHousePriceFromBurnableMoney(
+      monthlyRent,
+      downPayment,
+      scenario.interestRate,
+      scenario.loanTermYears
+    );
 
-    const propertyTax = (housePriceForTotalHousing * HOUSING_ASSUMPTIONS.propertyTax) / 12;
-    const insurance = (housePriceForTotalHousing * HOUSING_ASSUMPTIONS.homeInsurance) / 12;
-    const maintenance = (housePriceForTotalHousing * HOUSING_ASSUMPTIONS.maintenance) / 12;
-    const pmi = downPayment < 0.2 ? (housePriceForTotalHousing * HOUSING_ASSUMPTIONS.pmi) / 12 : 0;
-    const totalMonthlyHousing = monthlyPI + propertyTax + insurance + maintenance + pmi;
+    // Calculate monthly payments for total housing scenario
+    const loanAmountTotal = housePriceForTotalHousing * (1 - downPayment);
+    const monthlyPI = calculateMonthlyPayment(loanAmountTotal, scenario.interestRate, scenario.loanTermYears);
+    const monthlyInterestTotal = calculateMonthlyInterest(loanAmountTotal, scenario.interestRate);
+    const monthlyPrincipalTotal = monthlyPI - monthlyInterestTotal;
+
+    // Calculate monthly payments for burnable money scenario
+    const loanAmountBurnable = housePriceForBurnableMoney * (1 - downPayment);
+    const monthlyInterestBurnable = calculateMonthlyInterest(loanAmountBurnable, scenario.interestRate);
+
+    // Calculate additional housing costs for both scenarios
+    const propertyTaxTotal = (housePriceForTotalHousing * HOUSING_ASSUMPTIONS.propertyTax) / 12;
+    const insuranceTotal = (housePriceForTotalHousing * HOUSING_ASSUMPTIONS.homeInsurance) / 12;
+    const maintenanceTotal = (housePriceForTotalHousing * HOUSING_ASSUMPTIONS.maintenance) / 12;
+    const pmiTotal = downPayment < 0.2 ? (housePriceForTotalHousing * HOUSING_ASSUMPTIONS.pmi) / 12 : 0;
+
+    const propertyTaxBurnable = (housePriceForBurnableMoney * HOUSING_ASSUMPTIONS.propertyTax) / 12;
+    const insuranceBurnable = (housePriceForBurnableMoney * HOUSING_ASSUMPTIONS.homeInsurance) / 12;
+    const pmiBurnable = downPayment < 0.2 ? (housePriceForBurnableMoney * HOUSING_ASSUMPTIONS.pmi) / 12 : 0;
+
+    const totalMonthlyHousing = monthlyPI + propertyTaxTotal + insuranceTotal + maintenanceTotal + pmiTotal;
+    const totalBurnableMoney = monthlyInterestBurnable + propertyTaxBurnable + insuranceBurnable + pmiBurnable;
 
     return {
       ...scenario,
-      housePriceForPIOnly: Math.round(housePriceForPIOnly),
       housePriceForTotalHousing: Math.round(housePriceForTotalHousing),
+      housePriceForBurnableMoney: Math.round(housePriceForBurnableMoney),
       monthlyPI: Math.round(monthlyPI),
-      totalMonthlyHousing: Math.round(totalMonthlyHousing)
+      monthlyInterestOnly: Math.round(monthlyInterestTotal),
+      monthlyPrincipalOnly: Math.round(monthlyPrincipalTotal),
+      totalMonthlyHousing: Math.round(totalMonthlyHousing),
+      totalBurnableMoney: Math.round(totalBurnableMoney)
     };
   });
 }
@@ -312,7 +390,7 @@ export function calculateRentVsBuyAnalysis(inputs: RentVsBuyInputs, downPaymentS
   
   // Use the average house price from the first scenario for cost projections
   const primaryScenario = equivalentHousePrices[0];
-  const avgHousePrice = (primaryScenario.housePriceForPIOnly + primaryScenario.housePriceForTotalHousing) / 2;
+  const avgHousePrice = (primaryScenario.housePriceForTotalHousing + primaryScenario.housePriceForBurnableMoney) / 2;
   
   const costProjections = calculateCostProjections(inputs, avgHousePrice);
   const breakEvenMonths = findBreakEvenPoint(costProjections);
