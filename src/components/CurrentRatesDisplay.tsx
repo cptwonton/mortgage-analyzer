@@ -148,10 +148,13 @@ const CurrentRatesDisplay: React.FC<CurrentRatesDisplayProps> = ({
         {/* 30-Year Fixed */}
         <div className="px-4 py-3 bg-white/5 border border-white/10 rounded-lg">
           <div className="flex items-center justify-between">
-            <div>
+            <div className="flex-1">
               <div className="font-medium text-slate-200 text-sm">30-Year Fixed</div>
               <div className="text-xl font-bold text-blue-400">
                 {formatRate(rates['30-year-fixed'])}
+              </div>
+              <div className="text-xs text-slate-400 mt-1">
+                Min. down: <span className="text-blue-300 font-medium">20%</span>
               </div>
             </div>
             {onRateSelect && rates['30-year-fixed'] && (
@@ -168,10 +171,13 @@ const CurrentRatesDisplay: React.FC<CurrentRatesDisplayProps> = ({
         {/* 15-Year Fixed */}
         <div className="px-4 py-3 bg-white/5 border border-white/10 rounded-lg">
           <div className="flex items-center justify-between">
-            <div>
+            <div className="flex-1">
               <div className="font-medium text-slate-200 text-sm">15-Year Fixed</div>
               <div className="text-xl font-bold text-green-400">
                 {formatRate(rates['15-year-fixed'])}
+              </div>
+              <div className="text-xs text-slate-400 mt-1">
+                Min. down: <span className="text-green-300 font-medium">20%</span>
               </div>
             </div>
             {onRateSelect && rates['15-year-fixed'] && (
@@ -188,10 +194,13 @@ const CurrentRatesDisplay: React.FC<CurrentRatesDisplayProps> = ({
         {/* FHA 30-Year */}
         <div className="px-4 py-3 bg-white/5 border border-white/10 rounded-lg">
           <div className="flex items-center justify-between">
-            <div>
+            <div className="flex-1">
               <div className="font-medium text-slate-200 text-sm">FHA 30-Year</div>
               <div className="text-xl font-bold text-purple-400">
                 {formatRate(rates['fha-30-year'])}
+              </div>
+              <div className="text-xs text-slate-400 mt-1">
+                Min. down: <span className="text-purple-300 font-medium">3.5%</span>
               </div>
             </div>
             {onRateSelect && rates['fha-30-year'] && (
@@ -208,10 +217,13 @@ const CurrentRatesDisplay: React.FC<CurrentRatesDisplayProps> = ({
         {/* ARM 5/1 */}
         <div className="px-4 py-3 bg-white/5 border border-white/10 rounded-lg">
           <div className="flex items-center justify-between">
-            <div>
+            <div className="flex-1">
               <div className="font-medium text-slate-200 text-sm">5/1 ARM</div>
               <div className="text-xl font-bold text-orange-400">
                 {formatRate(rates['arm-5-1'])}
+              </div>
+              <div className="text-xs text-slate-400 mt-1">
+                Min. down: <span className="text-orange-300 font-medium">5%</span>
               </div>
             </div>
             {onRateSelect && rates['arm-5-1'] && (
