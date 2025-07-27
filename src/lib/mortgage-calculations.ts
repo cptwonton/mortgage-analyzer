@@ -332,10 +332,6 @@ export function validateField(field: keyof MortgageInputs, value: number): {
   switch (field) {
     case 'purchasePrice':
       if (value <= 0) return { isValid: false, state: 'error', message: 'Purchase price is required' };
-      if (value < 50000) return { isValid: true, state: 'warning', message: 'Very low for typical investment property' };
-      if (value > 100000000) return { isValid: true, state: 'warning', message: 'Ultra-luxury property - consider specialized financing' };
-      if (value > 10000000) return { isValid: true, state: 'warning', message: 'High-end property - jumbo loan rates apply' };
-      if (value > 2000000) return { isValid: true, state: 'warning', message: 'Premium property - ensure rent projections are realistic' };
       return { isValid: true, state: 'success' };
 
     case 'propertyTaxRate':
