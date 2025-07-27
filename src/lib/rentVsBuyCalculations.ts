@@ -2,7 +2,7 @@
 
 export interface RentVsBuyInputs {
   monthlyRent: number;
-  timeHorizon: number; // years
+  timeHorizon?: number; // Optional - we'll calculate optimal horizon
   downPayment: number; // decimal (0.20 for 20%)
   investmentReturn: number; // decimal (0.07 for 7%)
   rentIncrease: number; // decimal (0.03 for 3%)
@@ -53,10 +53,12 @@ export interface CostProjection {
 export interface RentVsBuyAnalysis {
   recommendation: 'rent' | 'buy';
   breakEvenMonths: number;
+  breakEvenRentAmount: number; // The monthly rent where it flips from rent to buy
   totalCostDifference: number;
   equivalentHousePrices: LoanScenario[]; // Updated to use LoanScenario
   costProjections: CostProjection[];
   reasoning: string[];
+  analysisHorizon: number; // How many years we analyzed
 }
 
 // Current market rates (should match mortgage analyzer)
@@ -364,9 +366,10 @@ function calculateLoanScenarios(monthlyRent: number, downPaymentSelections?: Rec
 }
 
 // Legacy function for cost projections (simplified for now)
-// Comprehensive rent vs buy calculation based on NYTimes methodology
+// Calculate projections until break-even or reasonable maximum
 function calculateCostProjections(inputs: RentVsBuyInputs, housePrice: number): CostProjection[] {
   const projections: CostProjection[] = [];
+  const MAX_YEARS = 30; // Maximum analysis period
   
   // Default values for optional parameters
   const homeAppreciation = inputs.homeAppreciation || 0.03; // 3% annually
@@ -394,16 +397,14 @@ function calculateCostProjections(inputs: RentVsBuyInputs, housePrice: number): 
   const monthlyInsurance = (housePrice * insuranceRate) / 12;
   const monthlyPMI = downPaymentPercent < 0.20 ? (housePrice * 0.005) / 12 : 0; // 0.5% PMI
   
-  // Investment tracking
-  let investedAmount = downPaymentAmount + transactionCosts; // Initial investment
-  let cumulativeRentCost = 0;
-  let cumulativeBuyCost = downPaymentAmount + transactionCosts; // Start with upfront costs
+  // Investment tracking - start with down payment + transaction costs invested
+  let investedAmount = downPaymentAmount + transactionCosts;
+  let hasReachedBreakEven = false;
   
-  for (let year = 1; year <= inputs.timeHorizon; year++) {
+  for (let year = 1; year <= MAX_YEARS; year++) {
     // Current year rent (with annual increases)
     const currentRent = inputs.monthlyRent * Math.pow(1 + inputs.rentIncrease, year - 1);
     const annualRentCost = currentRent * 12;
-    cumulativeRentCost += annualRentCost;
     
     // Current home value (with appreciation)
     const currentHomeValue = housePrice * Math.pow(1 + homeAppreciation, year);
@@ -427,8 +428,6 @@ function calculateCostProjections(inputs: RentVsBuyInputs, housePrice: number): 
     const annualOwnershipCost = annualMortgagePI + annualPropertyTax + annualInsurance + 
                                annualPMI + annualMaintenance - taxSavings;
     
-    cumulativeBuyCost += annualOwnershipCost;
-    
     // Investment opportunity calculation
     const monthlyDifference = (annualOwnershipCost - annualRentCost) / 12;
     if (monthlyDifference > 0) {
@@ -440,13 +439,9 @@ function calculateCostProjections(inputs: RentVsBuyInputs, housePrice: number): 
     // Home equity calculation
     const homeEquity = currentHomeValue - remainingBalance;
     
-    // Net worth if renting: invested down payment + transaction costs + monthly savings
+    // Net worth comparison
     const netWorthRenting = investedAmount;
-    
-    // Net worth if buying: home equity (what you own minus what you owe)
     const netWorthBuying = homeEquity;
-    
-    // Net difference: positive means renting gives better net worth, negative means buying is better
     const netDifference = netWorthRenting - netWorthBuying;
     
     projections.push({
@@ -461,12 +456,61 @@ function calculateCostProjections(inputs: RentVsBuyInputs, housePrice: number): 
       taxSavings: taxSavings,
       opportunityCost: investedAmount - (downPaymentAmount + transactionCosts)
     });
+    
+    // Check if we've reached break-even (buying becomes better)
+    if (netDifference <= 0 && !hasReachedBreakEven) {
+      hasReachedBreakEven = true;
+      // Continue for a few more years to show the trend
+      if (year >= 3) { // Minimum 3 years of analysis
+        // Add 3-5 more years after break-even to show the benefit
+        const additionalYears = Math.min(5, MAX_YEARS - year);
+        if (additionalYears <= 0) break;
+      }
+    }
+    
+    // If we've been analyzing for a while and buying is still not better, we can stop
+    if (year >= 15 && netDifference > 0) {
+      break; // Buying will likely never be better
+    }
   }
   
   return projections;
 }
 
-// Helper function to calculate remaining mortgage balance
+// Calculate what monthly rent would result in break-even at a reasonable time (3-5 years)
+function calculateBreakEvenRentAmount(housePrice: number, inputs: RentVsBuyInputs): number {
+  const TARGET_BREAKEVEN_YEARS = 4; // Target 4-year break-even
+  
+  // Binary search to find the rent amount that gives us the target break-even
+  let lowRent = 500;
+  let highRent = 10000;
+  let bestRent = inputs.monthlyRent;
+  
+  for (let iteration = 0; iteration < 20; iteration++) { // Max 20 iterations
+    const testRent = (lowRent + highRent) / 2;
+    const testInputs = { ...inputs, monthlyRent: testRent };
+    const testProjections = calculateCostProjections(testInputs, housePrice);
+    const testBreakEven = findBreakEvenPoint(testProjections);
+    const testBreakEvenYears = testBreakEven / 12;
+    
+    if (Math.abs(testBreakEvenYears - TARGET_BREAKEVEN_YEARS) < 0.1) {
+      bestRent = testRent;
+      break;
+    }
+    
+    if (testBreakEvenYears > TARGET_BREAKEVEN_YEARS) {
+      // Break-even is too long, need higher rent
+      lowRent = testRent;
+    } else {
+      // Break-even is too short, need lower rent
+      highRent = testRent;
+    }
+    
+    bestRent = testRent;
+  }
+  
+  return Math.round(bestRent);
+}
 function calculateRemainingBalance(principal: number, monthlyRate: number, totalMonths: number, monthsPaid: number): number {
   if (monthsPaid >= totalMonths) return 0;
   
@@ -513,36 +557,29 @@ function calculateAnnualInterest(principal: number, monthlyRate: number, totalMo
   return annualInterest;
 }
 
-// Find the break-even point where buying becomes cheaper than renting
+// Find the break-even point where buying becomes better than renting
 function findBreakEvenPoint(projections: CostProjection[]): number {
-  // Look for the first year where the cumulative difference becomes negative
-  // (meaning buying is cheaper than renting + opportunity cost)
   for (let i = 0; i < projections.length; i++) {
     if (projections[i].difference <= 0) {
       // Interpolate to find more precise break-even point within the year
       if (i === 0) {
-        return 12; // Break-even in first year
+        return 6; // Break-even in first 6 months
       }
       
       const prevDiff = projections[i - 1].difference;
       const currDiff = projections[i].difference;
       const monthsIntoYear = 12 * (prevDiff / (prevDiff - currDiff));
       
-      return (i * 12) + monthsIntoYear;
+      return ((i - 1) * 12) + monthsIntoYear;
     }
   }
   
-  // If never breaks even within the time horizon, return a high number
-  return projections.length * 12 + 60; // Add 5 years beyond timeline
+  // If never breaks even, return a number beyond our analysis
+  return projections.length * 12 + 120; // Add 10 years beyond analysis
 }
 
 export function calculateRentVsBuyAnalysis(inputs: RentVsBuyInputs, downPaymentSelections?: Record<string, number>): RentVsBuyAnalysis {
   const equivalentHousePrices = calculateLoanScenarios(inputs.monthlyRent, downPaymentSelections);
-  
-  // Market reality constraints
-  const MIN_VIABLE_HOUSE_PRICE = 150000; // $150k minimum in 2025 market
-  const MIN_RENT_FOR_BUYING = 1200; // Below $1,200/month rent, buying rarely makes sense
-  const MAX_REASONABLE_HOUSE_PRICE = 2000000; // $2M+ is luxury market with different dynamics
   
   // Use the average house price from the first scenario for cost projections
   const primaryScenario = equivalentHousePrices[0];
@@ -550,93 +587,54 @@ export function calculateRentVsBuyAnalysis(inputs: RentVsBuyInputs, downPaymentS
   
   const costProjections = calculateCostProjections(inputs, avgHousePrice);
   const breakEvenMonths = findBreakEvenPoint(costProjections);
+  const breakEvenRentAmount = calculateBreakEvenRentAmount(avgHousePrice, inputs);
   
-  // Debug logging
-  console.log('=== RENT VS BUY DEBUG ===');
-  console.log('Monthly rent:', inputs.monthlyRent);
-  console.log('Average house price:', avgHousePrice);
-  console.log('Break-even months:', breakEvenMonths);
-  console.log('Cost projections:', costProjections.map(p => ({
-    year: p.year,
-    rentCost: p.rentCost,
-    buyCost: p.buyCost,
-    difference: p.difference,
-    equity: p.equity,
-    investmentValue: p.investmentValue
-  })));
-  console.log('========================');
+  // Simple paradigm: if your rent is below break-even rent, keep renting. If above, buy.
+  const recommendation: 'buy' | 'rent' = inputs.monthlyRent >= breakEvenRentAmount ? 'buy' : 'rent';
   
-  // Determine recommendation with market reality checks
+  // Calculate total difference at the end of our analysis
   const finalProjection = costProjections[costProjections.length - 1];
-  let recommendation: 'buy' | 'rent' = finalProjection.difference <= 0 ? 'buy' : 'rent';
   const totalCostDifference = finalProjection.difference;
   
-  // Override if break-even is too long, even if buying eventually wins
-  if (breakEvenMonths > 84 && recommendation === 'buy') { // More than 7 years
-    recommendation = 'rent';
-  }
-  
-  // Override recommendation based on market realities
+  // Generate reasoning based on the simple paradigm
   const reasoning = [];
+  const breakEvenYears = breakEvenMonths / 12;
   
-  if (inputs.monthlyRent < MIN_RENT_FOR_BUYING) {
-    recommendation = 'rent';
-    reasoning.push(`At $${inputs.monthlyRent.toLocaleString()}/month rent, you're getting an amazing deal`);
-    reasoning.push('House prices in your budget range are extremely limited in 2025');
-    reasoning.push('Transaction costs and maintenance would exceed your rent savings');
-    reasoning.push('Keep renting and invest the difference for better returns');
-  } else if (avgHousePrice < MIN_VIABLE_HOUSE_PRICE) {
-    recommendation = 'rent';
-    reasoning.push(`Houses under $${MIN_VIABLE_HOUSE_PRICE.toLocaleString()} are rare and often problematic in 2025`);
-    reasoning.push('Limited inventory in this price range across most US markets');
-    reasoning.push('Your rent is low enough that buying doesn\'t make financial sense');
-    reasoning.push('Continue renting and save for a larger down payment');
-  } else if (avgHousePrice > MAX_REASONABLE_HOUSE_PRICE) {
-    recommendation = 'rent';
-    reasoning.push(`At $${inputs.monthlyRent.toLocaleString()}/month rent, you're in luxury territory`);
-    reasoning.push('Luxury real estate has different dynamics and higher volatility');
-    reasoning.push('Renting provides flexibility without massive capital commitment');
-    reasoning.push('Consider investing the down payment in diversified assets');
-  } else if (breakEvenMonths > 84) { // More than 7 years
-    recommendation = 'rent';
-    reasoning.push(`Break-even point at ${(breakEvenMonths / 12).toFixed(1)} years is too long`);
-    reasoning.push('Your money would likely perform better in diversified investments');
-    reasoning.push('Renting provides flexibility without long-term commitment');
-    reasoning.push('Consider buying when you find a better deal or market conditions improve');
-  } else if (recommendation === 'buy') {
-    reasoning.push(`Your $${inputs.monthlyRent.toLocaleString()}/month rent can support homeownership`);
-    reasoning.push(`Break-even point at ${(breakEvenMonths / 12).toFixed(1)} years is reasonable`);
-    reasoning.push(`Building equity vs. paying $${(inputs.monthlyRent * 12).toLocaleString()}/year to landlord`);
-    if (totalCostDifference < 0) {
-      reasoning.push(`Buying saves $${Math.abs(totalCostDifference).toLocaleString()} over ${inputs.timeHorizon} years`);
+  if (recommendation === 'rent') {
+    reasoning.push(`Your rent of $${inputs.monthlyRent.toLocaleString()}/month is below the break-even point`);
+    reasoning.push(`Break-even occurs at $${breakEvenRentAmount.toLocaleString()}/month rent (${breakEvenYears.toFixed(1)} years)`);
+    reasoning.push('At your current rent level, investing the down payment gives better returns');
+    reasoning.push('You maintain flexibility to move without selling costs');
+    if (inputs.monthlyRent < 1200) {
+      reasoning.push('You have an excellent rent deal - keep it!');
     }
   } else {
-    reasoning.push(`Renting saves $${Math.abs(totalCostDifference).toLocaleString()} over ${inputs.timeHorizon} years`);
-    reasoning.push('Flexibility to move without selling costs and realtor fees');
-    reasoning.push('Investment returns on down payment may exceed housing appreciation');
-    if (breakEvenMonths > 60) { // 5+ years
-      reasoning.push('Long break-even period makes renting more attractive');
+    reasoning.push(`Your rent of $${inputs.monthlyRent.toLocaleString()}/month is above the break-even point`);
+    reasoning.push(`Break-even occurs at $${breakEvenRentAmount.toLocaleString()}/month rent (${breakEvenYears.toFixed(1)} years)`);
+    reasoning.push('At your rent level, buying builds wealth faster than renting + investing');
+    reasoning.push('You benefit from tax deductions and home appreciation');
+    if (breakEvenYears <= 3) {
+      reasoning.push('Quick break-even makes buying very attractive');
     }
   }
   
-  // Add time horizon considerations
-  if (inputs.timeHorizon < 3) {
-    if (recommendation === 'buy') {
-      recommendation = 'rent';
-      reasoning.unshift('Short time horizon (under 3 years) strongly favors renting');
-    } else {
-      reasoning.push('Short time horizon avoids transaction costs of buying/selling');
-    }
-  } else if (inputs.timeHorizon < 5 && recommendation === 'buy') {
-    reasoning.push('Consider your mobility needs - buying works best if staying 5+ years');
-  }
+  // Debug logging
+  console.log('=== RENT VS BUY DEBUG (New Paradigm) ===');
+  console.log('Monthly rent:', inputs.monthlyRent);
+  console.log('Break-even rent amount:', breakEvenRentAmount);
+  console.log('Break-even months:', breakEvenMonths);
+  console.log('Recommendation:', recommendation);
+  console.log('Analysis horizon:', costProjections.length, 'years');
+  console.log('========================================');
   
   return {
     recommendation,
     breakEvenMonths,
+    breakEvenRentAmount,
     totalCostDifference,
     equivalentHousePrices,
     costProjections,
-    reasoning
+    reasoning,
+    analysisHorizon: costProjections.length
   };
 }

@@ -132,7 +132,6 @@ export default function RentVsBuyCalculator() {
       
       const result = calculateRentVsBuyAnalysis({
         monthlyRent: Number(monthlyRent) || 0,
-        timeHorizon: 7,
         downPayment: 0.20, // 20% down payment
         investmentReturn: 0.07, // 7% stock market return
         rentIncrease: 0.03, // 3% annual rent increases
@@ -414,23 +413,21 @@ export default function RentVsBuyCalculator() {
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                         <div className="text-center p-4 bg-slate-800/30 rounded-lg">
                           <div className="text-2xl font-bold text-blue-400">
+                            ${analysis.breakEvenRentAmount.toLocaleString()}
+                          </div>
+                          <div className="text-sm text-slate-400">Break-even rent amount</div>
+                        </div>
+                        <div className="text-center p-4 bg-slate-800/30 rounded-lg">
+                          <div className="text-2xl font-bold text-purple-400">
                             {(analysis.breakEvenMonths / 12).toFixed(1)} years
                           </div>
-                          <div className="text-sm text-slate-400">Break-even point</div>
+                          <div className="text-sm text-slate-400">Time to break-even</div>
                         </div>
                         <div className="text-center p-4 bg-slate-800/30 rounded-lg">
-                          <div className={`text-2xl font-bold ${
-                            analysis.totalCostDifference < 0 ? 'text-green-400' : 'text-red-400'
-                          }`}>
-                            ${Math.abs(analysis.totalCostDifference).toLocaleString()}
+                          <div className="text-2xl font-bold text-orange-400">
+                            {analysis.analysisHorizon} years
                           </div>
-                          <div className="text-sm text-slate-400">
-                            {analysis.totalCostDifference < 0 ? 'Savings by buying' : 'Extra cost to buy'}
-                          </div>
-                        </div>
-                        <div className="text-center p-4 bg-slate-800/30 rounded-lg">
-                          <div className="text-2xl font-bold text-purple-400">7 years</div>
-                          <div className="text-sm text-slate-400">Analysis timeframe</div>
+                          <div className="text-sm text-slate-400">Analysis period</div>
                         </div>
                       </div>
 
