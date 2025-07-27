@@ -108,8 +108,8 @@ export default function LandingPage() {
               </motion.p>
               <motion.div 
                 className="flex justify-center"
-                initial={{ width: 0 }}
-                animate={{ width: 128 }}
+                initial={{ opacity: 0, scale: 0 }}
+                animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.8, delay: 0.7 }}
               >
                 <div className="h-1 w-32 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 rounded-full"></div>
