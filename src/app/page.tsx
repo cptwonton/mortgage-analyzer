@@ -43,17 +43,9 @@ export default function Home() {
         "Free money is free money. The app's creator respects the hustle."
       ];
       return messages[Math.floor(Math.random() * messages.length)];
-    } else if (rate < 3) {
+    } else if (rate >= 10) {
       const messages = [
-        "✨ Under 3%? That's genuinely exceptional. Well negotiated.",
-        "Impressive rate. The app's creator didn't expect such skill.",
-        "That's a unicorn rate in today's market. Respect.",
-        "Exceptional financing. You clearly know what you're doing."
-      ];
-      return messages[Math.floor(Math.random() * messages.length)];
-    } else if (rate > 8) {
-      const messages = [
-        "😬 Over 8%? That's rough. You might want to shop around more.",
+        "😬 10%? That's rough. You might want to shop around more.",
         "That rate seems high for today's market. Consider other lenders.",
         "Yikes. The app's creator suggests getting a second opinion.",
         "That's approaching predatory territory. You can do better."
