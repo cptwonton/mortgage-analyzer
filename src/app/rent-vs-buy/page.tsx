@@ -120,8 +120,21 @@ export default function RentVsBuyCalculator() {
                         placeholder="2500"
                         formatCurrency={true}
                         helpText="Your current monthly rent payment"
-                        min={500}
-                        max={20000}
+                        max={15000}
+                        helpTooltip={
+                          Number(monthlyRent) === 0 ? {
+                            title: "Free Rent? 🏠",
+                            content: (
+                              <div>
+                                <p className="mb-2">Living rent-free? Lucky you! 🍀</p>
+                                <p className="text-sm text-slate-400">
+                                  Maybe you're living with family, house-sitting, or found the deal of the century. 
+                                  In any case, buying will definitely cost more than $0/month! 😄
+                                </p>
+                              </div>
+                            )
+                          } : undefined
+                        }
                       />
 
                       {/* Time Horizon Slider */}
@@ -151,8 +164,21 @@ export default function RentVsBuyCalculator() {
                         placeholder="50000"
                         formatCurrency={true}
                         helpText="Cash available for down payment"
-                        min={0}
-                        max={500000}
+                        max={1000000}
+                        helpTooltip={
+                          Number(downPayment) === 0 ? {
+                            title: "No Down Payment? 💸",
+                            content: (
+                              <div>
+                                <p className="mb-2">Starting from scratch? We've all been there! 💪</p>
+                                <p className="text-sm text-slate-400">
+                                  Don't worry - there are loan programs with low or no down payment options. 
+                                  The analysis will show you what's possible even without a big down payment.
+                                </p>
+                              </div>
+                            )
+                          } : undefined
+                        }
                       />
 
                       {/* Fixed Assumptions Display */}
