@@ -372,6 +372,88 @@ export default function RentVsBuyCalculator() {
                 </motion.div>
               )}
 
+              {/* Rent vs Buy Recommendation */}
+              {analysis && !isCalculating && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.2 }}
+                  className="mb-8"
+                >
+                  <Card variant="section">
+                    <div className="p-6">
+                      <div className="text-center mb-6">
+                        <div className={`inline-flex items-center justify-center p-3 rounded-full mb-4 ${
+                          analysis.recommendation === 'buy' 
+                            ? 'bg-green-500/20 text-green-400' 
+                            : 'bg-blue-500/20 text-blue-400'
+                        }`}>
+                          <span className="text-3xl mr-2">
+                            {analysis.recommendation === 'buy' ? '🏠' : '🏢'}
+                          </span>
+                          <span className="text-xl font-bold">
+                            {analysis.recommendation === 'buy' ? 'BUY' : 'RENT'}
+                          </span>
+                        </div>
+                        <h2 className="text-2xl font-bold text-white mb-2">
+                          Our Recommendation: {analysis.recommendation === 'buy' ? 'Buy a Home' : 'Keep Renting'}
+                        </h2>
+                        <p className="text-slate-300">
+                          Based on your ${Number(monthlyRent).toLocaleString()}/month rent and current market conditions
+                        </p>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                        <div className="text-center p-4 bg-slate-800/30 rounded-lg">
+                          <div className="text-2xl font-bold text-blue-400">
+                            {(analysis.breakEvenMonths / 12).toFixed(1)} years
+                          </div>
+                          <div className="text-sm text-slate-400">Break-even point</div>
+                        </div>
+                        <div className="text-center p-4 bg-slate-800/30 rounded-lg">
+                          <div className={`text-2xl font-bold ${
+                            analysis.totalCostDifference < 0 ? 'text-green-400' : 'text-red-400'
+                          }`}>
+                            ${Math.abs(analysis.totalCostDifference).toLocaleString()}
+                          </div>
+                          <div className="text-sm text-slate-400">
+                            {analysis.totalCostDifference < 0 ? 'Savings by buying' : 'Extra cost to buy'}
+                          </div>
+                        </div>
+                        <div className="text-center p-4 bg-slate-800/30 rounded-lg">
+                          <div className="text-2xl font-bold text-purple-400">7 years</div>
+                          <div className="text-sm text-slate-400">Analysis timeframe</div>
+                        </div>
+                      </div>
+
+                      <div className="space-y-3">
+                        <h3 className="text-lg font-semibold text-white">Why {analysis.recommendation === 'buy' ? 'buying' : 'renting'} makes sense:</h3>
+                        <ul className="space-y-2">
+                          {analysis.reasoning.map((reason, index) => (
+                            <li key={index} className="flex items-start">
+                              <span className="text-green-400 mr-2 mt-1">✓</span>
+                              <span className="text-slate-300">{reason}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  </Card>
+                </motion.div>
+              )}
+
+              {/* Loan Options Header */}
+              {analysis && !isCalculating && (
+                <div className="text-center mb-8">
+                  <h2 className="text-2xl font-bold text-white mb-2">
+                    Available Loan Options
+                  </h2>
+                  <p className="text-slate-400">
+                    Click any card to get detailed mortgage analysis
+                  </p>
+                </div>
+              )}
+
               {/* Mortgage Scenario Cards */}
               {analysis && !isCalculating && (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
