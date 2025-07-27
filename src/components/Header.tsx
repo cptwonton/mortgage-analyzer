@@ -10,7 +10,7 @@ const Header: React.FC = () => {
 
   const navItems = [
     { href: '/mortgage-analyzer', label: 'Mortgage Analyzer', icon: '🏠' },
-    { href: '/rent-vs-buy', label: 'Rent vs Buy', icon: '⚖️', comingSoon: true },
+    { href: '/rent-vs-buy', label: 'Rent vs Buy', icon: '⚖️' },
   ];
 
   return (
@@ -42,69 +42,41 @@ const Header: React.FC = () => {
             <nav className="hidden md:flex items-center space-x-1">
               {navItems.map((item) => {
                 const isActive = pathname === item.href;
-                const isComingSoon = item.comingSoon;
                 
                 return (
                   <div key={item.href} className="relative">
-                    {isComingSoon ? (
-                      <motion.div 
-                        className="flex items-center space-x-2 px-3 py-2 text-slate-400 cursor-not-allowed relative"
-                        whileHover={{ scale: 1.02 }}
+                    <Link href={item.href}>
+                      <motion.div
+                        className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-all duration-200 relative ${
+                          isActive
+                            ? 'bg-white/10 text-white border border-white/20'
+                            : 'text-slate-300 hover:text-white hover:bg-white/5'
+                        }`}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.98 }}
                         transition={{ duration: 0.2 }}
                       >
-                        <span className="text-sm">{item.icon}</span>
-                        <span className="text-sm font-medium">{item.label}</span>
                         <motion.span 
-                          className="text-xs bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full"
-                          animate={{ 
-                            boxShadow: [
-                              '0 0 0 0 rgba(245, 158, 11, 0.4)',
-                              '0 0 0 4px rgba(245, 158, 11, 0)',
-                            ]
-                          }}
-                          transition={{ 
-                            duration: 2,
-                            repeat: Infinity,
-                            ease: 'easeInOut'
-                          }}
-                        >
-                          Soon
-                        </motion.span>
-                      </motion.div>
-                    ) : (
-                      <Link href={item.href}>
-                        <motion.div
-                          className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-all duration-200 relative ${
-                            isActive
-                              ? 'bg-white/10 text-white border border-white/20'
-                              : 'text-slate-300 hover:text-white hover:bg-white/5'
-                          }`}
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.98 }}
+                          className="text-sm"
+                          whileHover={{ scale: 1.2 }}
                           transition={{ duration: 0.2 }}
                         >
-                          <motion.span 
-                            className="text-sm"
-                            whileHover={{ scale: 1.2 }}
-                            transition={{ duration: 0.2 }}
-                          >
-                            {item.icon}
-                          </motion.span>
-                          <span className="text-sm font-medium">{item.label}</span>
-                          
-                          {/* Active indicator */}
-                          {isActive && (
-                            <motion.div
-                              className="absolute -bottom-1 left-1/2 w-1 h-1 bg-blue-400 rounded-full"
-                              layoutId="activeIndicator"
-                              initial={{ scale: 0 }}
-                              animate={{ scale: 1 }}
-                              transition={{ duration: 0.3 }}
-                            />
-                          )}
-                        </motion.div>
-                      </Link>
-                    )}
+                          {item.icon}
+                        </motion.span>
+                        <span className="text-sm font-medium">{item.label}</span>
+                        
+                        {/* Active indicator */}
+                        {isActive && (
+                          <motion.div
+                            className="absolute -bottom-1 left-1/2 w-1 h-1 bg-blue-400 rounded-full"
+                            layoutId="activeIndicator"
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            transition={{ duration: 0.3 }}
+                          />
+                        )}
+                      </motion.div>
+                    </Link>
                   </div>
                 );
               })}

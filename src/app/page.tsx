@@ -201,19 +201,24 @@ export default function LandingPage() {
 
               {/* Rent vs Buy Calculator Tool */}
               <motion.div variants={itemVariants}>
-                <div className="group relative">
+                <Link href="/rent-vs-buy" className="group block">
                   <motion.div
-                    whileHover={{ scale: 1.01 }}
+                    whileHover={{ scale: 1.02, y: -5 }}
+                    whileTap={{ scale: 0.98 }}
                     transition={{ duration: 0.2 }}
                   >
-                    <Card variant="section" className="h-full opacity-60">
+                    <Card variant="section" className="h-full cursor-pointer overflow-hidden">
                       <div className="p-8">
                         <div className="flex items-center mb-6">
-                          <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center mr-4">
+                          <motion.div 
+                            className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center mr-4"
+                            whileHover={{ scale: 1.1, rotate: 5 }}
+                            transition={{ duration: 0.3 }}
+                          >
                             <span className="text-3xl">⚖️</span>
-                          </div>
+                          </motion.div>
                           <div>
-                            <h2 className="text-2xl font-bold text-white">
+                            <h2 className="text-2xl font-bold text-white group-hover:text-purple-300 transition-colors">
                               Rent vs Buy Calculator
                             </h2>
                             <p className="text-purple-400 font-medium">Decision Analysis Tool</p>
@@ -225,59 +230,50 @@ export default function LandingPage() {
                           you could purchase, with break-even analysis and long-term cost comparisons.
                         </p>
                         
-                        <div className="space-y-3 mb-6">
+                        <motion.div 
+                          className="space-y-3 mb-6"
+                          variants={containerVariants}
+                        >
                           {[
                             { icon: '💰', text: 'Rent-to-Purchase Equivalency Analysis', color: 'text-purple-400' },
                             { icon: '📊', text: 'Break-Even Timeline Calculation', color: 'text-blue-400' },
                             { icon: '⏱️', text: 'Long-Term Cost Projections', color: 'text-green-400' },
                             { icon: '🎯', text: 'Personalized Rent vs Buy Recommendation', color: 'text-amber-400' }
                           ].map((feature, index) => (
-                            <div key={index} className="flex items-center text-slate-400">
+                            <motion.div 
+                              key={index}
+                              className="flex items-center text-slate-400"
+                              variants={itemVariants}
+                              whileHover={{ x: 5 }}
+                              transition={{ duration: 0.2 }}
+                            >
                               <span className={`${feature.color} mr-3`}>{feature.icon}</span>
                               <span>{feature.text}</span>
-                            </div>
+                            </motion.div>
                           ))}
-                        </div>
+                        </motion.div>
                         
-                        <div className="flex items-center text-slate-500 font-semibold">
-                          <span>Coming Soon</span>
-                          <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                          </svg>
-                        </div>
+                        <motion.div 
+                          className="flex items-center text-purple-400 font-semibold group-hover:text-purple-300 transition-colors"
+                          whileHover={{ x: 5 }}
+                          transition={{ duration: 0.2 }}
+                        >
+                          <span>Launch Calculator</span>
+                          <motion.svg 
+                            className="w-5 h-5 ml-2" 
+                            fill="none" 
+                            stroke="currentColor" 
+                            viewBox="0 0 24 24"
+                            whileHover={{ x: 3 }}
+                            transition={{ duration: 0.2 }}
+                          >
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                          </motion.svg>
+                        </motion.div>
                       </div>
                     </Card>
                   </motion.div>
-                  
-                  {/* Coming Soon Overlay */}
-                  <motion.div 
-                    className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm rounded-xl flex items-center justify-center"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.8 }}
-                  >
-                    <div className="text-center">
-                      <motion.div 
-                        className="w-16 h-16 bg-amber-500/20 border border-amber-500/30 rounded-full flex items-center justify-center mx-auto mb-4"
-                        animate={{ 
-                          boxShadow: [
-                            '0 0 0 0 rgba(245, 158, 11, 0.4)',
-                            '0 0 0 8px rgba(245, 158, 11, 0)',
-                          ]
-                        }}
-                        transition={{ 
-                          duration: 2,
-                          repeat: Infinity,
-                          ease: 'easeInOut'
-                        }}
-                      >
-                        <span className="text-2xl">🚧</span>
-                      </motion.div>
-                      <p className="text-amber-300 font-semibold text-lg">Coming Soon</p>
-                      <p className="text-slate-400 text-sm mt-1">Currently in development</p>
-                    </div>
-                  </motion.div>
-                </div>
+                </Link>
               </motion.div>
             </motion.div>
 
