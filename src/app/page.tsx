@@ -589,7 +589,7 @@ export default function Home() {
                           
                           <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-2">
                             <p className="text-xs text-amber-300">
-                              💡 <strong>Pro Tip:</strong> Check your county assessor's website for exact rates. They can vary significantly within states!
+                              💡 <strong>Pro Tip:</strong> Check your county assessor&apos;s website for exact rates. They can vary significantly within states!
                             </p>
                           </div>
                         </div>
@@ -714,7 +714,7 @@ export default function Home() {
                               </ul>
                             </div>
                             <div className="border-t border-slate-600/50 pt-2">
-                              <p className="text-xs text-green-300">💡 <strong>Smart Strategy:</strong> Set aside $100-200/month so you're prepared when these big expenses hit!</p>
+                              <p className="text-xs text-green-300">💡 <strong>Smart Strategy:</strong> Set aside $100-200/month so you&apos;re prepared when these big expenses hit!</p>
                             </div>
                           </div>
                         )

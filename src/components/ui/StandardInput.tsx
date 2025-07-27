@@ -40,7 +40,7 @@ const StandardInput: React.FC<StandardInputProps> = ({
   errorMessage,
   min,
   max,
-  allowZero = true,
+  allowZero = true, // eslint-disable-line @typescript-eslint/no-unused-vars
   formatCurrency = false
 }) => {
   const [easterEggMessage, setEasterEggMessage] = useState<string>('');
