@@ -199,81 +199,87 @@ export default function LandingPage() {
                 </Link>
               </motion.div>
 
-              {/* Rent vs Buy Calculator Tool */}
+              {/* Rent vs Buy Calculator Tool - Under Development */}
               <motion.div variants={itemVariants}>
-                <Link href="/rent-vs-buy" className="group block">
-                  <motion.div
-                    whileHover={{ scale: 1.02, y: -5 }}
-                    whileTap={{ scale: 0.98 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <Card variant="section" className="h-full cursor-pointer overflow-hidden">
-                      <div className="p-8">
-                        <div className="flex items-center mb-6">
-                          <motion.div 
-                            className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center mr-4"
-                            whileHover={{ scale: 1.1, rotate: 5 }}
-                            transition={{ duration: 0.3 }}
-                          >
-                            <span className="text-3xl">⚖️</span>
-                          </motion.div>
-                          <div>
-                            <h2 className="text-2xl font-bold text-white group-hover:text-purple-300 transition-colors">
-                              Rent vs Buy Calculator
-                            </h2>
-                            <p className="text-purple-400 font-medium">Decision Analysis Tool</p>
-                          </div>
+                <motion.div
+                  whileHover={{ scale: 1.01, y: -2 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <Card variant="section" className="h-full overflow-hidden relative">
+                    {/* Under Development Overlay */}
+                    <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-sm z-10 flex items-center justify-center">
+                      <div className="text-center">
+                        <div className="inline-flex items-center px-4 py-2 bg-orange-500/20 border border-orange-500/30 rounded-full mb-3">
+                          <span className="text-orange-300 font-medium text-sm">🚧 Under Development</span>
                         </div>
-                        
-                        <p className="text-slate-300 text-lg leading-relaxed mb-6">
-                          Should you rent or buy? Enter your current rent and see what equivalent house 
-                          you could purchase, with break-even analysis and long-term cost comparisons.
+                        <p className="text-slate-300 text-sm max-w-xs">
+                          We're building an advanced rent vs buy analysis tool. Coming soon!
                         </p>
-                        
+                      </div>
+                    </div>
+                    
+                    {/* Original Content (Dimmed) */}
+                    <div className="p-8 opacity-40">
+                      <div className="flex items-center mb-6">
                         <motion.div 
-                          className="space-y-3 mb-6"
-                          variants={containerVariants}
+                          className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center mr-4"
+                          transition={{ duration: 0.3 }}
                         >
-                          {[
-                            { icon: '💰', text: 'Rent-to-Purchase Equivalency Analysis', color: 'text-purple-400' },
-                            { icon: '📊', text: 'Break-Even Timeline Calculation', color: 'text-blue-400' },
-                            { icon: '⏱️', text: 'Long-Term Cost Projections', color: 'text-green-400' },
-                            { icon: '🎯', text: 'Personalized Rent vs Buy Recommendation', color: 'text-amber-400' }
-                          ].map((feature, index) => (
-                            <motion.div 
-                              key={index}
-                              className="flex items-center text-slate-400"
-                              variants={itemVariants}
-                              whileHover={{ x: 5 }}
-                              transition={{ duration: 0.2 }}
-                            >
-                              <span className={`${feature.color} mr-3`}>{feature.icon}</span>
-                              <span>{feature.text}</span>
-                            </motion.div>
-                          ))}
+                          <span className="text-3xl">⚖️</span>
                         </motion.div>
-                        
-                        <motion.div 
-                          className="flex items-center text-purple-400 font-semibold group-hover:text-purple-300 transition-colors"
-                          whileHover={{ x: 5 }}
-                          transition={{ duration: 0.2 }}
-                        >
-                          <span>Launch Calculator</span>
-                          <motion.svg 
-                            className="w-5 h-5 ml-2" 
-                            fill="none" 
-                            stroke="currentColor" 
-                            viewBox="0 0 24 24"
-                            whileHover={{ x: 3 }}
+                        <div>
+                          <h2 className="text-2xl font-bold text-white transition-colors">
+                            Rent vs Buy Calculator
+                          </h2>
+                          <p className="text-purple-400 font-medium">Decision Analysis Tool</p>
+                        </div>
+                      </div>
+                      
+                      <p className="text-slate-300 text-lg leading-relaxed mb-6">
+                        Should you rent or buy? Enter your current rent and see what equivalent house 
+                        you could purchase, with break-even analysis and long-term cost comparisons.
+                      </p>
+                      
+                      <motion.div 
+                        className="space-y-3 mb-6"
+                        variants={containerVariants}
+                      >
+                        {[
+                          { icon: '💰', text: 'Rent-to-Purchase Equivalency Analysis', color: 'text-purple-400' },
+                          { icon: '📊', text: 'Break-Even Timeline Calculation', color: 'text-blue-400' },
+                          { icon: '⏱️', text: 'Long-Term Cost Projections', color: 'text-green-400' },
+                          { icon: '🎯', text: 'Personalized Rent vs Buy Recommendation', color: 'text-amber-400' }
+                        ].map((feature, index) => (
+                          <motion.div 
+                            key={index}
+                            className="flex items-center text-slate-400"
+                            variants={itemVariants}
                             transition={{ duration: 0.2 }}
                           >
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                          </motion.svg>
-                        </motion.div>
-                      </div>
-                    </Card>
-                  </motion.div>
-                </Link>
+                            <span className={`${feature.color} mr-3`}>{feature.icon}</span>
+                            <span>{feature.text}</span>
+                          </motion.div>
+                        ))}
+                      </motion.div>
+                      
+                      <motion.div 
+                        className="flex items-center text-purple-400 font-semibold transition-colors"
+                        transition={{ duration: 0.2 }}
+                      >
+                        <span>Launch Calculator</span>
+                        <motion.svg 
+                          className="w-5 h-5 ml-2" 
+                          fill="none" 
+                          stroke="currentColor" 
+                          viewBox="0 0 24 24"
+                          transition={{ duration: 0.2 }}
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                        </motion.svg>
+                      </motion.div>
+                    </div>
+                  </Card>
+                </motion.div>
               </motion.div>
             </motion.div>
 
