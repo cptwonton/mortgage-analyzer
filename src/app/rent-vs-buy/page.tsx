@@ -12,21 +12,18 @@ import { RentVsBuyAnalysis, calculateRentVsBuyAnalysis } from '@/lib/rentVsBuyCa
 // Default values
 const DEFAULT_VALUES = {
   monthlyRent: '2500',
-  timeHorizon: '7',
   downPayment: '50000'
 };
 
 // localStorage keys
 const STORAGE_KEYS = {
   monthlyRent: 'rentVsBuy_monthlyRent',
-  timeHorizon: 'rentVsBuy_timeHorizon',
   downPayment: 'rentVsBuy_downPayment'
 };
 
 export default function RentVsBuyCalculator() {
   // State with default values
   const [monthlyRent, setMonthlyRent] = useState<string>(DEFAULT_VALUES.monthlyRent);
-  const [timeHorizon, setTimeHorizon] = useState<string>(DEFAULT_VALUES.timeHorizon);
   const [downPayment, setDownPayment] = useState<string>(DEFAULT_VALUES.downPayment);
   
   // Debounced values for validation tooltips
@@ -57,11 +54,9 @@ export default function RentVsBuyCalculator() {
     const loadFromStorage = () => {
       try {
         const savedMonthlyRent = localStorage.getItem(STORAGE_KEYS.monthlyRent);
-        const savedTimeHorizon = localStorage.getItem(STORAGE_KEYS.timeHorizon);
         const savedDownPayment = localStorage.getItem(STORAGE_KEYS.downPayment);
 
         if (savedMonthlyRent) setMonthlyRent(savedMonthlyRent);
-        if (savedTimeHorizon) setTimeHorizon(savedTimeHorizon);
         if (savedDownPayment) setDownPayment(savedDownPayment);
       } catch (error) {
         console.warn('Failed to load rent vs buy data from localStorage:', error);
@@ -82,14 +77,6 @@ export default function RentVsBuyCalculator() {
 
   useEffect(() => {
     try {
-      localStorage.setItem(STORAGE_KEYS.timeHorizon, timeHorizon);
-    } catch (error) {
-      console.warn('Failed to save time horizon to localStorage:', error);
-    }
-  }, [timeHorizon]);
-
-  useEffect(() => {
-    try {
       localStorage.setItem(STORAGE_KEYS.downPayment, downPayment);
     } catch (error) {
       console.warn('Failed to save down payment to localStorage:', error);
@@ -106,7 +93,7 @@ export default function RentVsBuyCalculator() {
       
       const result = calculateRentVsBuyAnalysis({
         monthlyRent: Number(monthlyRent) || 0,
-        timeHorizon: Number(timeHorizon) || 0,
+        timeHorizon: 7, // Fixed at 7 years for simplicity
         downPayment: Number(downPayment) || 0,
         investmentReturn: 0.07, // Fixed at 7% (S&P 500 average)
         rentIncrease: 0.03 // Fixed at 3% annual increase
@@ -117,7 +104,7 @@ export default function RentVsBuyCalculator() {
     };
 
     calculateAnalysis();
-  }, [monthlyRent, timeHorizon, downPayment]);
+  }, [monthlyRent, downPayment]);
 
   return (
     <>
@@ -161,13 +148,13 @@ export default function RentVsBuyCalculator() {
               transition={{ duration: 0.6 }}
             >
               <div className="inline-flex items-center justify-center p-3 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full mb-6">
-                <span className="text-4xl">⚖️</span>
+                <span className="text-4xl">🏠</span>
               </div>
               <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-white via-blue-100 to-purple-100 bg-clip-text text-transparent mb-4">
-                Rent vs Buy Calculator
+                Rent to Home Price Calculator
               </h1>
               <p className="text-xl text-slate-300 max-w-3xl mx-auto leading-relaxed">
-                Should you rent or buy? Get a personalized recommendation based on your financial situation and timeline.
+                Based on your current monthly rent, see what house you could afford with that same payment across different mortgage options.
               </p>
             </motion.div>
 
@@ -182,8 +169,8 @@ export default function RentVsBuyCalculator() {
                 <Card variant="section" className="sticky top-24">
                   <div className="p-6">
                     <h2 className="text-2xl font-bold text-white mb-6 flex items-center">
-                      <span className="text-blue-400 mr-3">📊</span>
-                      Your Situation
+                      <span className="text-blue-400 mr-3">💰</span>
+                      Your Current Situation
                     </h2>
                     
                     <div className="space-y-8">
@@ -196,7 +183,7 @@ export default function RentVsBuyCalculator() {
                         prefix="$"
                         placeholder="2500"
                         formatCurrency={true}
-                        helpText="Your current monthly rent payment"
+                        helpText="We'll show you what house you could buy for this same monthly payment"
                         helpTooltip={
                           Number(debouncedMonthlyRent) === 0 ? {
                             title: "Free Rent? 🏠",
@@ -235,23 +222,6 @@ export default function RentVsBuyCalculator() {
                         }
                       />
 
-                      {/* Time Horizon Slider */}
-                      <SliderInput
-                        label="How long will you stay?"
-                        value={Number(timeHorizon)}
-                        onChange={setTimeHorizon}
-                        min={1}
-                        max={15}
-                        step={0.5}
-                        unit="years"
-                        helpText="Your expected time in the area"
-                        colorCondition={(value) => {
-                          if (value < 3) return 'warning';
-                          if (value > 10) return 'success';
-                          return 'default';
-                        }}
-                      />
-
                       {/* Down Payment */}
                       <StandardInput
                         label="Available Down Payment"
@@ -261,7 +231,7 @@ export default function RentVsBuyCalculator() {
                         prefix="$"
                         placeholder="50000"
                         formatCurrency={true}
-                        helpText="Cash available for down payment"
+                        helpText="How much cash you have available for a down payment"
                         helpTooltip={
                           Number(debouncedDownPayment) === 0 ? {
                             title: "No Down Payment? 💸",
@@ -270,7 +240,7 @@ export default function RentVsBuyCalculator() {
                                 <p className="mb-2">Starting from scratch? We've all been there! 💪</p>
                                 <p className="text-sm text-slate-400">
                                   Don't worry - there are loan programs with low or no down payment options. 
-                                  The analysis will show you what's possible even without a big down payment.
+                                  We'll show you what's possible even without a big down payment.
                                 </p>
                               </div>
                             )
@@ -280,8 +250,8 @@ export default function RentVsBuyCalculator() {
                               <div>
                                 <p className="mb-2">Over $1M down payment? You're in great shape! 🚀</p>
                                 <p className="text-sm text-slate-400">
-                                  With that kind of cash, you have lots of options. The analysis will still work, 
-                                  but you might want to consider investment diversification too! 📈
+                                  With that kind of cash, you have lots of options. We'll show you what's possible 
+                                  across different mortgage scenarios! 📈
                                 </p>
                               </div>
                             )
@@ -289,21 +259,16 @@ export default function RentVsBuyCalculator() {
                         }
                       />
 
-                      {/* Fixed Assumptions Display */}
-                      <div className="bg-slate-800/30 rounded-lg p-4 border border-slate-600/30">
-                        <h3 className="text-sm font-medium text-slate-300 mb-3">Fixed Assumptions</h3>
-                        <div className="space-y-2 text-sm">
-                          <div className="flex justify-between">
-                            <span className="text-slate-400">Investment Return (S&P 500)</span>
-                            <span className="text-white">7%</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-slate-400">Annual Rent Increase</span>
-                            <span className="text-white">3%</span>
-                          </div>
-                        </div>
-                        <p className="text-xs text-slate-500 mt-3">
-                          These are realistic market assumptions used in the analysis.
+                      {/* Key Insight Box */}
+                      <div className="bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-500/20 rounded-lg p-4">
+                        <h3 className="text-sm font-medium text-blue-300 mb-2 flex items-center">
+                          <span className="mr-2">💡</span>
+                          Key Insight
+                        </h3>
+                        <p className="text-sm text-slate-300">
+                          If you're comfortable paying <strong>${Number(monthlyRent).toLocaleString()}/month</strong> in rent, 
+                          you could afford a house with that same monthly payment. We'll show you different mortgage 
+                          scenarios and what house prices are possible.
                         </p>
                       </div>
                     </div>
@@ -319,51 +284,22 @@ export default function RentVsBuyCalculator() {
                 transition={{ duration: 0.6, delay: 0.4 }}
               >
                 <div className="space-y-8">
-                  {/* Recommendation Card */}
-                  {analysis && (
+                  {/* Main Results Header */}
+                  {analysis && !isCalculating && (
                     <motion.div
                       initial={{ opacity: 0, scale: 0.95 }}
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ duration: 0.5 }}
                     >
-                      <Card variant="section" className={`border-2 ${
-                        analysis.recommendation === 'buy' 
-                          ? 'border-green-500/50 bg-green-500/5' 
-                          : 'border-blue-500/50 bg-blue-500/5'
-                      }`}>
+                      <Card variant="section" className="border-2 border-blue-500/50 bg-blue-500/5">
                         <div className="p-8 text-center">
-                          <div className="text-6xl mb-4">
-                            {analysis.recommendation === 'buy' ? '🏠' : '🏢'}
-                          </div>
+                          <div className="text-6xl mb-4">🏠</div>
                           <h2 className="text-3xl font-bold text-white mb-2">
-                            RECOMMENDATION: {analysis.recommendation.toUpperCase()}
+                            House Price Options
                           </h2>
                           <p className="text-xl text-slate-300 mb-6">
-                            Based on your {Number(timeHorizon)}-year timeline and ${Number(monthlyRent).toLocaleString()}/month rent
+                            For your ${Number(monthlyRent).toLocaleString()}/month rent payment, here's what you could buy:
                           </p>
-                          
-                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
-                            <div className="bg-slate-800/30 rounded-lg p-4">
-                              <div className="text-2xl font-bold text-green-400">
-                                ${Math.abs(analysis.totalCostDifference).toLocaleString()}
-                              </div>
-                              <div className="text-sm text-slate-400">
-                                {analysis.recommendation === 'buy' ? 'Savings from buying' : 'Cost of buying vs renting'}
-                              </div>
-                            </div>
-                            <div className="bg-slate-800/30 rounded-lg p-4">
-                              <div className="text-2xl font-bold text-blue-400">
-                                {(analysis.breakEvenMonths / 12).toFixed(1)} years
-                              </div>
-                              <div className="text-sm text-slate-400">Break-even point</div>
-                            </div>
-                            <div className="bg-slate-800/30 rounded-lg p-4">
-                              <div className="text-2xl font-bold text-purple-400">
-                                ${analysis.equivalentHousePrices[0]?.housePrice.toLocaleString() || 'N/A'}
-                              </div>
-                              <div className="text-sm text-slate-400">Equivalent house price</div>
-                            </div>
-                          </div>
                         </div>
                       </Card>
                     </motion.div>
@@ -392,39 +328,88 @@ export default function RentVsBuyCalculator() {
                           animate={{ scale: [1, 1.2, 1] }}
                           transition={{ duration: 1, repeat: Infinity, delay: 0.4 }}
                         />
-                        <span className="text-slate-300 ml-3">Analyzing your situation...</span>
+                        <span className="text-slate-300 ml-3">Calculating house prices...</span>
                       </div>
                     </motion.div>
                   )}
 
-                  {/* Placeholder for additional components */}
+                  {/* Mortgage Scenario Cards */}
                   {analysis && !isCalculating && (
-                    <div className="space-y-8">
-                      {/* Break-Even Analysis - Coming Next */}
-                      <Card variant="section">
-                        <div className="p-6">
-                          <h3 className="text-xl font-bold text-white mb-4">📊 Break-Even Analysis</h3>
-                          <p className="text-slate-300">
-                            Buying becomes cheaper after {(analysis.breakEvenMonths / 12).toFixed(1)} years
-                          </p>
-                          <div className="mt-4 text-sm text-slate-400">
-                            📈 Cost comparison chart coming soon...
-                          </div>
-                        </div>
-                      </Card>
-
-                      {/* Equivalent House Prices - Coming Next */}
-                      <Card variant="section">
-                        <div className="p-6">
-                          <h3 className="text-xl font-bold text-white mb-4">🏠 Equivalent House Options</h3>
-                          <p className="text-slate-300">
-                            For your ${Number(monthlyRent).toLocaleString()}/month rent, you could buy:
-                          </p>
-                          <div className="mt-4 text-sm text-slate-400">
-                            🏘️ Loan scenario cards coming soon...
-                          </div>
-                        </div>
-                      </Card>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {analysis.equivalentHousePrices.map((scenario, index) => (
+                        <motion.div
+                          key={scenario.loanType}
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.5, delay: index * 0.1 }}
+                        >
+                          <Card variant="section" className="h-full hover:border-blue-500/30 transition-colors">
+                            <div className="p-6">
+                              <div className="flex items-center justify-between mb-4">
+                                <h3 className="text-lg font-bold text-white">{scenario.loanType}</h3>
+                                <div className="text-sm text-slate-400">
+                                  {(scenario.interestRate * 100).toFixed(2)}% APR
+                                </div>
+                              </div>
+                              
+                              <div className="space-y-4">
+                                {/* House Price */}
+                                <div className="text-center bg-gradient-to-r from-green-500/10 to-blue-500/10 rounded-lg p-4">
+                                  <div className="text-3xl font-bold text-green-400">
+                                    ${scenario.housePrice.toLocaleString()}
+                                  </div>
+                                  <div className="text-sm text-slate-400">House Price</div>
+                                </div>
+                                
+                                {/* Down Payment Required */}
+                                <div className="flex justify-between items-center">
+                                  <span className="text-slate-400">Down Payment Required:</span>
+                                  <span className="text-white font-medium">
+                                    ${(scenario.housePrice * scenario.downPaymentPercent).toLocaleString()}
+                                  </span>
+                                </div>
+                                
+                                {/* Down Payment Percentage */}
+                                <div className="flex justify-between items-center">
+                                  <span className="text-slate-400">Down Payment %:</span>
+                                  <span className="text-white font-medium">
+                                    {(scenario.downPaymentPercent * 100).toFixed(1)}%
+                                  </span>
+                                </div>
+                                
+                                {/* Monthly Payment Breakdown */}
+                                <div className="border-t border-slate-600/30 pt-4">
+                                  <div className="flex justify-between items-center mb-2">
+                                    <span className="text-slate-400">Principal & Interest:</span>
+                                    <span className="text-white">${scenario.monthlyPayment.toLocaleString()}</span>
+                                  </div>
+                                  <div className="flex justify-between items-center">
+                                    <span className="text-slate-400">Total Monthly (w/ taxes, insurance):</span>
+                                    <span className="text-blue-400 font-medium">
+                                      ${scenario.totalMonthlyHousing.toLocaleString()}
+                                    </span>
+                                  </div>
+                                </div>
+                                
+                                {/* Affordability Check */}
+                                <div className="mt-4">
+                                  {Number(downPayment) >= (scenario.housePrice * scenario.downPaymentPercent) ? (
+                                    <div className="flex items-center text-green-400 text-sm">
+                                      <span className="mr-2">✅</span>
+                                      You can afford this option!
+                                    </div>
+                                  ) : (
+                                    <div className="flex items-center text-amber-400 text-sm">
+                                      <span className="mr-2">⚠️</span>
+                                      Need ${((scenario.housePrice * scenario.downPaymentPercent) - Number(downPayment)).toLocaleString()} more for down payment
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          </Card>
+                        </motion.div>
+                      ))}
                     </div>
                   )}
                 </div>
