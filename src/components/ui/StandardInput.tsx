@@ -64,6 +64,7 @@ const StandardInput: React.FC<StandardInputProps> = ({
     if (formatCurrency && type === 'number') {
       // For currency fields, clean the input and pass the raw number
       const cleaned = inputValue.replace(/[^\d]/g, '');
+      console.log('Currency input change:', { inputValue, cleaned, label });
       onChange(cleaned);
     } else {
       onChange(inputValue);
@@ -93,13 +94,18 @@ const StandardInput: React.FC<StandardInputProps> = ({
     if (formatCurrency && type === 'number' && !isFocused) {
       // When not focused, show formatted value with commas
       const numValue = typeof value === 'number' ? value : (typeof value === 'string' ? parseFloat(value) || 0 : 0);
+      console.log('Currency display (unfocused):', { value, numValue, label });
       if (numValue === 0) {
         return ''; // Let placeholder show
       }
       return formatCurrencyValue(numValue);
     } else {
       // When focused or non-currency, show raw value
-      return typeof value === 'number' ? value.toString() : value.toString();
+      const result = typeof value === 'number' ? value.toString() : value.toString();
+      if (formatCurrency) {
+        console.log('Currency display (focused):', { value, result, isFocused, label });
+      }
+      return result;
     }
   };
 
