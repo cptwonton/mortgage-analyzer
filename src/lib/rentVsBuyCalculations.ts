@@ -10,11 +10,22 @@ export interface RentVsBuyInputs {
 
 export interface HousePriceScenario {
   loanType: string;
-  downPaymentPercent: number;
   interestRate: number;
-  housePrice: number;
-  monthlyPayment: number;
-  totalMonthlyHousing: number;
+  loanTermYears: number;
+  downPaymentRange: {
+    min: number; // percentage (0.05 for 5%)
+    max: number; // percentage (0.20 for 20%)
+  };
+  housePriceRange: {
+    min: number; // dollar amount
+    max: number; // dollar amount
+  };
+  downPaymentAmountRange: {
+    min: number; // dollar amount
+    max: number; // dollar amount
+  };
+  monthlyPayment: number; // P&I only
+  totalMonthlyHousing: number; // includes taxes, insurance, etc.
 }
 
 export interface CostProjection {
@@ -95,37 +106,69 @@ function calculateEquivalentHousePrice(monthlyRent: number, downPaymentPercent: 
 
 function calculateEquivalentHousePrices(monthlyRent: number): HousePriceScenario[] {
   const scenarios = [
-    { loanType: 'FHA 3.5% Down', downPaymentPercent: 0.035, interestRate: CURRENT_RATES.fha, loanTermYears: 30 },
-    { loanType: 'Conventional 5% Down', downPaymentPercent: 0.05, interestRate: CURRENT_RATES.conventional, loanTermYears: 30 },
-    { loanType: 'Conventional 10% Down', downPaymentPercent: 0.10, interestRate: CURRENT_RATES.conventional, loanTermYears: 30 },
-    { loanType: 'Conventional 20% Down', downPaymentPercent: 0.20, interestRate: CURRENT_RATES.conventional, loanTermYears: 30 },
-    { loanType: '15-Year Fixed 20% Down', downPaymentPercent: 0.20, interestRate: CURRENT_RATES.fifteenYear, loanTermYears: 15 }
+    { 
+      loanType: 'FHA Loan', 
+      interestRate: CURRENT_RATES.fha, 
+      loanTermYears: 30,
+      downPaymentRange: { min: 0.035, max: 0.035 } // FHA is fixed at 3.5%
+    },
+    { 
+      loanType: 'Conventional 30-Year', 
+      interestRate: CURRENT_RATES.conventional, 
+      loanTermYears: 30,
+      downPaymentRange: { min: 0.05, max: 0.20 } // 5% to 20% range
+    },
+    { 
+      loanType: 'Conventional 15-Year', 
+      interestRate: CURRENT_RATES.fifteenYear, 
+      loanTermYears: 15,
+      downPaymentRange: { min: 0.10, max: 0.20 } // 10% to 20% range
+    }
   ];
 
   return scenarios.map(scenario => {
-    const housePrice = calculateEquivalentHousePrice(
+    // Calculate house price for minimum down payment (highest house price)
+    const maxHousePrice = calculateEquivalentHousePrice(
       monthlyRent, 
-      scenario.downPaymentPercent, 
+      scenario.downPaymentRange.min, 
       scenario.interestRate, 
       scenario.loanTermYears
     );
     
-    const loanAmount = housePrice * (1 - scenario.downPaymentPercent);
+    // Calculate house price for maximum down payment (lowest house price)
+    const minHousePrice = calculateEquivalentHousePrice(
+      monthlyRent, 
+      scenario.downPaymentRange.max, 
+      scenario.interestRate, 
+      scenario.loanTermYears
+    );
+    
+    // Calculate monthly payment (P&I only) using average house price
+    const avgHousePrice = (maxHousePrice + minHousePrice) / 2;
+    const avgDownPayment = (scenario.downPaymentRange.min + scenario.downPaymentRange.max) / 2;
+    const loanAmount = avgHousePrice * (1 - avgDownPayment);
     const monthlyPayment = calculateMonthlyPayment(loanAmount, scenario.interestRate, scenario.loanTermYears);
     
-    // Calculate total monthly housing costs
-    const propertyTax = (housePrice * HOUSING_ASSUMPTIONS.propertyTax) / 12;
-    const insurance = (housePrice * HOUSING_ASSUMPTIONS.homeInsurance) / 12;
-    const maintenance = (housePrice * HOUSING_ASSUMPTIONS.maintenance) / 12;
-    const pmi = scenario.downPaymentPercent < 0.2 ? (housePrice * HOUSING_ASSUMPTIONS.pmi) / 12 : 0;
-    
+    // Calculate total monthly housing costs (using average)
+    const propertyTax = (avgHousePrice * HOUSING_ASSUMPTIONS.propertyTax) / 12;
+    const insurance = (avgHousePrice * HOUSING_ASSUMPTIONS.homeInsurance) / 12;
+    const maintenance = (avgHousePrice * HOUSING_ASSUMPTIONS.maintenance) / 12;
+    const pmi = avgDownPayment < 0.2 ? (avgHousePrice * HOUSING_ASSUMPTIONS.pmi) / 12 : 0;
     const totalMonthlyHousing = monthlyPayment + propertyTax + insurance + maintenance + pmi;
     
     return {
       loanType: scenario.loanType,
-      downPaymentPercent: scenario.downPaymentPercent,
       interestRate: scenario.interestRate,
-      housePrice,
+      loanTermYears: scenario.loanTermYears,
+      downPaymentRange: scenario.downPaymentRange,
+      housePriceRange: {
+        min: Math.round(minHousePrice / 1000) * 1000, // Round to nearest $1000
+        max: Math.round(maxHousePrice / 1000) * 1000
+      },
+      downPaymentAmountRange: {
+        min: Math.round(minHousePrice * scenario.downPaymentRange.max / 1000) * 1000,
+        max: Math.round(maxHousePrice * scenario.downPaymentRange.min / 1000) * 1000
+      },
       monthlyPayment,
       totalMonthlyHousing
     };
@@ -216,9 +259,12 @@ function findBreakEvenPoint(projections: CostProjection[]): number {
 
 export function calculateRentVsBuyAnalysis(inputs: RentVsBuyInputs): RentVsBuyAnalysis {
   const equivalentHousePrices = calculateEquivalentHousePrices(inputs.monthlyRent);
-  const primaryHousePrice = equivalentHousePrices[0].housePrice;
   
-  const costProjections = calculateCostProjections(inputs, primaryHousePrice);
+  // Use the average house price from the first scenario for cost projections
+  const primaryScenario = equivalentHousePrices[0];
+  const avgHousePrice = (primaryScenario.housePriceRange.min + primaryScenario.housePriceRange.max) / 2;
+  
+  const costProjections = calculateCostProjections(inputs, avgHousePrice);
   const breakEvenMonths = findBreakEvenPoint(costProjections);
   
   // Determine recommendation

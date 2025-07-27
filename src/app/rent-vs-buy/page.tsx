@@ -277,11 +277,8 @@ export default function RentVsBuyCalculator() {
 
                   {/* Mortgage Scenario Cards */}
                   {analysis && !isCalculating && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                       {analysis.equivalentHousePrices.map((scenario, index) => {
-                        // Determine loan term from loan type
-                        const loanTerm = scenario.loanType.includes('15-Year') ? '15-year' : '30-year';
-                        
                         return (
                           <motion.div
                             key={scenario.loanType}
@@ -298,33 +295,32 @@ export default function RentVsBuyCalculator() {
                                       {(scenario.interestRate * 100).toFixed(2)}% APR
                                     </div>
                                     <div className="text-xs text-slate-500">
-                                      {loanTerm} term
+                                      {scenario.loanTermYears}-year term
                                     </div>
                                   </div>
                                 </div>
                                 
                                 <div className="space-y-4">
-                                  {/* House Price */}
+                                  {/* House Price Range */}
                                   <div className="text-center bg-gradient-to-r from-green-500/10 to-blue-500/10 rounded-lg p-4">
-                                    <div className="text-3xl font-bold text-green-400">
-                                      ${Math.round(scenario.housePrice).toLocaleString()}
+                                    <div className="text-2xl font-bold text-green-400">
+                                      ${scenario.housePriceRange.min.toLocaleString()} - ${scenario.housePriceRange.max.toLocaleString()}
                                     </div>
-                                    <div className="text-sm text-slate-400">House Price</div>
+                                    <div className="text-sm text-slate-400">House Price Range</div>
                                   </div>
                                   
-                                  {/* Down Payment Required */}
+                                  {/* Down Payment Range */}
                                   <div className="flex justify-between items-center">
-                                    <span className="text-slate-400">Down Payment Required:</span>
-                                    <span className="text-white font-medium">
-                                      ${Math.round(scenario.housePrice * scenario.downPaymentPercent).toLocaleString()}
-                                    </span>
-                                  </div>
-                                  
-                                  {/* Down Payment Percentage */}
-                                  <div className="flex justify-between items-center">
-                                    <span className="text-slate-400">Down Payment %:</span>
-                                    <span className="text-white font-medium">
-                                      {(scenario.downPaymentPercent * 100).toFixed(1)}%
+                                    <span className="text-slate-400">Down Payment:</span>
+                                    <span className="text-white font-medium text-right">
+                                      {scenario.downPaymentRange.min === scenario.downPaymentRange.max ? (
+                                        <>{(scenario.downPaymentRange.min * 100).toFixed(1)}%</>
+                                      ) : (
+                                        <>{(scenario.downPaymentRange.min * 100).toFixed(1)}% - {(scenario.downPaymentRange.max * 100).toFixed(1)}%</>
+                                      )}
+                                      <div className="text-xs text-slate-400">
+                                        ${scenario.downPaymentAmountRange.min.toLocaleString()} - ${scenario.downPaymentAmountRange.max.toLocaleString()}
+                                      </div>
                                     </span>
                                   </div>
                                   
@@ -344,9 +340,12 @@ export default function RentVsBuyCalculator() {
                                   
                                   {/* Loan Details */}
                                   <div className="bg-slate-800/30 rounded-lg p-3">
-                                    <div className="text-xs text-slate-400 mb-1">Loan Details:</div>
+                                    <div className="text-xs text-slate-400 mb-1">Key Details:</div>
                                     <div className="text-sm text-slate-300">
-                                      ${Math.round(scenario.housePrice * (1 - scenario.downPaymentPercent)).toLocaleString()} loan amount over {loanTerm}
+                                      {scenario.loanTermYears}-year term at {(scenario.interestRate * 100).toFixed(2)}% APR
+                                    </div>
+                                    <div className="text-xs text-slate-400 mt-1">
+                                      Higher down payment = lower house price for same monthly payment
                                     </div>
                                   </div>
                                 </div>
