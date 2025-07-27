@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -37,6 +37,9 @@ export default function RentVsBuyCalculator() {
   // Analysis results
   const [analysis, setAnalysis] = useState<RentVsBuyAnalysis | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
+
+  // Ref to track previous rent value
+  const prevRentRef = useRef<string>(DEFAULT_VALUES.monthlyRent);
 
   // Update down payment for a specific loan type
   const updateDownPayment = (loanType: string, value: number) => {
@@ -78,32 +81,18 @@ export default function RentVsBuyCalculator() {
     }
   }, [monthlyRent]);
 
-  // Calculate analysis when monthly rent changes (with loading)
+  // Calculate analysis when inputs change
   useEffect(() => {
     const calculateAnalysis = async () => {
-      setIsCalculating(true);
+      // Check if rent changed (not just slider)
+      const rentChanged = monthlyRent !== prevRentRef.current;
       
-      // Add small delay to show loading state for rent changes
-      await new Promise(resolve => setTimeout(resolve, 300));
+      if (rentChanged) {
+        setIsCalculating(true);
+        // Add small delay for rent changes
+        await new Promise(resolve => setTimeout(resolve, 300));
+      }
       
-      const result = calculateRentVsBuyAnalysis({
-        monthlyRent: Number(monthlyRent) || 0,
-        timeHorizon: 7, // Fixed at 7 years for simplicity
-        downPayment: 0, // Ignore down payment - show all scenarios
-        investmentReturn: 0.07, // Fixed at 7% (S&P 500 average)
-        rentIncrease: 0.03 // Fixed at 3% annual increase
-      }, downPayments);
-      
-      setAnalysis(result);
-      setIsCalculating(false);
-    };
-
-    calculateAnalysis();
-  }, [monthlyRent]); // Only trigger loading for rent changes
-
-  // Update analysis instantly when down payments change (no loading)
-  useEffect(() => {
-    if (analysis) { // Only update if we already have an analysis
       const result = calculateRentVsBuyAnalysis({
         monthlyRent: Number(monthlyRent) || 0,
         timeHorizon: 7,
@@ -113,8 +102,15 @@ export default function RentVsBuyCalculator() {
       }, downPayments);
       
       setAnalysis(result);
-    }
-  }, [downPayments, monthlyRent, analysis]); // Add dependencies
+      
+      if (rentChanged) {
+        setIsCalculating(false);
+        prevRentRef.current = monthlyRent; // Update ref after processing
+      }
+    };
+
+    calculateAnalysis();
+  }, [monthlyRent, downPayments]); // Clean dependencies
 
   return (
     <>
