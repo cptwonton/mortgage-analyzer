@@ -5,15 +5,15 @@ import { motion } from 'framer-motion';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Card from '@/components/ui/Card';
+import StandardInput from '@/components/ui/StandardInput';
+import SliderInput from '@/components/ui/SliderInput';
 import { RentVsBuyAnalysis, calculateRentVsBuyAnalysis } from '@/lib/rentVsBuyCalculations';
 
 export default function RentVsBuyCalculator() {
-  // Input states
-  const [monthlyRent, setMonthlyRent] = useState<number>(2500);
-  const [timeHorizon, setTimeHorizon] = useState<number>(7);
-  const [downPayment, setDownPayment] = useState<number>(50000);
-  const [investmentReturn, setInvestmentReturn] = useState<number>(7);
-  const [rentIncrease, setRentIncrease] = useState<number>(3);
+  // Simplified input states - removed investmentReturn and rentIncrease
+  const [monthlyRent, setMonthlyRent] = useState<string>('2500');
+  const [timeHorizon, setTimeHorizon] = useState<string>('7');
+  const [downPayment, setDownPayment] = useState<string>('50000');
   
   // Analysis results
   const [analysis, setAnalysis] = useState<RentVsBuyAnalysis | null>(null);
@@ -28,11 +28,11 @@ export default function RentVsBuyCalculator() {
       await new Promise(resolve => setTimeout(resolve, 300));
       
       const result = calculateRentVsBuyAnalysis({
-        monthlyRent,
-        timeHorizon,
-        downPayment,
-        investmentReturn: investmentReturn / 100,
-        rentIncrease: rentIncrease / 100
+        monthlyRent: Number(monthlyRent) || 0,
+        timeHorizon: Number(timeHorizon) || 0,
+        downPayment: Number(downPayment) || 0,
+        investmentReturn: 0.07, // Fixed at 7% (S&P 500 average)
+        rentIncrease: 0.03 // Fixed at 3% annual increase
       });
       
       setAnalysis(result);
@@ -40,7 +40,7 @@ export default function RentVsBuyCalculator() {
     };
 
     calculateAnalysis();
-  }, [monthlyRent, timeHorizon, downPayment, investmentReturn, rentIncrease]);
+  }, [monthlyRent, timeHorizon, downPayment]);
 
   return (
     <>
@@ -109,159 +109,68 @@ export default function RentVsBuyCalculator() {
                       Your Situation
                     </h2>
                     
-                    <div className="space-y-6">
+                    <div className="space-y-8">
                       {/* Monthly Rent */}
-                      <div>
-                        <label className="block text-sm font-medium text-slate-300 mb-2">
-                          Current Monthly Rent
-                        </label>
-                        <div className="relative">
-                          <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400">$</span>
-                          <input
-                            type="number"
-                            value={monthlyRent}
-                            onChange={(e) => setMonthlyRent(Number(e.target.value))}
-                            className="w-full pl-8 pr-4 py-3 bg-slate-800/50 border border-slate-600/50 rounded-lg text-white placeholder-slate-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
-                            placeholder="2500"
-                          />
-                        </div>
-                      </div>
+                      <StandardInput
+                        label="Current Monthly Rent"
+                        value={monthlyRent}
+                        onChange={setMonthlyRent}
+                        type="number"
+                        prefix="$"
+                        placeholder="2500"
+                        formatCurrency={true}
+                        helpText="Your current monthly rent payment"
+                        min={500}
+                        max={20000}
+                      />
 
-                      {/* Time Horizon */}
-                      <div>
-                        <label className="block text-sm font-medium text-slate-300 mb-3">
-                          How long will you stay?
-                        </label>
-                        <div className="space-y-4">
-                          {/* Slider */}
-                          <div className="relative">
-                            <input
-                              type="range"
-                              min="1"
-                              max="15"
-                              step="0.5"
-                              value={timeHorizon}
-                              onChange={(e) => setTimeHorizon(Number(e.target.value))}
-                              className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer slider"
-                              style={{
-                                background: `linear-gradient(to right, #8b5cf6 0%, #8b5cf6 ${((timeHorizon - 1) / 14) * 100}%, #374151 ${((timeHorizon - 1) / 14) * 100}%, #374151 100%)`
-                              }}
-                            />
-                            <style jsx>{`
-                              .slider::-webkit-slider-thumb {
-                                appearance: none;
-                                height: 20px;
-                                width: 20px;
-                                border-radius: 50%;
-                                background: linear-gradient(135deg, #8b5cf6, #ec4899);
-                                cursor: pointer;
-                                border: 2px solid #1e293b;
-                                box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
-                              }
-                              .slider::-moz-range-thumb {
-                                height: 20px;
-                                width: 20px;
-                                border-radius: 50%;
-                                background: linear-gradient(135deg, #8b5cf6, #ec4899);
-                                cursor: pointer;
-                                border: 2px solid #1e293b;
-                                box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
-                              }
-                            `}</style>
-                          </div>
-                          
-                          {/* Value Display */}
-                          <div className="flex justify-between items-center">
-                            <div className="text-center">
-                              <div className="text-2xl font-bold text-white">
-                                {timeHorizon} {timeHorizon === 1 ? 'year' : 'years'}
-                              </div>
-                              <div className="text-xs text-slate-400">
-                                {timeHorizon < 3 ? 'Short term' : timeHorizon < 7 ? 'Medium term' : 'Long term'}
-                              </div>
-                            </div>
-                            <div className="text-right">
-                              <div className="text-sm text-slate-400">Range: 1-15 years</div>
-                              <div className="text-xs text-slate-500">
-                                {timeHorizon < 5 ? 'Favors renting' : timeHorizon > 10 ? 'Favors buying' : 'Depends on costs'}
-                              </div>
-                            </div>
-                          </div>
-                          
-                          {/* Quick Preset Buttons */}
-                          <div className="flex space-x-2">
-                            {[2, 5, 7, 10].map((preset) => (
-                              <motion.button
-                                key={preset}
-                                onClick={() => setTimeHorizon(preset)}
-                                className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${
-                                  timeHorizon === preset
-                                    ? 'bg-purple-500 text-white'
-                                    : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
-                                }`}
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
-                              >
-                                {preset}y
-                              </motion.button>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
+                      {/* Time Horizon Slider */}
+                      <SliderInput
+                        label="How long will you stay?"
+                        value={Number(timeHorizon)}
+                        onChange={setTimeHorizon}
+                        min={1}
+                        max={15}
+                        step={0.5}
+                        unit="years"
+                        helpText="Your expected time in the area"
+                        colorCondition={(value) => {
+                          if (value < 3) return 'warning';
+                          if (value > 10) return 'success';
+                          return 'default';
+                        }}
+                      />
 
                       {/* Down Payment */}
-                      <div>
-                        <label className="block text-sm font-medium text-slate-300 mb-2">
-                          Available Down Payment
-                        </label>
-                        <div className="relative">
-                          <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400">$</span>
-                          <input
-                            type="number"
-                            value={downPayment}
-                            onChange={(e) => setDownPayment(Number(e.target.value))}
-                            className="w-full pl-8 pr-4 py-3 bg-slate-800/50 border border-slate-600/50 rounded-lg text-white placeholder-slate-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
-                            placeholder="50000"
-                            step="1000"
-                          />
+                      <StandardInput
+                        label="Available Down Payment"
+                        value={downPayment}
+                        onChange={setDownPayment}
+                        type="number"
+                        prefix="$"
+                        placeholder="50000"
+                        formatCurrency={true}
+                        helpText="Cash available for down payment"
+                        min={0}
+                        max={500000}
+                      />
+
+                      {/* Fixed Assumptions Display */}
+                      <div className="bg-slate-800/30 rounded-lg p-4 border border-slate-600/30">
+                        <h3 className="text-sm font-medium text-slate-300 mb-3">Fixed Assumptions</h3>
+                        <div className="space-y-2 text-sm">
+                          <div className="flex justify-between">
+                            <span className="text-slate-400">Investment Return (S&P 500)</span>
+                            <span className="text-white">7%</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-slate-400">Annual Rent Increase</span>
+                            <span className="text-white">3%</span>
+                          </div>
                         </div>
-                      </div>
-
-                      {/* Investment Return */}
-                      <div>
-                        <label className="block text-sm font-medium text-slate-300 mb-2">
-                          Expected Investment Return (%)
-                        </label>
-                        <input
-                          type="number"
-                          value={investmentReturn}
-                          onChange={(e) => setInvestmentReturn(Number(e.target.value))}
-                          className="w-full px-4 py-3 bg-slate-800/50 border border-slate-600/50 rounded-lg text-white placeholder-slate-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
-                          placeholder="7"
-                          min="0"
-                          max="20"
-                          step="0.1"
-                        />
-                        <p className="text-xs text-slate-400 mt-1">
-                          If you invested your down payment instead
+                        <p className="text-xs text-slate-500 mt-3">
+                          These are realistic market assumptions used in the analysis.
                         </p>
-                      </div>
-
-                      {/* Rent Increase */}
-                      <div>
-                        <label className="block text-sm font-medium text-slate-300 mb-2">
-                          Annual Rent Increase (%)
-                        </label>
-                        <input
-                          type="number"
-                          value={rentIncrease}
-                          onChange={(e) => setRentIncrease(Number(e.target.value))}
-                          className="w-full px-4 py-3 bg-slate-800/50 border border-slate-600/50 rounded-lg text-white placeholder-slate-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
-                          placeholder="3"
-                          min="0"
-                          max="10"
-                          step="0.1"
-                        />
                       </div>
                     </div>
                   </div>
@@ -296,7 +205,7 @@ export default function RentVsBuyCalculator() {
                             RECOMMENDATION: {analysis.recommendation.toUpperCase()}
                           </h2>
                           <p className="text-xl text-slate-300 mb-6">
-                            Based on your {timeHorizon}-year timeline and ${monthlyRent.toLocaleString()}/month rent
+                            Based on your {Number(timeHorizon)}-year timeline and ${Number(monthlyRent).toLocaleString()}/month rent
                           </p>
                           
                           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
@@ -375,7 +284,7 @@ export default function RentVsBuyCalculator() {
                         <div className="p-6">
                           <h3 className="text-xl font-bold text-white mb-4">🏠 Equivalent House Options</h3>
                           <p className="text-slate-300">
-                            For your ${monthlyRent.toLocaleString()}/month rent, you could buy:
+                            For your ${Number(monthlyRent).toLocaleString()}/month rent, you could buy:
                           </p>
                           <div className="mt-4 text-sm text-slate-400">
                             🏘️ Loan scenario cards coming soon...
