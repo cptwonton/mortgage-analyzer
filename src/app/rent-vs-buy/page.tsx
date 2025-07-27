@@ -29,9 +29,28 @@ export default function RentVsBuyCalculator() {
   const [timeHorizon, setTimeHorizon] = useState<string>(DEFAULT_VALUES.timeHorizon);
   const [downPayment, setDownPayment] = useState<string>(DEFAULT_VALUES.downPayment);
   
+  // Debounced values for validation tooltips
+  const [debouncedMonthlyRent, setDebouncedMonthlyRent] = useState<string>(DEFAULT_VALUES.monthlyRent);
+  const [debouncedDownPayment, setDebouncedDownPayment] = useState<string>(DEFAULT_VALUES.downPayment);
+  
   // Analysis results
   const [analysis, setAnalysis] = useState<RentVsBuyAnalysis | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
+
+  // Debounce validation values (500ms delay)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedMonthlyRent(monthlyRent);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [monthlyRent]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedDownPayment(downPayment);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [downPayment]);
 
   // Load values from localStorage on mount
   useEffect(() => {
@@ -181,7 +200,7 @@ export default function RentVsBuyCalculator() {
                         min={200}
                         max={15000}
                         helpTooltip={
-                          Number(monthlyRent) === 0 ? {
+                          Number(debouncedMonthlyRent) === 0 ? {
                             title: "Free Rent? 🏠",
                             content: (
                               <div>
@@ -192,7 +211,7 @@ export default function RentVsBuyCalculator() {
                                 </p>
                               </div>
                             )
-                          } : Number(monthlyRent) < 200 && Number(monthlyRent) > 0 ? {
+                          } : Number(debouncedMonthlyRent) < 200 && Number(debouncedMonthlyRent) > 0 ? {
                             title: "Unicorn Deal Alert! 🦄",
                             content: (
                               <div>
@@ -236,7 +255,7 @@ export default function RentVsBuyCalculator() {
                         helpText="Cash available for down payment"
                         max={1000000}
                         helpTooltip={
-                          Number(downPayment) === 0 ? {
+                          Number(debouncedDownPayment) === 0 ? {
                             title: "No Down Payment? 💸",
                             content: (
                               <div>
