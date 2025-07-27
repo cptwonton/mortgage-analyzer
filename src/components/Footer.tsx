@@ -1,8 +1,6 @@
 import React from 'react';
 
 const Footer: React.FC = () => {
-  const currentYear = new Date().getFullYear();
-  
   return (
     <footer className="bg-slate-900/30 backdrop-blur-sm border-t border-white/10 mt-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
