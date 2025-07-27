@@ -65,10 +65,10 @@ export default function RentVsBuyCalculator() {
 
       // Store data for mortgage analyzer
       const mortgageData = {
-        housePrice: housePrice,
-        downPayment: downPayment * 100, // Convert to percentage for mortgage analyzer
-        interestRate: scenario.interestRate * 100, // Convert to percentage
-        loanTerm: scenario.loanTermYears,
+        housePrice: Number(housePrice),
+        downPayment: Number(downPayment * 100), // Convert to percentage for mortgage analyzer
+        interestRate: Number(scenario.interestRate * 100), // Convert to percentage
+        loanTerm: Number(scenario.loanTermYears),
         loanType: scenario.loanType,
         calculationMode: calculationMode,
         sourceRent: Number(monthlyRent),

@@ -35,10 +35,10 @@ export default function Home() {
           setRentVsBuyData(data);
           
           // Auto-populate the form with the data
-          updateInput('purchasePrice', data.housePrice.toString());
-          updateInput('downPaymentPercent', data.downPayment.toString());
-          updateInput('interestRate', data.interestRate.toString());
-          updateInput('loanTermYears', data.loanTerm.toString());
+          updateInput('purchasePrice', data.housePrice);
+          updateInput('downPaymentPercent', data.downPayment);
+          updateInput('interestRate', data.interestRate);
+          updateInput('loanTermYears', data.loanTerm);
           
           // Clear the data after using it
           localStorage.removeItem('mortgageAnalyzerData');
@@ -363,7 +363,7 @@ export default function Home() {
                         <div className="px-4 py-4 bg-white/5 border border-white/20 rounded-xl backdrop-blur-sm">
                           <div className="flex items-center justify-between mb-3">
                             <span className="text-white font-bold text-lg">
-                              {Number(inputs.downPaymentPercent).toFixed(0)}%
+                              {inputs.downPaymentPercent.toFixed(0)}%
                             </span>
                             <div className="flex space-x-1 text-xs text-slate-400">
                               <span>0%</span>
@@ -508,7 +508,7 @@ export default function Home() {
                       <div className="px-4 py-4 bg-white/5 border border-white/20 rounded-xl backdrop-blur-sm">
                         <div className="flex items-center justify-between mb-3">
                           <span className="text-white font-bold text-lg">
-                            {Number(inputs.interestRate).toFixed(2)}%
+                            {inputs.interestRate.toFixed(2)}%
                           </span>
                           <div className="flex space-x-1 text-xs text-slate-400">
                             <span>0%</span>
@@ -594,7 +594,7 @@ export default function Home() {
                       <div className="px-4 py-4 bg-white/5 border border-white/20 rounded-xl backdrop-blur-sm">
                         <div className="flex items-center justify-between mb-3">
                           <span className="text-white font-bold text-lg">
-                            {Number(inputs.propertyTaxRate).toFixed(2)}%
+                            {inputs.propertyTaxRate.toFixed(2)}%
                           </span>
                           <div className="flex space-x-1 text-xs text-slate-400">
                             <span>0%</span>
