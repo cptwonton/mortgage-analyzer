@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import HelpTooltip from './HelpTooltip';
 
 interface StandardInputProps {
@@ -43,28 +43,25 @@ const StandardInput: React.FC<StandardInputProps> = ({
   allowZero = true,
   formatCurrency = false
 }) => {
-  const [isFocused, setIsFocused] = useState(false);
-
   // Format number with commas for currency display
   const formatCurrencyValue = (num: number): string => {
+    if (num === 0) return '';
     return num.toLocaleString('en-US');
   };
 
-  const handleFocus = () => {
-    setIsFocused(true);
-  };
-
-  const handleBlur = () => {
-    setIsFocused(false);
+  // Parse formatted string back to number, removing commas
+  const parseCurrencyValue = (str: string): number => {
+    const cleaned = str.replace(/[^\d]/g, '');
+    return cleaned === '' ? 0 : parseInt(cleaned, 10);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
     
     if (formatCurrency && type === 'number') {
-      // For currency fields, clean the input and pass the raw number
-      const cleaned = inputValue.replace(/[^\d]/g, '');
-      onChange(cleaned);
+      // For currency fields, parse the number and let parent handle it
+      const numericValue = parseCurrencyValue(inputValue);
+      onChange(numericValue.toString());
     } else {
       onChange(inputValue);
     }
@@ -88,17 +85,12 @@ const StandardInput: React.FC<StandardInputProps> = ({
     }
   };
 
-  // Determine what to display in the input
+  // Determine what to display in the input - always format currency if enabled
   const getDisplayValue = (): string => {
-    if (formatCurrency && type === 'number' && !isFocused) {
-      // When not focused, show formatted value with commas
+    if (formatCurrency && type === 'number') {
       const numValue = typeof value === 'number' ? value : (typeof value === 'string' ? parseFloat(value) || 0 : 0);
-      if (numValue === 0) {
-        return ''; // Let placeholder show
-      }
       return formatCurrencyValue(numValue);
     } else {
-      // When focused or non-currency, show raw value
       return typeof value === 'number' ? value.toString() : value.toString();
     }
   };
@@ -171,14 +163,12 @@ const StandardInput: React.FC<StandardInputProps> = ({
           </span>
         )}
         <input
-          type={formatCurrency && !isFocused ? "text" : type}
+          type={formatCurrency ? "text" : type}
           step={step}
           min={min}
           max={max}
           value={inputValue}
           onChange={handleChange}
-          onFocus={handleFocus}
-          onBlur={handleBlur}
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
           className={`w-full py-4 bg-white/5 border ${styles.border} ${styles.focusRing} rounded-xl focus:outline-none focus:ring-2 focus:border-transparent text-white placeholder-slate-400 backdrop-blur-sm transition-all duration-200 hover:bg-white/10 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${
