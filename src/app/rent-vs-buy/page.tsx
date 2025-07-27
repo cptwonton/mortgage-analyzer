@@ -197,8 +197,6 @@ export default function RentVsBuyCalculator() {
                         placeholder="2500"
                         formatCurrency={true}
                         helpText="Your current monthly rent payment"
-                        min={200}
-                        max={15000}
                         helpTooltip={
                           Number(debouncedMonthlyRent) === 0 ? {
                             title: "Free Rent? 🏠",
@@ -219,6 +217,17 @@ export default function RentVsBuyCalculator() {
                                 <p className="text-sm text-slate-400">
                                   You've either found the deal of the century, live in a very unique situation, 
                                   or there might be a typo. Either way, definitely keep renting! 😂
+                                </p>
+                              </div>
+                            )
+                          } : Number(debouncedMonthlyRent) > 15000 ? {
+                            title: "Luxury Living! 💎",
+                            content: (
+                              <div>
+                                <p className="mb-2">Over $15k/month? Living the high life! ✨</p>
+                                <p className="text-sm text-slate-400">
+                                  That's some serious luxury rent! The analysis will still work, 
+                                  but you might want to double-check that number. 🏙️
                                 </p>
                               </div>
                             )
@@ -253,7 +262,6 @@ export default function RentVsBuyCalculator() {
                         placeholder="50000"
                         formatCurrency={true}
                         helpText="Cash available for down payment"
-                        max={1000000}
                         helpTooltip={
                           Number(debouncedDownPayment) === 0 ? {
                             title: "No Down Payment? 💸",
@@ -263,6 +271,17 @@ export default function RentVsBuyCalculator() {
                                 <p className="text-sm text-slate-400">
                                   Don't worry - there are loan programs with low or no down payment options. 
                                   The analysis will show you what's possible even without a big down payment.
+                                </p>
+                              </div>
+                            )
+                          } : Number(debouncedDownPayment) > 1000000 ? {
+                            title: "Big Money! 💰",
+                            content: (
+                              <div>
+                                <p className="mb-2">Over $1M down payment? You're in great shape! 🚀</p>
+                                <p className="text-sm text-slate-400">
+                                  With that kind of cash, you have lots of options. The analysis will still work, 
+                                  but you might want to consider investment diversification too! 📈
                                 </p>
                               </div>
                             )
