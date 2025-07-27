@@ -59,8 +59,19 @@ const StandardInput: React.FC<StandardInputProps> = ({
     const inputValue = e.target.value;
     
     if (formatCurrency && type === 'number') {
-      // For currency fields, parse the number and let parent handle it
+      // For currency fields, parse the number and validate against limits
       const numericValue = parseCurrencyValue(inputValue);
+      
+      // Enforce max limit if provided
+      if (max !== undefined && numericValue > max) {
+        return; // Don't update if over max
+      }
+      
+      // Enforce min limit if provided
+      if (min !== undefined && numericValue < min && numericValue !== 0) {
+        return; // Don't update if under min (allow 0 for clearing)
+      }
+      
       onChange(numericValue.toString());
     } else {
       onChange(inputValue);
