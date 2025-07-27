@@ -184,7 +184,7 @@ export default function RentVsBuyCalculator() {
                               <div>
                                 <p className="mb-2">Living rent-free? Lucky you! 🍀</p>
                                 <p className="text-sm text-slate-400">
-                                  Maybe you're living with family, house-sitting, or found the deal of the century. 
+                                  Maybe you&apos;re living with family, house-sitting, or found the deal of the century. 
                                   In any case, buying will definitely cost more than $0/month! 😄
                                 </p>
                               </div>
@@ -193,9 +193,9 @@ export default function RentVsBuyCalculator() {
                             title: "Unicorn Deal Alert! 🦄",
                             content: (
                               <div>
-                                <p className="mb-2">Under $200/month? That's a ridiculous homie deal! 🤯</p>
+                                <p className="mb-2">Under $200/month? That&apos;s a ridiculous homie deal! 🤯</p>
                                 <p className="text-sm text-slate-400">
-                                  You've either found the deal of the century, live in a very unique situation, 
+                                  You&apos;ve either found the deal of the century, live in a very unique situation, 
                                   or there might be a typo. Either way, definitely keep renting! 😂
                                 </p>
                               </div>
@@ -206,7 +206,7 @@ export default function RentVsBuyCalculator() {
                               <div>
                                 <p className="mb-2">Over $15k/month? Living the high life! ✨</p>
                                 <p className="text-sm text-slate-400">
-                                  That's some serious luxury rent! The analysis will still work, 
+                                  That&apos;s some serious luxury rent! The analysis will still work, 
                                   but you might want to double-check that number. 🏙️
                                 </p>
                               </div>
@@ -222,8 +222,8 @@ export default function RentVsBuyCalculator() {
                           How This Works
                         </h3>
                         <p className="text-sm text-slate-300 text-center">
-                          If you're comfortable paying <strong>${Number(monthlyRent).toLocaleString()}/month</strong> in rent, 
-                          you could afford a house with that same monthly payment. We'll show you different mortgage 
+                          If you&apos;re comfortable paying <strong>${Number(monthlyRent).toLocaleString()}/month</strong> in rent, 
+                          you could afford a house with that same monthly payment. We&apos;ll show you different mortgage 
                           scenarios and what house prices are possible with standard down payment options.
                         </p>
                       </div>
