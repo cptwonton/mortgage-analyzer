@@ -44,42 +44,28 @@ const StandardInput: React.FC<StandardInputProps> = ({
   formatCurrency = false
 }) => {
   const [isFocused, setIsFocused] = useState(false);
-  const [rawValue, setRawValue] = useState('');
 
   // Format number with commas for currency display
   const formatCurrencyValue = (num: number): string => {
-    if (num === 0) return '';
     return num.toLocaleString('en-US');
   };
 
   const handleFocus = () => {
     setIsFocused(true);
-    if (formatCurrency && type === 'number') {
-      // When focusing, set raw value for editing
-      const numValue = typeof value === 'number' ? value : (typeof value === 'string' ? parseFloat(value) || 0 : 0);
-      setRawValue(numValue === 0 ? '' : numValue.toString());
-    }
   };
 
   const handleBlur = () => {
     setIsFocused(false);
-    if (formatCurrency && type === 'number') {
-      // When blurring, parse the raw value and update parent
-      const cleaned = rawValue.replace(/[^\d]/g, '');
-      const numericValue = cleaned === '' ? 0 : parseInt(cleaned, 10);
-      onChange(numericValue.toString());
-    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
     
-    if (formatCurrency && type === 'number' && isFocused) {
-      // For currency fields when focused, just update raw value
+    if (formatCurrency && type === 'number') {
+      // For currency fields, clean the input and pass the raw number
       const cleaned = inputValue.replace(/[^\d]/g, '');
-      setRawValue(cleaned);
+      onChange(cleaned);
     } else {
-      // For non-currency fields, update parent immediately
       onChange(inputValue);
     }
   };
@@ -104,17 +90,15 @@ const StandardInput: React.FC<StandardInputProps> = ({
 
   // Determine what to display in the input
   const getDisplayValue = (): string => {
-    if (formatCurrency && type === 'number') {
-      if (isFocused) {
-        // When focused, show raw value for editing
-        return rawValue;
-      } else {
-        // When not focused, show formatted value
-        const numValue = typeof value === 'number' ? value : (typeof value === 'string' ? parseFloat(value) || 0 : 0);
-        return formatCurrencyValue(numValue);
+    if (formatCurrency && type === 'number' && !isFocused) {
+      // When not focused, show formatted value with commas
+      const numValue = typeof value === 'number' ? value : (typeof value === 'string' ? parseFloat(value) || 0 : 0);
+      if (numValue === 0) {
+        return ''; // Let placeholder show
       }
+      return formatCurrencyValue(numValue);
     } else {
-      // For non-currency fields, use the value as-is
+      // When focused or non-currency, show raw value
       return typeof value === 'number' ? value.toString() : value.toString();
     }
   };

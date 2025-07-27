@@ -121,7 +121,7 @@ export default function Home() {
                 <div className="space-y-4">
                   <StandardInput
                     label="Purchase Price"
-                    value={inputs.purchasePrice}
+                    value={inputs.purchasePrice.toString()}
                     onChange={(value) => handleInputChange('purchasePrice', value)}
                     type="number"
                     prefix="$"
