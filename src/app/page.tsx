@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { calculateBreakevenAnalysis, MortgageInputs, validateMortgageInputs, validateField, getFieldRanges } from '@/lib/mortgage-calculations';
 import { getStorageInfo } from '@/lib/localStorage';
 import { usePersistedInputs } from '@/hooks/usePersistedInputs';
@@ -19,6 +19,49 @@ export default function Home() {
   const [errors, setErrors] = useState<string[]>([]);
   const [showPMIInfo, setShowPMIInfo] = useState(false);
   const [showFloatingControls, setShowFloatingControls] = useState(false);
+  const [interestRateEasterEgg, setInterestRateEasterEgg] = useState<string>('');
+  const [showInterestRateEasterEgg, setShowInterestRateEasterEgg] = useState(false);
+
+  // Clear interest rate easter egg after a few seconds
+  useEffect(() => {
+    if (showInterestRateEasterEgg) {
+      const timer = setTimeout(() => {
+        setShowInterestRateEasterEgg(false);
+        setInterestRateEasterEgg('');
+      }, 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [showInterestRateEasterEgg]);
+
+  // Get sassy interest rate easter egg message
+  const getInterestRateEasterEgg = (rate: number): string => {
+    if (rate === 0) {
+      const messages = [
+        "👨‍👩‍👧‍👦 Aww, daddy's money? How sweet! uwu The app's creator knew someone would get the family discount~",
+        "💝 0%? Someone's parents really love them! The genius who built this saw the nepotism coming uwu",
+        "🏠 Free money from family? The app's brilliant creator anticipated these wholesome moments uwu",
+        "👑 Royal treatment detected! The mastermind behind this app knew about family favors uwu"
+      ];
+      return messages[Math.floor(Math.random() * messages.length)];
+    } else if (rate < 3) {
+      const messages = [
+        "✨ Under 3%? That's absolutely exceptional! The app's creator is impressed uwu",
+        "🎯 Wow, exceptional rate! The genius behind this app tips their hat to your negotiation skills uwu",
+        "💎 That's a unicorn rate! The brilliant mind who built this is genuinely impressed uwu",
+        "🏆 Exceptional financing detected! The app's creator didn't expect such prowess uwu"
+      ];
+      return messages[Math.floor(Math.random() * messages.length)];
+    } else if (rate > 8) {
+      const messages = [
+        "😬 Over 8%? Bestie, you're getting scammed! The app's creator is concerned for you uwu",
+        "🚨 That rate is sus! The genius who built this app is worried about your lender uwu",
+        "💸 Yikes, that's predatory! The brilliant creator of this app says run away uwu",
+        "⚠️ Honey no! The mastermind behind this app is throwing red flags for you uwu"
+      ];
+      return messages[Math.floor(Math.random() * messages.length)];
+    }
+    return '';
+  };
 
   const handleInputChange = (field: keyof MortgageInputs, value: string) => {
     // Handle mortgage type separately since it's not a number
@@ -36,6 +79,15 @@ export default function Home() {
     // Convert string to number, but handle empty strings
     const numericValue = value === '' ? 0 : Number(value);
     updateInput(field, numericValue);
+    
+    // Check for interest rate easter eggs
+    if (field === 'interestRate') {
+      const easterEggMessage = getInterestRateEasterEgg(numericValue);
+      if (easterEggMessage) {
+        setInterestRateEasterEgg(easterEggMessage);
+        setShowInterestRateEasterEgg(true);
+      }
+    }
     
     // Create temporary inputs object for validation
     const newInputs = { ...inputs, [field]: numericValue };
@@ -461,6 +513,15 @@ export default function Home() {
                           </div>
                         )}
                       </div>
+                      
+                      {/* Interest Rate Easter Egg */}
+                      {showInterestRateEasterEgg && (
+                        <div className="mt-3 p-3 bg-gradient-to-r from-pink-500/20 to-purple-500/20 border border-pink-400/30 rounded-lg animate-pulse">
+                          <p className="text-xs text-pink-200 font-medium">
+                            {interestRateEasterEgg}
+                          </p>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
