@@ -155,6 +155,9 @@ const StandardInput: React.FC<StandardInputProps> = ({
 
   // Generate range hint for help text
   const getRangeHint = () => {
+    // Skip range hint for Purchase Price - easter egg handles limits
+    if (label === 'Purchase Price') return '';
+    
     if (type !== 'number' || (min === undefined && max === undefined)) return '';
     
     if (min !== undefined && max !== undefined) {
