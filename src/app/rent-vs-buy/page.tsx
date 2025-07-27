@@ -11,24 +11,20 @@ import { RentVsBuyAnalysis, calculateRentVsBuyAnalysis } from '@/lib/rentVsBuyCa
 
 // Default values
 const DEFAULT_VALUES = {
-  monthlyRent: '2500',
-  downPayment: '50000'
+  monthlyRent: '2500'
 };
 
 // localStorage keys
 const STORAGE_KEYS = {
-  monthlyRent: 'rentVsBuy_monthlyRent',
-  downPayment: 'rentVsBuy_downPayment'
+  monthlyRent: 'rentVsBuy_monthlyRent'
 };
 
 export default function RentVsBuyCalculator() {
   // State with default values
   const [monthlyRent, setMonthlyRent] = useState<string>(DEFAULT_VALUES.monthlyRent);
-  const [downPayment, setDownPayment] = useState<string>(DEFAULT_VALUES.downPayment);
   
   // Debounced values for validation tooltips
   const [debouncedMonthlyRent, setDebouncedMonthlyRent] = useState<string>(DEFAULT_VALUES.monthlyRent);
-  const [debouncedDownPayment, setDebouncedDownPayment] = useState<string>(DEFAULT_VALUES.downPayment);
   
   // Analysis results
   const [analysis, setAnalysis] = useState<RentVsBuyAnalysis | null>(null);
@@ -42,22 +38,13 @@ export default function RentVsBuyCalculator() {
     return () => clearTimeout(timer);
   }, [monthlyRent]);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedDownPayment(downPayment);
-    }, 500);
-    return () => clearTimeout(timer);
-  }, [downPayment]);
-
   // Load values from localStorage on mount
   useEffect(() => {
     const loadFromStorage = () => {
       try {
         const savedMonthlyRent = localStorage.getItem(STORAGE_KEYS.monthlyRent);
-        const savedDownPayment = localStorage.getItem(STORAGE_KEYS.downPayment);
 
         if (savedMonthlyRent) setMonthlyRent(savedMonthlyRent);
-        if (savedDownPayment) setDownPayment(savedDownPayment);
       } catch (error) {
         console.warn('Failed to load rent vs buy data from localStorage:', error);
       }
@@ -75,14 +62,6 @@ export default function RentVsBuyCalculator() {
     }
   }, [monthlyRent]);
 
-  useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEYS.downPayment, downPayment);
-    } catch (error) {
-      console.warn('Failed to save down payment to localStorage:', error);
-    }
-  }, [downPayment]);
-
   // Calculate analysis when inputs change
   useEffect(() => {
     const calculateAnalysis = async () => {
@@ -94,7 +73,7 @@ export default function RentVsBuyCalculator() {
       const result = calculateRentVsBuyAnalysis({
         monthlyRent: Number(monthlyRent) || 0,
         timeHorizon: 7, // Fixed at 7 years for simplicity
-        downPayment: Number(downPayment) || 0,
+        downPayment: 0, // Ignore down payment - show all scenarios
         investmentReturn: 0.07, // Fixed at 7% (S&P 500 average)
         rentIncrease: 0.03 // Fixed at 3% annual increase
       });
@@ -104,7 +83,7 @@ export default function RentVsBuyCalculator() {
     };
 
     calculateAnalysis();
-  }, [monthlyRent, downPayment]);
+  }, [monthlyRent]);
 
   return (
     <>
@@ -170,7 +149,7 @@ export default function RentVsBuyCalculator() {
                   <div className="p-6">
                     <h2 className="text-2xl font-bold text-white mb-6 flex items-center">
                       <span className="text-blue-400 mr-3">💰</span>
-                      Your Current Situation
+                      Your Monthly Rent
                     </h2>
                     
                     <div className="space-y-8">
@@ -222,53 +201,16 @@ export default function RentVsBuyCalculator() {
                         }
                       />
 
-                      {/* Down Payment */}
-                      <StandardInput
-                        label="Available Down Payment"
-                        value={downPayment}
-                        onChange={setDownPayment}
-                        type="number"
-                        prefix="$"
-                        placeholder="50000"
-                        formatCurrency={true}
-                        helpText="How much cash you have available for a down payment"
-                        helpTooltip={
-                          Number(debouncedDownPayment) === 0 ? {
-                            title: "No Down Payment? 💸",
-                            content: (
-                              <div>
-                                <p className="mb-2">Starting from scratch? We've all been there! 💪</p>
-                                <p className="text-sm text-slate-400">
-                                  Don't worry - there are loan programs with low or no down payment options. 
-                                  We'll show you what's possible even without a big down payment.
-                                </p>
-                              </div>
-                            )
-                          } : Number(debouncedDownPayment) > 1000000 ? {
-                            title: "Big Money! 💰",
-                            content: (
-                              <div>
-                                <p className="mb-2">Over $1M down payment? You're in great shape! 🚀</p>
-                                <p className="text-sm text-slate-400">
-                                  With that kind of cash, you have lots of options. We'll show you what's possible 
-                                  across different mortgage scenarios! 📈
-                                </p>
-                              </div>
-                            )
-                          } : undefined
-                        }
-                      />
-
                       {/* Key Insight Box */}
-                      <div className="bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-500/20 rounded-lg p-4">
-                        <h3 className="text-sm font-medium text-blue-300 mb-2 flex items-center">
+                      <div className="bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-500/20 rounded-lg p-6">
+                        <h3 className="text-lg font-medium text-blue-300 mb-3 flex items-center">
                           <span className="mr-2">💡</span>
-                          Key Insight
+                          How This Works
                         </h3>
-                        <p className="text-sm text-slate-300">
+                        <p className="text-slate-300 leading-relaxed">
                           If you're comfortable paying <strong>${Number(monthlyRent).toLocaleString()}/month</strong> in rent, 
                           you could afford a house with that same monthly payment. We'll show you different mortgage 
-                          scenarios and what house prices are possible.
+                          scenarios and what house prices are possible with standard down payment options.
                         </p>
                       </div>
                     </div>
@@ -336,80 +278,83 @@ export default function RentVsBuyCalculator() {
                   {/* Mortgage Scenario Cards */}
                   {analysis && !isCalculating && (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      {analysis.equivalentHousePrices.map((scenario, index) => (
-                        <motion.div
-                          key={scenario.loanType}
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ duration: 0.5, delay: index * 0.1 }}
-                        >
-                          <Card variant="section" className="h-full hover:border-blue-500/30 transition-colors">
-                            <div className="p-6">
-                              <div className="flex items-center justify-between mb-4">
-                                <h3 className="text-lg font-bold text-white">{scenario.loanType}</h3>
-                                <div className="text-sm text-slate-400">
-                                  {(scenario.interestRate * 100).toFixed(2)}% APR
-                                </div>
-                              </div>
-                              
-                              <div className="space-y-4">
-                                {/* House Price */}
-                                <div className="text-center bg-gradient-to-r from-green-500/10 to-blue-500/10 rounded-lg p-4">
-                                  <div className="text-3xl font-bold text-green-400">
-                                    ${scenario.housePrice.toLocaleString()}
+                      {analysis.equivalentHousePrices.map((scenario, index) => {
+                        // Determine loan term from loan type
+                        const loanTerm = scenario.loanType.includes('15-Year') ? '15-year' : '30-year';
+                        
+                        return (
+                          <motion.div
+                            key={scenario.loanType}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.5, delay: index * 0.1 }}
+                          >
+                            <Card variant="section" className="h-full hover:border-blue-500/30 transition-colors">
+                              <div className="p-6">
+                                <div className="flex items-center justify-between mb-4">
+                                  <h3 className="text-lg font-bold text-white">{scenario.loanType}</h3>
+                                  <div className="text-right">
+                                    <div className="text-sm text-slate-400">
+                                      {(scenario.interestRate * 100).toFixed(2)}% APR
+                                    </div>
+                                    <div className="text-xs text-slate-500">
+                                      {loanTerm} term
+                                    </div>
                                   </div>
-                                  <div className="text-sm text-slate-400">House Price</div>
                                 </div>
                                 
-                                {/* Down Payment Required */}
-                                <div className="flex justify-between items-center">
-                                  <span className="text-slate-400">Down Payment Required:</span>
-                                  <span className="text-white font-medium">
-                                    ${(scenario.housePrice * scenario.downPaymentPercent).toLocaleString()}
-                                  </span>
-                                </div>
-                                
-                                {/* Down Payment Percentage */}
-                                <div className="flex justify-between items-center">
-                                  <span className="text-slate-400">Down Payment %:</span>
-                                  <span className="text-white font-medium">
-                                    {(scenario.downPaymentPercent * 100).toFixed(1)}%
-                                  </span>
-                                </div>
-                                
-                                {/* Monthly Payment Breakdown */}
-                                <div className="border-t border-slate-600/30 pt-4">
-                                  <div className="flex justify-between items-center mb-2">
-                                    <span className="text-slate-400">Principal & Interest:</span>
-                                    <span className="text-white">${scenario.monthlyPayment.toLocaleString()}</span>
+                                <div className="space-y-4">
+                                  {/* House Price */}
+                                  <div className="text-center bg-gradient-to-r from-green-500/10 to-blue-500/10 rounded-lg p-4">
+                                    <div className="text-3xl font-bold text-green-400">
+                                      ${Math.round(scenario.housePrice).toLocaleString()}
+                                    </div>
+                                    <div className="text-sm text-slate-400">House Price</div>
                                   </div>
+                                  
+                                  {/* Down Payment Required */}
                                   <div className="flex justify-between items-center">
-                                    <span className="text-slate-400">Total Monthly (w/ taxes, insurance):</span>
-                                    <span className="text-blue-400 font-medium">
-                                      ${scenario.totalMonthlyHousing.toLocaleString()}
+                                    <span className="text-slate-400">Down Payment Required:</span>
+                                    <span className="text-white font-medium">
+                                      ${Math.round(scenario.housePrice * scenario.downPaymentPercent).toLocaleString()}
                                     </span>
                                   </div>
-                                </div>
-                                
-                                {/* Affordability Check */}
-                                <div className="mt-4">
-                                  {Number(downPayment) >= (scenario.housePrice * scenario.downPaymentPercent) ? (
-                                    <div className="flex items-center text-green-400 text-sm">
-                                      <span className="mr-2">✅</span>
-                                      You can afford this option!
+                                  
+                                  {/* Down Payment Percentage */}
+                                  <div className="flex justify-between items-center">
+                                    <span className="text-slate-400">Down Payment %:</span>
+                                    <span className="text-white font-medium">
+                                      {(scenario.downPaymentPercent * 100).toFixed(1)}%
+                                    </span>
+                                  </div>
+                                  
+                                  {/* Monthly Payment Breakdown */}
+                                  <div className="border-t border-slate-600/30 pt-4">
+                                    <div className="flex justify-between items-center mb-2">
+                                      <span className="text-slate-400">Principal & Interest:</span>
+                                      <span className="text-white">${Math.round(scenario.monthlyPayment).toLocaleString()}</span>
                                     </div>
-                                  ) : (
-                                    <div className="flex items-center text-amber-400 text-sm">
-                                      <span className="mr-2">⚠️</span>
-                                      Need ${((scenario.housePrice * scenario.downPaymentPercent) - Number(downPayment)).toLocaleString()} more for down payment
+                                    <div className="flex justify-between items-center">
+                                      <span className="text-slate-400">Total Monthly (w/ taxes, insurance):</span>
+                                      <span className="text-blue-400 font-medium">
+                                        ${Math.round(scenario.totalMonthlyHousing).toLocaleString()}
+                                      </span>
                                     </div>
-                                  )}
+                                  </div>
+                                  
+                                  {/* Loan Details */}
+                                  <div className="bg-slate-800/30 rounded-lg p-3">
+                                    <div className="text-xs text-slate-400 mb-1">Loan Details:</div>
+                                    <div className="text-sm text-slate-300">
+                                      ${Math.round(scenario.housePrice * (1 - scenario.downPaymentPercent)).toLocaleString()} loan amount over {loanTerm}
+                                    </div>
+                                  </div>
                                 </div>
                               </div>
-                            </div>
-                          </Card>
-                        </motion.div>
-                      ))}
+                            </Card>
+                          </motion.div>
+                        );
+                      })}
                     </div>
                   )}
                 </div>
