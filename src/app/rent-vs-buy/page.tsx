@@ -8,6 +8,8 @@ import Card from '@/components/ui/Card';
 import StandardInput from '@/components/ui/StandardInput';
 import SliderInput from '@/components/ui/SliderInput';
 import { RentVsBuyAnalysis, calculateRentVsBuyAnalysis } from '@/lib/rentVsBuyCalculations';
+import RentVsBuyChart from '@/components/RentVsBuyChart';
+import CostBreakdown from '@/components/CostBreakdown';
 
 // Default values
 const DEFAULT_VALUES = {
@@ -445,6 +447,30 @@ export default function RentVsBuyCalculator() {
                       </div>
                     </div>
                   </Card>
+                </motion.div>
+              )}
+
+              {/* Detailed Analysis - Chart and Breakdown */}
+              {analysis && !isCalculating && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.4 }}
+                  className="space-y-8"
+                >
+                  {/* Cost Analysis Chart */}
+                  <RentVsBuyChart 
+                    projections={analysis.costProjections} 
+                    breakEvenMonths={analysis.breakEvenMonths}
+                  />
+
+                  {/* Detailed Cost Breakdown */}
+                  <CostBreakdown 
+                    projections={analysis.costProjections}
+                    monthlyRent={Number(monthlyRent)}
+                    housePrice={analysis.equivalentHousePrices[0]?.housePriceForTotalHousing || 0}
+                    downPayment={0.20}
+                  />
                 </motion.div>
               )}
 
