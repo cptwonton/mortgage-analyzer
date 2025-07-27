@@ -96,7 +96,7 @@ export default function LandingPage() {
                 animate={{ scale: 1 }}
                 transition={{ duration: 0.5, delay: 0.3 }}
               >
-                Money Math
+                wut?
               </motion.h1>
               <motion.p 
                 className="text-2xl text-slate-300 max-w-3xl mx-auto leading-relaxed mb-8"

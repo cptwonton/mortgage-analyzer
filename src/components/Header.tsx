@@ -32,7 +32,7 @@ const Header: React.FC = () => {
               🏠
             </motion.span>
             <h1 className="text-xl font-bold bg-gradient-to-r from-white via-blue-100 to-purple-100 bg-clip-text text-transparent group-hover:from-blue-200 group-hover:via-purple-200 group-hover:to-pink-200 transition-all duration-300">
-              Money Math
+              wut?
             </h1>
           </Link>
 

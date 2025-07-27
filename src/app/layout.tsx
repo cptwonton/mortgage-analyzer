@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Money Math - Housing Calculators",
-  description: "A couple tools I made to help with mortgage and rent vs buy calculations. Useful for when you're browsing Zillow and want to do the math.",
+  title: "wut? - housing math tools",
+  description: "ok so i kept doing mortgage math in my head while looking at houses online and it was annoying so i built these",
   keywords: "mortgage calculator, rent vs buy, housing math, mortgage payment, real estate calculator",
   authors: [{ name: "Jeff" }],
   openGraph: {
