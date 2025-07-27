@@ -259,7 +259,12 @@ export default function RentVsBuyCalculator() {
                         <div className="text-xs text-slate-400 text-center">
                           {calculationMode === 'total' 
                             ? 'Shows house prices if rent equals your total monthly housing payment'
-                            : 'Shows house prices if rent equals only the money you don\'t get back (no principal)'
+                            : (
+                              <div>
+                                <div>Shows house prices if rent equals only the money you don&apos;t get back</div>
+                                <div className="text-amber-400 mt-1">💡 &quot;Burnable&quot; = money lost forever (like rent), excludes principal which builds equity</div>
+                              </div>
+                            )
                           }
                         </div>
                       </div>
@@ -270,11 +275,30 @@ export default function RentVsBuyCalculator() {
                           <span className="mr-2">💡</span>
                           How This Works
                         </h3>
-                        <p className="text-sm text-slate-300 text-center">
-                          If you&apos;re comfortable paying <strong>${Number(monthlyRent).toLocaleString()}/month</strong> in rent, 
-                          you could afford a house with that same monthly payment. We&apos;ll show you different mortgage 
-                          scenarios and what house prices are possible with standard down payment options.
-                        </p>
+                        {calculationMode === 'total' ? (
+                          <p className="text-sm text-slate-300 text-center">
+                            If you&apos;re comfortable paying <strong>${Number(monthlyRent).toLocaleString()}/month</strong> in rent, 
+                            you could afford a house with that same <strong>total monthly payment</strong>. This includes 
+                            principal (which builds equity), interest, taxes, insurance, and PMI.
+                          </p>
+                        ) : (
+                          <div className="text-sm text-slate-300 text-center space-y-2">
+                            <p>
+                              Your <strong>${Number(monthlyRent).toLocaleString()}/month</strong> rent is &quot;burned&quot; - you never get it back. 
+                              This mode shows what house you could afford if you only &quot;burned&quot; the same amount.
+                            </p>
+                            <div className="bg-orange-500/10 border border-orange-500/20 rounded p-2 text-xs">
+                              <div className="text-orange-300 font-medium mb-1">🔥 Burnable Money = Money Lost Forever</div>
+                              <div className="text-slate-400">
+                                • Interest payments → Lost to bank<br/>
+                                • Property taxes → Lost to government<br/>
+                                • Insurance → Lost to insurance company<br/>
+                                • PMI → Lost until 20% equity<br/>
+                                • Principal → NOT burnable (builds equity you get back!)
+                              </div>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -366,8 +390,9 @@ export default function RentVsBuyCalculator() {
                                   </div>
                                 )}
                                 {calculationMode === 'burnable' && (
-                                  <div className="text-xs text-slate-500 mt-1">
-                                    Interest + taxes + insurance{downPayment < 0.2 ? ' + PMI' : ''} (no principal)
+                                  <div className="text-xs text-slate-500 mt-1 space-y-1">
+                                    <div>Interest + taxes + insurance{downPayment < 0.2 ? ' + PMI' : ''} (no principal)</div>
+                                    <div className="text-orange-400">🔥 Like rent - money you never get back</div>
                                   </div>
                                 )}
                               </div>
@@ -500,12 +525,17 @@ export default function RentVsBuyCalculator() {
                                 <div className="text-xs text-slate-400 mt-1">
                                   {calculationMode === 'total' 
                                     ? 'Total housing cost = what you actually pay monthly'
-                                    : 'Burnable money = money you don\'t get back (like rent)'
+                                    : 'Burnable money = money lost forever (like rent)'
                                   }
                                 </div>
                                 {calculationMode === 'total' && (
                                   <div className="text-xs text-slate-400">
                                     Principal builds equity - you get it back when you sell
+                                  </div>
+                                )}
+                                {calculationMode === 'burnable' && (
+                                  <div className="text-xs text-green-400 mt-1">
+                                    💰 Principal payments build equity - that&apos;s why you can afford a bigger house!
                                   </div>
                                 )}
                                 {downPayment < 0.2 && (
