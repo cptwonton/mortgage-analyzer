@@ -122,9 +122,52 @@ export default function Home() {
             <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-white via-blue-100 to-purple-100 bg-clip-text text-transparent mb-4">
               Mortgage Analyzer
             </h1>
-            <p className="text-xl text-slate-300 max-w-2xl mx-auto leading-relaxed">
-              Discover the exact rental income needed to make your investment property profitable
-            </p>
+            <div className="flex items-center justify-center mb-4">
+              <p className="text-xl text-slate-300 max-w-2xl mx-auto leading-relaxed">
+                Discover the exact rental income needed to make your investment property profitable
+              </p>
+              <div className="ml-3 relative group">
+                <div className="w-5 h-5 bg-blue-500/20 border border-blue-400/40 rounded-full flex items-center justify-center cursor-help hover:bg-blue-500/30 transition-colors">
+                  <span className="text-xs text-blue-300 font-bold">?</span>
+                </div>
+                <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 w-80 bg-slate-800/95 border border-slate-600/50 rounded-xl p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none backdrop-blur-sm z-50">
+                  <div className="space-y-3">
+                    <div>
+                      <h4 className="font-semibold text-blue-300 mb-2">💡 Think About Mortgages Differently</h4>
+                      <p className="text-xs text-slate-300 leading-relaxed">
+                        This app helps you understand the true cost of homeownership by separating money you&apos;ll never see again from money you can recover.
+                      </p>
+                    </div>
+                    
+                    <div className="border-t border-slate-600/50 pt-3">
+                      <div className="space-y-2">
+                        <div>
+                          <p className="text-xs font-medium text-red-300">🔥 Burned Money (Like Rent)</p>
+                          <p className="text-xs text-slate-400">Interest, taxes, insurance, maintenance - money you&apos;ll never get back. This is your true monthly cost and can be compared directly to rent.</p>
+                        </div>
+                        
+                        <div>
+                          <p className="text-xs font-medium text-yellow-300">⚖️ Full Breakeven</p>
+                          <p className="text-xs text-slate-400">Total monthly cost including principal. Higher than burned money because principal builds equity you&apos;ll likely recover when selling.</p>
+                        </div>
+                        
+                        <div>
+                          <p className="text-xs font-medium text-green-300">💰 Investment Viable</p>
+                          <p className="text-xs text-slate-400">Rental income needed for positive cash flow after all expenses. The bar for making money as an investor.</p>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="border-t border-slate-600/50 pt-2">
+                      <p className="text-xs text-blue-300">
+                        <strong>Key Insight:</strong> Compare &quot;burned money&quot; to rent, not the full mortgage payment!
+                      </p>
+                    </div>
+                  </div>
+                  <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-slate-800/95"></div>
+                </div>
+              </div>
+            </div>
             <div className="mt-6 flex justify-center">
               <div className="h-1 w-24 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 rounded-full"></div>
             </div>
