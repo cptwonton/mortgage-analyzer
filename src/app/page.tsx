@@ -104,7 +104,7 @@ export default function LandingPage() {
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.5, delay: 0.5 }}
               >
-                A couple tools I made to help with the housing math I was always doing in my head
+                ok so i kept doing mortgage math in my head while looking at houses online and it was annoying so i built these
               </motion.p>
               <motion.div 
                 className="flex justify-center"
@@ -149,8 +149,9 @@ export default function LandingPage() {
                         </div>
                         
                         <p className="text-slate-300 text-lg leading-relaxed mb-6">
-                          Figure out what rent you'd need to break even on an investment property, 
-                          or just see what your monthly payment would be. Shows the math behind the numbers.
+                          so you want to buy a house to rent out? this tells you what rent you need to break even. 
+                          also shows you what money you actually "burn" each month vs what builds equity. 
+                          (important: principal payments aren't burned money - you get that back when you sell)
                         </p>
                         
                         <motion.div 
@@ -158,10 +159,10 @@ export default function LandingPage() {
                           variants={containerVariants}
                         >
                           {[
-                            { icon: '🔥', text: 'What money you "burn" each month (like rent)', color: 'text-red-400' },
-                            { icon: '⚖️', text: 'Break-even rental income needed', color: 'text-yellow-400' },
-                            { icon: '💰', text: 'Monthly payment breakdowns', color: 'text-green-400' },
-                            { icon: '📊', text: 'Amortization schedule over time', color: 'text-blue-400' }
+                            { icon: '🔥', text: 'shows what money you actually "burn" (hint: not the principal)', color: 'text-red-400' },
+                            { icon: '⚖️', text: 'tells you exactly what rent you need to not lose money', color: 'text-yellow-400' },
+                            { icon: '💰', text: 'breaks down where your payment actually goes', color: 'text-green-400' },
+                            { icon: '📊', text: 'amortization table because why not', color: 'text-blue-400' }
                           ].map((feature, index) => (
                             <motion.div 
                               key={index}
@@ -236,8 +237,8 @@ export default function LandingPage() {
                       </div>
                       
                       <p className="text-slate-300 text-lg leading-relaxed mb-6">
-                        The classic question: should you rent or buy? I wanted a tool to help think through 
-                        the break-even math and see what house price would be equivalent to your current rent.
+                        the eternal question. should you keep throwing money at rent or buy something? 
+                        this was gonna help figure out the break-even math but it's not ready yet.
                       </p>
                       
                       <motion.div 
@@ -245,10 +246,10 @@ export default function LandingPage() {
                         variants={containerVariants}
                       >
                         {[
-                          { icon: '💰', text: 'What house price equals your current rent', color: 'text-purple-400' },
-                          { icon: '📊', text: 'When buying becomes cheaper than renting', color: 'text-blue-400' },
-                          { icon: '⏱️', text: 'Long-term cost comparisons', color: 'text-green-400' },
-                          { icon: '🎯', text: 'Simple rent vs buy recommendation', color: 'text-amber-400' }
+                          { icon: '💰', text: 'what house price equals your current rent situation', color: 'text-purple-400' },
+                          { icon: '📊', text: 'when buying becomes cheaper than renting (if ever)', color: 'text-blue-400' },
+                          { icon: '⏱️', text: 'long-term cost comparisons and stuff', color: 'text-green-400' },
+                          { icon: '🎯', text: 'just tell me what to do already', color: 'text-amber-400' }
                         ].map((feature, index) => (
                           <motion.div 
                             key={index}
@@ -297,19 +298,19 @@ export default function LandingPage() {
                   {
                     icon: '😴',
                     title: 'lazy',
-                    description: 'I got tired of doing rough mortgage calculations in my head while browsing Zillow.',
+                    description: 'was browsing zillow and kept trying to figure out payments in my head. got tired of it.',
                     color: 'blue'
                   },
                   {
                     icon: '🎮',
                     title: 'for funsies',
-                    description: 'Wanted to practice some UI/UX design and try out some "vibe coding" approaches.',
+                    description: 'wanted to mess around with some ui stuff and see what this "vibe coding" thing was about.',
                     color: 'green'
                   },
                   {
                     icon: '✨',
                     title: 'w0w',
-                    description: 'Turns out these tools are actually pretty handy for real financial decisions.',
+                    description: 'actually ended up being pretty useful for real decisions. who knew.',
                     color: 'purple'
                   }
                 ].map((feature, index) => (
