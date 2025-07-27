@@ -255,6 +255,10 @@ export default function RentVsBuyCalculator() {
               {analysis && !isCalculating && (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {analysis.equivalentHousePrices.map((scenario, index) => {
+                    const downPayment = scenario.downPaymentOptions.isFixed 
+                      ? scenario.downPaymentOptions.fixedPercent!
+                      : scenario.selectedDownPayment!;
+
                     return (
                       <motion.div
                         key={scenario.loanType}
@@ -277,26 +281,37 @@ export default function RentVsBuyCalculator() {
                             </div>
                             
                             <div className="space-y-4">
-                              {/* House Price Range */}
-                              <div className="text-center bg-gradient-to-r from-green-500/10 to-blue-500/10 rounded-lg p-4">
-                                <div className="text-2xl font-bold text-green-400">
-                                  ${scenario.housePriceRange.min.toLocaleString()} - ${scenario.housePriceRange.max.toLocaleString()}
+                              {/* House Price Options */}
+                              <div className="space-y-3">
+                                <div className="text-center bg-gradient-to-r from-green-500/10 to-blue-500/10 rounded-lg p-3">
+                                  <div className="text-lg font-bold text-green-400">
+                                    ${scenario.housePriceForPIOnly.toLocaleString()}
+                                  </div>
+                                  <div className="text-xs text-slate-400">If rent = P&I only</div>
                                 </div>
-                                <div className="text-sm text-slate-400">House Price Range</div>
+                                
+                                <div className="text-center bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-lg p-3">
+                                  <div className="text-lg font-bold text-blue-400">
+                                    ${scenario.housePriceForTotalHousing.toLocaleString()}
+                                  </div>
+                                  <div className="text-xs text-slate-400">If rent = total housing</div>
+                                </div>
                               </div>
                               
-                              {/* Down Payment Range */}
+                              {/* Down Payment */}
                               <div className="flex justify-between items-center">
                                 <span className="text-slate-400">Down Payment:</span>
                                 <span className="text-white font-medium text-right">
-                                  {scenario.downPaymentRange.min === scenario.downPaymentRange.max ? (
-                                    <>{(scenario.downPaymentRange.min * 100).toFixed(1)}%</>
+                                  {scenario.downPaymentOptions.isFixed ? (
+                                    <>{(scenario.downPaymentOptions.fixedPercent! * 100).toFixed(1)}%</>
                                   ) : (
-                                    <>{(scenario.downPaymentRange.min * 100).toFixed(1)}% - {(scenario.downPaymentRange.max * 100).toFixed(1)}%</>
+                                    <>
+                                      {(downPayment * 100).toFixed(1)}%
+                                      <div className="text-xs text-slate-400">
+                                        ({(scenario.downPaymentOptions.range!.min * 100).toFixed(1)}% - {(scenario.downPaymentOptions.range!.max * 100).toFixed(1)}% range)
+                                      </div>
+                                    </>
                                   )}
-                                  <div className="text-xs text-slate-400">
-                                    ${scenario.downPaymentAmountRange.min.toLocaleString()} - ${scenario.downPaymentAmountRange.max.toLocaleString()}
-                                  </div>
                                 </span>
                               </div>
                               
@@ -304,12 +319,12 @@ export default function RentVsBuyCalculator() {
                               <div className="border-t border-slate-600/30 pt-4">
                                 <div className="flex justify-between items-center mb-2">
                                   <span className="text-slate-400">Principal & Interest:</span>
-                                  <span className="text-white">${Math.round(scenario.monthlyPayment).toLocaleString()}</span>
+                                  <span className="text-white">${scenario.monthlyPI.toLocaleString()}</span>
                                 </div>
                                 <div className="flex justify-between items-center">
                                   <span className="text-slate-400">Total Monthly (w/ taxes, insurance):</span>
                                   <span className="text-blue-400 font-medium">
-                                    ${Math.round(scenario.totalMonthlyHousing).toLocaleString()}
+                                    ${scenario.totalMonthlyHousing.toLocaleString()}
                                   </span>
                                 </div>
                               </div>
@@ -321,7 +336,7 @@ export default function RentVsBuyCalculator() {
                                   {scenario.loanTermYears}-year term at {(scenario.interestRate * 100).toFixed(2)}% APR
                                 </div>
                                 <div className="text-xs text-slate-400 mt-1">
-                                  Higher down payment = lower house price for same monthly payment
+                                  Two calculation modes: P&I only vs total housing cost
                                 </div>
                               </div>
                             </div>
