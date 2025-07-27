@@ -47,7 +47,9 @@ const StandardInput: React.FC<StandardInputProps> = ({
 
   // Format number with commas for currency display
   const formatCurrencyValue = (num: number): string => {
-    return num.toLocaleString('en-US');
+    const result = num.toLocaleString('en-US');
+    console.log('formatCurrencyValue:', { num, result, label });
+    return result;
   };
 
   const handleFocus = () => {
@@ -110,6 +112,10 @@ const StandardInput: React.FC<StandardInputProps> = ({
   };
 
   const inputValue = getDisplayValue();
+  
+  if (formatCurrency && label === 'Purchase Price') {
+    console.log('Final inputValue for render:', { inputValue, isFocused, label });
+  }
 
   // Generate range hint for help text
   const getRangeHint = () => {
