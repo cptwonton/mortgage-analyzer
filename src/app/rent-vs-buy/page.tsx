@@ -52,6 +52,38 @@ export default function RentVsBuyCalculator() {
     }));
   };
 
+  // Navigate to mortgage analyzer with loan data
+  const handleCardClick = (scenario: any) => {
+    try {
+      const downPayment = scenario.downPaymentOptions.isFixed 
+        ? scenario.downPaymentOptions.fixedPercent!
+        : scenario.selectedDownPayment!;
+
+      const housePrice = calculationMode === 'total' 
+        ? scenario.housePriceForTotalHousing 
+        : scenario.housePriceForBurnableMoney;
+
+      // Store data for mortgage analyzer
+      const mortgageData = {
+        housePrice: housePrice,
+        downPayment: downPayment * 100, // Convert to percentage for mortgage analyzer
+        interestRate: scenario.interestRate * 100, // Convert to percentage
+        loanTerm: scenario.loanTermYears,
+        loanType: scenario.loanType,
+        calculationMode: calculationMode,
+        sourceRent: Number(monthlyRent),
+        timestamp: Date.now()
+      };
+
+      localStorage.setItem('mortgageAnalyzerData', JSON.stringify(mortgageData));
+      
+      // Navigate to mortgage analyzer
+      window.location.href = '/mortgage-analyzer';
+    } catch (error) {
+      console.error('Failed to navigate to mortgage analyzer:', error);
+    }
+  };
+
   // Debounce validation values (500ms delay)
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -354,8 +386,10 @@ export default function RentVsBuyCalculator() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5, delay: index * 0.1 }}
+                        className="cursor-pointer"
+                        onClick={() => handleCardClick(scenario)}
                       >
-                        <Card variant="section" className="h-full hover:border-blue-500/30 transition-colors">
+                        <Card variant="section" className="h-full hover:border-blue-500/50 hover:bg-slate-800/70 transition-all duration-200 hover:shadow-lg hover:shadow-blue-500/10">
                           <div className="p-6">
                             <div className="flex items-center justify-between mb-4">
                               <h3 className="text-lg font-bold text-white">{scenario.loanType}</h3>
@@ -365,6 +399,10 @@ export default function RentVsBuyCalculator() {
                                 </div>
                                 <div className="text-xs text-slate-500">
                                   {scenario.loanTermYears}-year term
+                                </div>
+                                <div className="text-xs text-blue-400 mt-1 flex items-center">
+                                  Click to analyze
+                                  <span className="ml-1">→</span>
                                 </div>
                               </div>
                             </div>

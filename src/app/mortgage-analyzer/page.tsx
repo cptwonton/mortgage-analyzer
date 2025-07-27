@@ -23,6 +23,31 @@ export default function Home() {
   const [showFloatingControls, setShowFloatingControls] = useState(false);
   const [interestRateEasterEgg, setInterestRateEasterEgg] = useState<string>('');
   const [showInterestRateEasterEgg, setShowInterestRateEasterEgg] = useState(false);
+  const [rentVsBuyData, setRentVsBuyData] = useState<any>(null);
+
+  // Check for rent vs buy data on load
+  useEffect(() => {
+    if (isLoaded) {
+      try {
+        const storedData = localStorage.getItem('mortgageAnalyzerData');
+        if (storedData) {
+          const data = JSON.parse(storedData);
+          setRentVsBuyData(data);
+          
+          // Auto-populate the form with the data
+          updateInput('purchasePrice', data.housePrice.toString());
+          updateInput('downPaymentPercent', data.downPayment.toString());
+          updateInput('interestRate', data.interestRate.toString());
+          updateInput('loanTermYears', data.loanTerm.toString());
+          
+          // Clear the data after using it
+          localStorage.removeItem('mortgageAnalyzerData');
+        }
+      } catch (error) {
+        console.error('Failed to load rent vs buy data:', error);
+      }
+    }
+  }, [isLoaded, updateInput]);
 
   // Clear interest rate easter egg after a few seconds
   useEffect(() => {
@@ -133,6 +158,36 @@ export default function Home() {
               <div className="h-1 w-24 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 rounded-full"></div>
             </div>
           </div>
+
+          {/* Rent vs Buy Data Banner */}
+          {rentVsBuyData && (
+            <div className="mb-8">
+              <div className="max-w-4xl mx-auto">
+                <div className="bg-gradient-to-r from-blue-500/10 to-green-500/10 border border-blue-500/20 rounded-lg p-4">
+                  <div className="flex items-center justify-center mb-2">
+                    <span className="text-2xl mr-2">🏠</span>
+                    <h3 className="text-lg font-bold text-blue-300">
+                      Analyzing {rentVsBuyData.loanType} from Rent vs Buy Calculator
+                    </h3>
+                  </div>
+                  <div className="text-center text-sm text-slate-300 space-y-1">
+                    <div>
+                      <strong>${rentVsBuyData.housePrice.toLocaleString()}</strong> house price • 
+                      <strong> {rentVsBuyData.downPayment}%</strong> down • 
+                      <strong> {rentVsBuyData.interestRate}%</strong> APR • 
+                      <strong> {rentVsBuyData.loanTerm}</strong> years
+                    </div>
+                    <div className="text-xs text-slate-400">
+                      {rentVsBuyData.calculationMode === 'total' 
+                        ? `Based on $${rentVsBuyData.sourceRent}/month total housing cost`
+                        : `Based on $${rentVsBuyData.sourceRent}/month burnable money (no principal)`
+                      }
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
 
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
             {/* Input Panel */}
