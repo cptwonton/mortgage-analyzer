@@ -333,7 +333,9 @@ export function validateField(field: keyof MortgageInputs, value: number): {
     case 'purchasePrice':
       if (value <= 0) return { isValid: false, state: 'error', message: 'Purchase price is required' };
       if (value < 50000) return { isValid: true, state: 'warning', message: 'Very low for typical investment property' };
-      if (value > 2000000) return { isValid: true, state: 'warning', message: 'High-end property - ensure rent projections are realistic' };
+      if (value > 100000000) return { isValid: true, state: 'warning', message: 'Ultra-luxury property - consider specialized financing' };
+      if (value > 10000000) return { isValid: true, state: 'warning', message: 'High-end property - jumbo loan rates apply' };
+      if (value > 2000000) return { isValid: true, state: 'warning', message: 'Premium property - ensure rent projections are realistic' };
       return { isValid: true, state: 'success' };
 
     case 'propertyTaxRate':
@@ -382,7 +384,7 @@ export function validateField(field: keyof MortgageInputs, value: number): {
 export function getFieldRanges(field: keyof MortgageInputs): { min?: number; max?: number; allowZero: boolean } {
   switch (field) {
     case 'purchasePrice':
-      return { min: 1, max: 5000000, allowZero: false };
+      return { min: 1, max: 1000000000, allowZero: false };
     case 'propertyTaxRate':
       return { min: 0, max: 10, allowZero: true };
     case 'monthlyInsurance':
