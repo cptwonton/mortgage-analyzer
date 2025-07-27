@@ -48,6 +48,8 @@ const StandardInput: React.FC<StandardInputProps> = ({
 
   // Easter egg messages for different scenarios
   const getEasterEggMessage = (numericValue: number, limit: number, isMax: boolean): string => {
+    const formatNumber = (num: number): string => num.toLocaleString('en-US');
+    
     if (isMax) {
       if (label === 'Purchase Price' && limit === 1000000000) {
         const messages = [
@@ -60,10 +62,10 @@ const StandardInput: React.FC<StandardInputProps> = ({
         ];
         return messages[Math.floor(Math.random() * messages.length)];
       } else {
-        return `🤓 The app's creator was too smart to let you enter $${limit.toLocaleString()}+. Nice try though!`;
+        return `🤓 The app's creator was too smart to let you enter $${formatNumber(limit)}+. Nice try though!`;
       }
     } else {
-      return `🤨 The brilliant mind behind this app won't let you go below $${limit}. Quality control!`;
+      return `🤨 The brilliant mind behind this app won't let you go below $${formatNumber(limit)}. Quality control!`;
     }
   };
 
