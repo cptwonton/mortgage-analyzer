@@ -96,7 +96,7 @@ export default function LandingPage() {
                 animate={{ scale: 1 }}
                 transition={{ duration: 0.5, delay: 0.3 }}
               >
-                Financial Tools
+                Financial Calculators
               </motion.h1>
               <motion.p 
                 className="text-2xl text-slate-300 max-w-3xl mx-auto leading-relaxed mb-8"
@@ -104,7 +104,7 @@ export default function LandingPage() {
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.5, delay: 0.5 }}
               >
-                Professional calculators to help you make informed real estate and financial decisions
+                Some tools I built to help with the kind of financial math I find myself doing in my head
               </motion.p>
               <motion.div 
                 className="flex justify-center"
@@ -144,13 +144,13 @@ export default function LandingPage() {
                             <h2 className="text-2xl font-bold text-white group-hover:text-emerald-300 transition-colors">
                               Mortgage Analyzer
                             </h2>
-                            <p className="text-emerald-400 font-medium">Investment Property Calculator</p>
+                            <p className="text-emerald-400 font-medium">Mortgage & Rental Calculator</p>
                           </div>
                         </div>
                         
                         <p className="text-slate-300 text-lg leading-relaxed mb-6">
-                          Discover the exact rental income needed to make your investment property profitable. 
-                          Analyze burned money vs. recoverable costs with detailed breakdowns.
+                          Figure out what rent you'd need to break even on an investment property, 
+                          or just see what your monthly payment would be. Shows the math behind the numbers.
                         </p>
                         
                         <motion.div 
@@ -158,10 +158,10 @@ export default function LandingPage() {
                           variants={containerVariants}
                         >
                           {[
-                            { icon: '🔥', text: 'Burned Money Analysis (like rent)', color: 'text-red-400' },
-                            { icon: '⚖️', text: 'Full Breakeven Calculations', color: 'text-yellow-400' },
-                            { icon: '💎', text: 'Investment Viability Metrics', color: 'text-green-400' },
-                            { icon: '📊', text: 'Amortization & Payment Breakdown', color: 'text-blue-400' }
+                            { icon: '🔥', text: 'What money you "burn" each month (like rent)', color: 'text-red-400' },
+                            { icon: '⚖️', text: 'Break-even rental income needed', color: 'text-yellow-400' },
+                            { icon: '💰', text: 'Monthly payment breakdowns', color: 'text-green-400' },
+                            { icon: '📊', text: 'Amortization schedule over time', color: 'text-blue-400' }
                           ].map((feature, index) => (
                             <motion.div 
                               key={index}
@@ -231,13 +231,13 @@ export default function LandingPage() {
                           <h2 className="text-2xl font-bold text-white transition-colors">
                             Rent vs Buy Calculator
                           </h2>
-                          <p className="text-purple-400 font-medium">Decision Analysis Tool</p>
+                          <p className="text-purple-400 font-medium">Rent vs Buy Helper</p>
                         </div>
                       </div>
                       
                       <p className="text-slate-300 text-lg leading-relaxed mb-6">
-                        Should you rent or buy? Enter your current rent and see what equivalent house 
-                        you could purchase, with break-even analysis and long-term cost comparisons.
+                        The classic question: should you rent or buy? I wanted a tool to help think through 
+                        the break-even math and see what house price would be equivalent to your current rent.
                       </p>
                       
                       <motion.div 
@@ -245,10 +245,10 @@ export default function LandingPage() {
                         variants={containerVariants}
                       >
                         {[
-                          { icon: '💰', text: 'Rent-to-Purchase Equivalency Analysis', color: 'text-purple-400' },
-                          { icon: '📊', text: 'Break-Even Timeline Calculation', color: 'text-blue-400' },
-                          { icon: '⏱️', text: 'Long-Term Cost Projections', color: 'text-green-400' },
-                          { icon: '🎯', text: 'Personalized Rent vs Buy Recommendation', color: 'text-amber-400' }
+                          { icon: '💰', text: 'What house price equals your current rent', color: 'text-purple-400' },
+                          { icon: '📊', text: 'When buying becomes cheaper than renting', color: 'text-blue-400' },
+                          { icon: '⏱️', text: 'Long-term cost comparisons', color: 'text-green-400' },
+                          { icon: '🎯', text: 'Simple rent vs buy recommendation', color: 'text-amber-400' }
                         ].map((feature, index) => (
                           <motion.div 
                             key={index}
@@ -288,28 +288,28 @@ export default function LandingPage() {
               className="mt-20 text-center"
               variants={itemVariants}
             >
-              <h2 className="text-3xl font-bold text-white mb-8">Why Use Our Financial Tools?</h2>
+              <h2 className="text-3xl font-bold text-white mb-8">Why I Built These</h2>
               <motion.div 
                 className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto"
                 variants={containerVariants}
               >
                 {[
                   {
-                    icon: '🎓',
-                    title: 'Educational Focus',
-                    description: 'Learn while you calculate. Understand the "why" behind every number.',
+                    icon: '🤔',
+                    title: 'Mental Math Helper',
+                    description: 'I got tired of doing rough mortgage calculations in my head while browsing Zillow.',
                     color: 'blue'
                   },
                   {
-                    icon: '🔓',
-                    title: 'Open Source',
-                    description: 'Transparent calculations you can trust. View and verify the code.',
+                    icon: '🛠️',
+                    title: 'Learning Project',
+                    description: 'Wanted to practice some UI/UX design and try out some "vibe coding" approaches.',
                     color: 'green'
                   },
                   {
                     icon: '📊',
-                    title: 'Real-Time Data',
-                    description: 'Current market rates and realistic calculations for today\'s market.',
+                    title: 'Useful Utilities',
+                    description: 'Turns out these tools are actually pretty handy for real financial decisions.',
                     color: 'purple'
                   }
                 ].map((feature, index) => (
