@@ -39,6 +39,15 @@ const Footer: React.FC = () => {
                 <span>View Source Code</span>
               </a>
               <a
+                href="https://github.com/cptwonton/mortgage-analyzer/blob/main/LICENSE"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center space-x-2 text-slate-300 hover:text-blue-300 transition-colors text-sm"
+              >
+                <span className="text-blue-400">📄</span>
+                <span>MIT License</span>
+              </a>
+              <a
                 href="https://github.com/cptwonton/mortgage-analyzer/issues"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -75,9 +84,19 @@ const Footer: React.FC = () => {
 
         {/* Bottom Bar */}
         <div className="border-t border-white/10 mt-8 pt-6 flex flex-col sm:flex-row justify-between items-center">
-          <p className="text-slate-400 text-sm">
-            © {currentYear} Mortgage Analyzer - Open Source Financial Education Tool
-          </p>
+          <div className="flex items-center space-x-4">
+            <p className="text-slate-400 text-sm">
+              Licensed under MIT License - Free to use with attribution
+            </p>
+            <a
+              href="https://github.com/cptwonton/mortgage-analyzer/blob/main/LICENSE"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-400 hover:text-blue-300 text-sm underline transition-colors"
+            >
+              View License
+            </a>
+          </div>
           <p className="text-slate-500 text-xs mt-2 sm:mt-0">
             Last updated: {new Date().toLocaleDateString()}
           </p>
