@@ -405,7 +405,7 @@ export default function Home() {
                       <div className="px-4 py-4 bg-white/5 border border-white/20 rounded-xl backdrop-blur-sm">
                         <div className="flex items-center justify-between mb-3">
                           <span className="text-white font-bold text-lg">
-                            {inputs.interestRate.toFixed(1)}%
+                            {inputs.interestRate.toFixed(2)}%
                           </span>
                           <div className="flex space-x-1 text-xs text-slate-400">
                             <span>0%</span>
@@ -418,7 +418,7 @@ export default function Home() {
                             type="range"
                             min="0"
                             max="10"
-                            step="0.1"
+                            step="0.05"
                             value={inputs.interestRate}
                             onChange={(e) => handleInputChange('interestRate', e.target.value)}
                             className="w-full h-2 bg-white/10 rounded-lg appearance-none cursor-pointer slider"
