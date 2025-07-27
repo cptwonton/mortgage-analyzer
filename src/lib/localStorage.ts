@@ -26,11 +26,11 @@ export const defaultInputs: MortgageInputs = {
     lifetime: 5
   },
   propertyTaxRate: 1.2,
-  monthlyInsurance: 150,
-  monthlyMaintenance: 200,
-  monthlyCapEx: 150,
-  vacancyRate: 8,
-  propertyManagementRate: 10,
+  monthlyInsurance: 0,
+  monthlyMaintenance: 0,
+  monthlyCapEx: 0,
+  vacancyRate: 0,
+  propertyManagementRate: 0,
   monthlyHOA: 0
 };
 
