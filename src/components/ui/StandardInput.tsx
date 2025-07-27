@@ -217,7 +217,7 @@ const StandardInput: React.FC<StandardInputProps> = ({
       </label>
       <div className="relative">
         {prefix && (
-          <span className="absolute left-4 top-1/2 transform -translate-y-1/2 font-medium text-white">
+          <span className="absolute left-4 top-1/2 transform -translate-y-1/2 font-medium text-white z-10 pointer-events-none">
             {prefix}
           </span>
         )}
@@ -230,12 +230,12 @@ const StandardInput: React.FC<StandardInputProps> = ({
           onChange={handleChange}
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
-          className={`w-full py-4 bg-white/5 border ${styles.border} ${styles.focusRing} rounded-xl focus:outline-none focus:ring-2 focus:border-transparent text-white placeholder-slate-400 backdrop-blur-sm transition-all duration-200 hover:bg-white/10 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${
+          className={`w-full py-4 bg-white/5 border ${styles.border} ${styles.focusRing} rounded-xl focus:outline-none focus:ring-2 focus:border-transparent text-white placeholder-slate-400 transition-all duration-200 hover:bg-white/10 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${
             prefix ? 'pl-8 pr-4' : suffix ? 'pl-4 pr-8' : 'px-4'
           }`}
         />
         {suffix && (
-          <span className="absolute right-4 top-1/2 transform -translate-y-1/2 font-medium text-white">
+          <span className="absolute right-4 top-1/2 transform -translate-y-1/2 font-medium text-white z-10 pointer-events-none">
             {suffix}
           </span>
         )}
