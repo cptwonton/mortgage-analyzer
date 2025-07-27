@@ -131,9 +131,15 @@ export default function RentVsBuyCalculator() {
       const result = calculateRentVsBuyAnalysis({
         monthlyRent: Number(monthlyRent) || 0,
         timeHorizon: 7,
-        downPayment: 0,
-        investmentReturn: 0.07,
-        rentIncrease: 0.03
+        downPayment: 0.20, // 20% down payment
+        investmentReturn: 0.07, // 7% stock market return
+        rentIncrease: 0.03, // 3% annual rent increases
+        homeAppreciation: 0.03, // 3% annual home appreciation
+        maintenanceRate: 0.02, // 2% of home value annually
+        propertyTaxRate: 0.012, // 1.2% annually
+        insuranceRate: 0.004, // 0.4% annually
+        marginalTaxRate: 0.24, // 24% tax bracket
+        transactionCostRate: 0.08, // 8% total transaction costs
       }, downPayments);
       
       setAnalysis(result);

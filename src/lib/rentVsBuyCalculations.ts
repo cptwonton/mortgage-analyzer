@@ -3,9 +3,15 @@
 export interface RentVsBuyInputs {
   monthlyRent: number;
   timeHorizon: number; // years
-  downPayment: number;
+  downPayment: number; // decimal (0.20 for 20%)
   investmentReturn: number; // decimal (0.07 for 7%)
   rentIncrease: number; // decimal (0.03 for 3%)
+  homeAppreciation?: number; // decimal (0.03 for 3% annually)
+  maintenanceRate?: number; // decimal (0.02 for 2% of home value annually)
+  propertyTaxRate?: number; // decimal (0.012 for 1.2% annually)
+  insuranceRate?: number; // decimal (0.004 for 0.4% annually)
+  marginalTaxRate?: number; // decimal (0.24 for 24% tax bracket)
+  transactionCostRate?: number; // decimal (0.08 for 8% total transaction costs)
 }
 
 export interface LoanScenario {
@@ -33,11 +39,15 @@ export interface LoanScenario {
 
 export interface CostProjection {
   year: number;
-  rentTotalCost: number;
-  buyTotalCost: number;
-  difference: number;
-  rentCumulative: number;
-  buyCumulative: number;
+  rentCost: number; // Annual rent cost
+  buyCost: number; // Annual ownership cost (mortgage + taxes + insurance + maintenance)
+  difference: number; // Cumulative difference (positive = renting saves money)
+  homeValue: number; // Current home value with appreciation
+  equity: number; // Home equity (value - remaining mortgage)
+  investmentValue: number; // Value of invested down payment + monthly savings
+  remainingMortgage: number; // Remaining mortgage balance
+  taxSavings: number; // Annual tax savings from mortgage interest deduction
+  opportunityCost: number; // Opportunity cost of down payment
 }
 
 export interface RentVsBuyAnalysis {
@@ -354,39 +364,171 @@ function calculateLoanScenarios(monthlyRent: number, downPaymentSelections?: Rec
 }
 
 // Legacy function for cost projections (simplified for now)
+// Comprehensive rent vs buy calculation based on NYTimes methodology
 function calculateCostProjections(inputs: RentVsBuyInputs, housePrice: number): CostProjection[] {
   const projections: CostProjection[] = [];
-  let rentCumulative = 0;
-  let buyCumulative = inputs.downPayment + (housePrice * HOUSING_ASSUMPTIONS.closingCosts);
+  
+  // Default values for optional parameters
+  const homeAppreciation = inputs.homeAppreciation || 0.03; // 3% annually
+  const maintenanceRate = inputs.maintenanceRate || 0.02; // 2% of home value
+  const propertyTaxRate = inputs.propertyTaxRate || 0.012; // 1.2% annually
+  const insuranceRate = inputs.insuranceRate || 0.004; // 0.4% annually
+  const marginalTaxRate = inputs.marginalTaxRate || 0.24; // 24% tax bracket
+  const transactionCostRate = inputs.transactionCostRate || 0.08; // 8% total
+  
+  // Mortgage details
+  const downPaymentPercent = inputs.downPayment || 0.20;
+  const downPaymentAmount = housePrice * downPaymentPercent;
+  const loanAmount = housePrice - downPaymentAmount;
+  const interestRate = 0.0725; // 7.25% current rate
+  const monthlyRate = interestRate / 12;
+  const loanTermMonths = 30 * 12;
+  
+  // Monthly mortgage payment (P&I only)
+  const monthlyPI = loanAmount * (monthlyRate * Math.pow(1 + monthlyRate, loanTermMonths)) / 
+                   (Math.pow(1 + monthlyRate, loanTermMonths) - 1);
+  
+  // Initial costs
+  const transactionCosts = housePrice * transactionCostRate;
+  const monthlyPropertyTax = (housePrice * propertyTaxRate) / 12;
+  const monthlyInsurance = (housePrice * insuranceRate) / 12;
+  const monthlyPMI = downPaymentPercent < 0.20 ? (housePrice * 0.005) / 12 : 0; // 0.5% PMI
+  
+  // Investment tracking
+  let investedAmount = downPaymentAmount + transactionCosts; // Initial investment
+  let cumulativeRentCost = 0;
+  let cumulativeBuyCost = downPaymentAmount + transactionCosts; // Start with upfront costs
   
   for (let year = 1; year <= inputs.timeHorizon; year++) {
-    const annualRent = inputs.monthlyRent * 12 * Math.pow(1 + inputs.rentIncrease, year - 1);
-    rentCumulative += annualRent;
+    // Current year rent (with annual increases)
+    const currentRent = inputs.monthlyRent * Math.pow(1 + inputs.rentIncrease, year - 1);
+    const annualRentCost = currentRent * 12;
+    cumulativeRentCost += annualRentCost;
     
-    // Simplified buy costs (would need more detailed calculation)
-    const annualBuyCosts = inputs.monthlyRent * 12; // Placeholder
-    buyCumulative += annualBuyCosts;
+    // Current home value (with appreciation)
+    const currentHomeValue = housePrice * Math.pow(1 + homeAppreciation, year);
+    
+    // Mortgage calculations for this year
+    const monthsPaid = year * 12;
+    const remainingBalance = calculateRemainingBalance(loanAmount, monthlyRate, loanTermMonths, monthsPaid);
+    const annualInterestPaid = calculateAnnualInterest(loanAmount, monthlyRate, loanTermMonths, year);
+    
+    // Annual ownership costs
+    const annualMortgagePI = monthlyPI * 12;
+    const annualPropertyTax = monthlyPropertyTax * 12;
+    const annualInsurance = monthlyInsurance * 12;
+    const annualPMI = monthlyPMI * 12;
+    const annualMaintenance = currentHomeValue * maintenanceRate;
+    
+    // Tax savings from mortgage interest and property tax deduction
+    const taxSavings = (annualInterestPaid + annualPropertyTax) * marginalTaxRate;
+    
+    // Total annual ownership cost (after tax benefits)
+    const annualOwnershipCost = annualMortgagePI + annualPropertyTax + annualInsurance + 
+                               annualPMI + annualMaintenance - taxSavings;
+    
+    cumulativeBuyCost += annualOwnershipCost;
+    
+    // Investment opportunity calculation
+    const monthlyDifference = (annualOwnershipCost - annualRentCost) / 12;
+    if (monthlyDifference > 0) {
+      // If renting is cheaper, invest the monthly difference
+      investedAmount += monthlyDifference * 12;
+    }
+    investedAmount *= (1 + inputs.investmentReturn); // Annual investment growth
+    
+    // Home equity calculation
+    const homeEquity = currentHomeValue - remainingBalance;
+    
+    // Net position: (Home Equity) - (Opportunity Cost of Down Payment + Transaction Costs)
+    const opportunityCost = investedAmount - (downPaymentAmount + transactionCosts);
+    const netDifference = cumulativeBuyCost - cumulativeRentCost + opportunityCost;
     
     projections.push({
       year,
-      rentTotalCost: annualRent,
-      buyTotalCost: annualBuyCosts,
-      difference: buyCumulative - rentCumulative,
-      rentCumulative,
-      buyCumulative
+      rentCost: annualRentCost,
+      buyCost: annualOwnershipCost,
+      difference: netDifference,
+      homeValue: currentHomeValue,
+      equity: homeEquity,
+      investmentValue: investedAmount,
+      remainingMortgage: remainingBalance,
+      taxSavings: taxSavings,
+      opportunityCost: opportunityCost
     });
   }
   
   return projections;
 }
 
+// Helper function to calculate remaining mortgage balance
+function calculateRemainingBalance(principal: number, monthlyRate: number, totalMonths: number, monthsPaid: number): number {
+  if (monthsPaid >= totalMonths) return 0;
+  
+  const monthlyPayment = principal * (monthlyRate * Math.pow(1 + monthlyRate, totalMonths)) / 
+                        (Math.pow(1 + monthlyRate, totalMonths) - 1);
+  
+  let balance = principal;
+  for (let i = 0; i < monthsPaid; i++) {
+    const interestPayment = balance * monthlyRate;
+    const principalPayment = monthlyPayment - interestPayment;
+    balance -= principalPayment;
+    if (balance <= 0) break;
+  }
+  return Math.max(0, balance);
+}
+
+// Helper function to calculate annual interest paid in a specific year
+function calculateAnnualInterest(principal: number, monthlyRate: number, totalMonths: number, year: number): number {
+  const monthlyPayment = principal * (monthlyRate * Math.pow(1 + monthlyRate, totalMonths)) / 
+                        (Math.pow(1 + monthlyRate, totalMonths) - 1);
+  
+  let balance = principal;
+  let annualInterest = 0;
+  const startMonth = (year - 1) * 12;
+  const endMonth = Math.min(year * 12, totalMonths);
+  
+  // Calculate balance at start of year
+  for (let i = 0; i < startMonth; i++) {
+    const interestPayment = balance * monthlyRate;
+    const principalPayment = monthlyPayment - interestPayment;
+    balance -= principalPayment;
+    if (balance <= 0) break;
+  }
+  
+  // Calculate interest for the year
+  for (let i = startMonth; i < endMonth; i++) {
+    if (balance <= 0) break;
+    const interestPayment = balance * monthlyRate;
+    const principalPayment = monthlyPayment - interestPayment;
+    annualInterest += interestPayment;
+    balance -= principalPayment;
+  }
+  
+  return annualInterest;
+}
+
+// Find the break-even point where buying becomes cheaper than renting
 function findBreakEvenPoint(projections: CostProjection[]): number {
+  // Look for the first year where the cumulative difference becomes negative
+  // (meaning buying is cheaper than renting + opportunity cost)
   for (let i = 0; i < projections.length; i++) {
     if (projections[i].difference <= 0) {
-      return (i + 1) * 12; // Convert to months
+      // Interpolate to find more precise break-even point within the year
+      if (i === 0) {
+        return 12; // Break-even in first year
+      }
+      
+      const prevDiff = projections[i - 1].difference;
+      const currDiff = projections[i].difference;
+      const monthsIntoYear = 12 * (prevDiff / (prevDiff - currDiff));
+      
+      return (i * 12) + monthsIntoYear;
     }
   }
-  return projections.length * 12; // If never breaks even, return full timeline
+  
+  // If never breaks even within the time horizon, return a high number
+  return projections.length * 12 + 60; // Add 5 years beyond timeline
 }
 
 export function calculateRentVsBuyAnalysis(inputs: RentVsBuyInputs, downPaymentSelections?: Record<string, number>): RentVsBuyAnalysis {
