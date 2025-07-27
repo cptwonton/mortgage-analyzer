@@ -440,9 +440,14 @@ function calculateCostProjections(inputs: RentVsBuyInputs, housePrice: number): 
     // Home equity calculation
     const homeEquity = currentHomeValue - remainingBalance;
     
-    // Net position: (Home Equity) - (Opportunity Cost of Down Payment + Transaction Costs)
-    const opportunityCost = investedAmount - (downPaymentAmount + transactionCosts);
-    const netDifference = cumulativeBuyCost - cumulativeRentCost + opportunityCost;
+    // Net worth if renting: invested down payment + transaction costs + monthly savings
+    const netWorthRenting = investedAmount;
+    
+    // Net worth if buying: home equity (what you own minus what you owe)
+    const netWorthBuying = homeEquity;
+    
+    // Net difference: positive means renting gives better net worth, negative means buying is better
+    const netDifference = netWorthRenting - netWorthBuying;
     
     projections.push({
       year,
@@ -454,7 +459,7 @@ function calculateCostProjections(inputs: RentVsBuyInputs, housePrice: number): 
       investmentValue: investedAmount,
       remainingMortgage: remainingBalance,
       taxSavings: taxSavings,
-      opportunityCost: opportunityCost
+      opportunityCost: investedAmount - (downPaymentAmount + transactionCosts)
     });
   }
   
@@ -546,10 +551,30 @@ export function calculateRentVsBuyAnalysis(inputs: RentVsBuyInputs, downPaymentS
   const costProjections = calculateCostProjections(inputs, avgHousePrice);
   const breakEvenMonths = findBreakEvenPoint(costProjections);
   
+  // Debug logging
+  console.log('=== RENT VS BUY DEBUG ===');
+  console.log('Monthly rent:', inputs.monthlyRent);
+  console.log('Average house price:', avgHousePrice);
+  console.log('Break-even months:', breakEvenMonths);
+  console.log('Cost projections:', costProjections.map(p => ({
+    year: p.year,
+    rentCost: p.rentCost,
+    buyCost: p.buyCost,
+    difference: p.difference,
+    equity: p.equity,
+    investmentValue: p.investmentValue
+  })));
+  console.log('========================');
+  
   // Determine recommendation with market reality checks
   const finalProjection = costProjections[costProjections.length - 1];
   let recommendation: 'buy' | 'rent' = finalProjection.difference <= 0 ? 'buy' : 'rent';
   const totalCostDifference = finalProjection.difference;
+  
+  // Override if break-even is too long, even if buying eventually wins
+  if (breakEvenMonths > 84 && recommendation === 'buy') { // More than 7 years
+    recommendation = 'rent';
+  }
   
   // Override recommendation based on market realities
   const reasoning = [];
@@ -572,6 +597,12 @@ export function calculateRentVsBuyAnalysis(inputs: RentVsBuyInputs, downPaymentS
     reasoning.push('Luxury real estate has different dynamics and higher volatility');
     reasoning.push('Renting provides flexibility without massive capital commitment');
     reasoning.push('Consider investing the down payment in diversified assets');
+  } else if (breakEvenMonths > 84) { // More than 7 years
+    recommendation = 'rent';
+    reasoning.push(`Break-even point at ${(breakEvenMonths / 12).toFixed(1)} years is too long`);
+    reasoning.push('Your money would likely perform better in diversified investments');
+    reasoning.push('Renting provides flexibility without long-term commitment');
+    reasoning.push('Consider buying when you find a better deal or market conditions improve');
   } else if (recommendation === 'buy') {
     reasoning.push(`Your $${inputs.monthlyRent.toLocaleString()}/month rent can support homeownership`);
     reasoning.push(`Break-even point at ${(breakEvenMonths / 12).toFixed(1)} years is reasonable`);
