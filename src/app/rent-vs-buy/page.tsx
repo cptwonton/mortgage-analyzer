@@ -129,18 +129,84 @@ export default function RentVsBuyCalculator() {
 
                       {/* Time Horizon */}
                       <div>
-                        <label className="block text-sm font-medium text-slate-300 mb-2">
-                          How long will you stay? (years)
+                        <label className="block text-sm font-medium text-slate-300 mb-3">
+                          How long will you stay?
                         </label>
-                        <input
-                          type="number"
-                          value={timeHorizon}
-                          onChange={(e) => setTimeHorizon(Number(e.target.value))}
-                          className="w-full px-4 py-3 bg-slate-800/50 border border-slate-600/50 rounded-lg text-white placeholder-slate-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
-                          placeholder="7"
-                          min="1"
-                          max="30"
-                        />
+                        <div className="space-y-4">
+                          {/* Slider */}
+                          <div className="relative">
+                            <input
+                              type="range"
+                              min="1"
+                              max="15"
+                              step="0.5"
+                              value={timeHorizon}
+                              onChange={(e) => setTimeHorizon(Number(e.target.value))}
+                              className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer slider"
+                              style={{
+                                background: `linear-gradient(to right, #8b5cf6 0%, #8b5cf6 ${((timeHorizon - 1) / 14) * 100}%, #374151 ${((timeHorizon - 1) / 14) * 100}%, #374151 100%)`
+                              }}
+                            />
+                            <style jsx>{`
+                              .slider::-webkit-slider-thumb {
+                                appearance: none;
+                                height: 20px;
+                                width: 20px;
+                                border-radius: 50%;
+                                background: linear-gradient(135deg, #8b5cf6, #ec4899);
+                                cursor: pointer;
+                                border: 2px solid #1e293b;
+                                box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
+                              }
+                              .slider::-moz-range-thumb {
+                                height: 20px;
+                                width: 20px;
+                                border-radius: 50%;
+                                background: linear-gradient(135deg, #8b5cf6, #ec4899);
+                                cursor: pointer;
+                                border: 2px solid #1e293b;
+                                box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
+                              }
+                            `}</style>
+                          </div>
+                          
+                          {/* Value Display */}
+                          <div className="flex justify-between items-center">
+                            <div className="text-center">
+                              <div className="text-2xl font-bold text-white">
+                                {timeHorizon} {timeHorizon === 1 ? 'year' : 'years'}
+                              </div>
+                              <div className="text-xs text-slate-400">
+                                {timeHorizon < 3 ? 'Short term' : timeHorizon < 7 ? 'Medium term' : 'Long term'}
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <div className="text-sm text-slate-400">Range: 1-15 years</div>
+                              <div className="text-xs text-slate-500">
+                                {timeHorizon < 5 ? 'Favors renting' : timeHorizon > 10 ? 'Favors buying' : 'Depends on costs'}
+                              </div>
+                            </div>
+                          </div>
+                          
+                          {/* Quick Preset Buttons */}
+                          <div className="flex space-x-2">
+                            {[2, 5, 7, 10].map((preset) => (
+                              <motion.button
+                                key={preset}
+                                onClick={() => setTimeHorizon(preset)}
+                                className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${
+                                  timeHorizon === preset
+                                    ? 'bg-purple-500 text-white'
+                                    : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+                                }`}
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                              >
+                                {preset}y
+                              </motion.button>
+                            ))}
+                          </div>
+                        </div>
                       </div>
 
                       {/* Down Payment */}
