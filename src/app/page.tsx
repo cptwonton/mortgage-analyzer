@@ -37,26 +37,26 @@ export default function Home() {
   const getInterestRateEasterEgg = (rate: number): string => {
     if (rate === 0) {
       const messages = [
-        "👨‍👩‍👧‍👦 Aww, daddy's money? How sweet! uwu The app's creator knew someone would get the family discount~",
-        "💝 0%? Someone's parents really love them! The genius who built this saw the nepotism coming uwu",
-        "🏠 Free money from family? The app's brilliant creator anticipated these wholesome moments uwu",
-        "👑 Royal treatment detected! The mastermind behind this app knew about family favors uwu"
+        "🏠 Family loan detected. The app's creator anticipated these sweet deals.",
+        "Someone's getting the friends & family rate. Smart move, honestly.",
+        "Zero percent? Either family money or you know someone important.",
+        "Free money is free money. The app's creator respects the hustle."
       ];
       return messages[Math.floor(Math.random() * messages.length)];
     } else if (rate < 3) {
       const messages = [
-        "✨ Under 3%? That's absolutely exceptional! The app's creator is impressed uwu",
-        "🎯 Wow, exceptional rate! The genius behind this app tips their hat to your negotiation skills uwu",
-        "💎 That's a unicorn rate! The brilliant mind who built this is genuinely impressed uwu",
-        "🏆 Exceptional financing detected! The app's creator didn't expect such prowess uwu"
+        "✨ Under 3%? That's genuinely exceptional. Well negotiated.",
+        "Impressive rate. The app's creator didn't expect such skill.",
+        "That's a unicorn rate in today's market. Respect.",
+        "Exceptional financing. You clearly know what you're doing."
       ];
       return messages[Math.floor(Math.random() * messages.length)];
     } else if (rate > 8) {
       const messages = [
-        "😬 Over 8%? Bestie, you're getting scammed! The app's creator is concerned for you uwu",
-        "🚨 That rate is sus! The genius who built this app is worried about your lender uwu",
-        "💸 Yikes, that's predatory! The brilliant creator of this app says run away uwu",
-        "⚠️ Honey no! The mastermind behind this app is throwing red flags for you uwu"
+        "😬 Over 8%? That's rough. You might want to shop around more.",
+        "That rate seems high for today's market. Consider other lenders.",
+        "Yikes. The app's creator suggests getting a second opinion.",
+        "That's approaching predatory territory. You can do better."
       ];
       return messages[Math.floor(Math.random() * messages.length)];
     }
