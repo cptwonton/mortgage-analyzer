@@ -8,9 +8,10 @@ interface CostBreakdownProps {
   monthlyRent: number;
   housePrice: number;
   downPayment: number;
+  calculationMode: 'total' | 'burnable';
 }
 
-export default function CostBreakdown({ projections, monthlyRent, housePrice, downPayment }: CostBreakdownProps) {
+export default function CostBreakdown({ projections, monthlyRent, housePrice, downPayment, calculationMode }: CostBreakdownProps) {
   const firstYear = projections[0];
   const lastYear = projections[projections.length - 1];
   
@@ -45,17 +46,25 @@ export default function CostBreakdown({ projections, monthlyRent, housePrice, do
             <div className="space-y-3">
               <h4 className="text-md font-medium text-blue-300 flex items-center">
                 <span className="mr-2">🏢</span>
-                Renting
+                Renting ({calculationMode === 'total' ? 'Total Housing Budget' : 'Burnable Money Budget'})
               </h4>
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
-                  <span className="text-slate-400">Monthly Rent:</span>
+                  <span className="text-slate-400">
+                    {calculationMode === 'total' ? 'Monthly Rent:' : 'Burnable Money (like rent):'}
+                  </span>
                   <span className="text-white font-medium">${monthlyRent.toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-slate-400">Renter's Insurance:</span>
                   <span className="text-white font-medium">$25</span>
                 </div>
+                {calculationMode === 'burnable' && (
+                  <div className="text-xs text-blue-200 bg-blue-500/10 p-2 rounded">
+                    💡 In burnable money mode, your ${monthlyRent.toLocaleString()}/month represents money you'd "lose" 
+                    (like rent). You could afford a higher total housing payment since principal builds equity.
+                  </div>
+                )}
                 <div className="border-t border-slate-600 pt-2">
                   <div className="flex justify-between items-center">
                     <span className="text-blue-300 font-medium">Total Monthly:</span>

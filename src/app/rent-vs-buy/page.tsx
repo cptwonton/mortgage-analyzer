@@ -86,6 +86,21 @@ export default function RentVsBuyCalculator() {
     }
   };
 
+  // Calculate effective monthly rent based on calculation mode
+  const calculateEffectiveMonthlyRent = (inputRent: number, mode: 'total' | 'burnable'): number => {
+    if (mode === 'total') {
+      // In total mode, rent represents total housing cost
+      return inputRent;
+    } else {
+      // In burnable mode, rent represents only burnable money
+      // We need to calculate what total housing payment they could afford
+      // Typical breakdown: ~70% burnable (interest + taxes + insurance + PMI), ~30% principal
+      // So if they can "burn" $2000/month, they could afford ~$2857/month total housing
+      const burnableRatio = 0.70; // Approximate ratio of burnable to total housing cost
+      return inputRent / burnableRatio;
+    }
+  };
+
   // Debounce validation values (500ms delay)
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -130,8 +145,10 @@ export default function RentVsBuyCalculator() {
         await new Promise(resolve => setTimeout(resolve, 300));
       }
       
+      const effectiveMonthlyRent = calculateEffectiveMonthlyRent(Number(monthlyRent) || 0, calculationMode);
+      
       const result = calculateRentVsBuyAnalysis({
-        monthlyRent: Number(monthlyRent) || 0,
+        monthlyRent: effectiveMonthlyRent,
         downPayment: 0.20, // 20% down payment
         investmentReturn: 0.07, // 7% stock market return
         rentIncrease: 0.03, // 3% annual rent increases
@@ -406,7 +423,7 @@ export default function RentVsBuyCalculator() {
                           Our Recommendation: {analysis.recommendation === 'buy' ? 'Buy a Home' : 'Keep Renting'}
                         </h2>
                         <p className="text-slate-300">
-                          Based on your ${Number(monthlyRent).toLocaleString()}/month rent and current market conditions
+                          Based on your ${Number(monthlyRent).toLocaleString()}/month {calculationMode === 'total' ? 'total housing budget' : 'burnable money budget'} and current market conditions
                         </p>
                       </div>
 
@@ -415,7 +432,9 @@ export default function RentVsBuyCalculator() {
                           <div className="text-2xl font-bold text-blue-400">
                             ${analysis.breakEvenRentAmount.toLocaleString()}
                           </div>
-                          <div className="text-sm text-slate-400">Break-even rent amount</div>
+                          <div className="text-sm text-slate-400">
+                            Break-even {calculationMode === 'total' ? 'total housing' : 'burnable money'} amount
+                          </div>
                         </div>
                         <div className="text-center p-4 bg-slate-800/30 rounded-lg">
                           <div className="text-2xl font-bold text-purple-400">
@@ -430,6 +449,18 @@ export default function RentVsBuyCalculator() {
                           <div className="text-sm text-slate-400">Analysis period</div>
                         </div>
                       </div>
+
+                      {calculationMode === 'burnable' && (
+                        <div className="mb-6 p-4 bg-orange-500/10 border border-orange-500/20 rounded-lg">
+                          <h4 className="text-sm font-medium text-orange-300 mb-2">Burnable Money Mode:</h4>
+                          <p className="text-sm text-slate-300">
+                            Your ${Number(monthlyRent).toLocaleString()}/month represents money you'd "burn" (never get back), 
+                            similar to rent. Since mortgage principal builds equity, you could actually afford a higher 
+                            total housing payment. The analysis accounts for this by calculating what total housing 
+                            payment would have the same "burnable" portion as your current rent.
+                          </p>
+                        </div>
+                      )}
 
                       <div className="space-y-3">
                         <h3 className="text-lg font-semibold text-white">Why {analysis.recommendation === 'buy' ? 'buying' : 'renting'} makes sense:</h3>
@@ -467,6 +498,7 @@ export default function RentVsBuyCalculator() {
                     monthlyRent={Number(monthlyRent)}
                     housePrice={analysis.equivalentHousePrices[0]?.housePriceForTotalHousing || 0}
                     downPayment={0.20}
+                    calculationMode={calculationMode}
                   />
                 </motion.div>
               )}
