@@ -44,6 +44,7 @@ const StandardInput: React.FC<StandardInputProps> = ({
   formatCurrency = false
 }) => {
   const [isFocused, setIsFocused] = useState(false);
+  const [rawValue, setRawValue] = useState('');
 
   // Format number with commas for currency display
   const formatCurrencyValue = (num: number): string => {
@@ -51,28 +52,34 @@ const StandardInput: React.FC<StandardInputProps> = ({
     return num.toLocaleString('en-US');
   };
 
-  // Parse formatted string back to number
-  const parseCurrencyValue = (str: string): number => {
-    const cleaned = str.replace(/[^\d]/g, '');
-    return cleaned === '' ? 0 : parseInt(cleaned, 10);
-  };
-
   const handleFocus = () => {
     setIsFocused(true);
+    if (formatCurrency && type === 'number') {
+      // When focusing, set raw value for editing
+      const numValue = typeof value === 'number' ? value : (typeof value === 'string' ? parseFloat(value) || 0 : 0);
+      setRawValue(numValue === 0 ? '' : numValue.toString());
+    }
   };
 
   const handleBlur = () => {
     setIsFocused(false);
+    if (formatCurrency && type === 'number') {
+      // When blurring, parse the raw value and update parent
+      const cleaned = rawValue.replace(/[^\d]/g, '');
+      const numericValue = cleaned === '' ? 0 : parseInt(cleaned, 10);
+      onChange(numericValue.toString());
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
     
-    if (formatCurrency && type === 'number') {
-      // For currency fields, clean the input and pass the raw number
+    if (formatCurrency && type === 'number' && isFocused) {
+      // For currency fields when focused, just update raw value
       const cleaned = inputValue.replace(/[^\d]/g, '');
-      onChange(cleaned);
+      setRawValue(cleaned);
     } else {
+      // For non-currency fields, update parent immediately
       onChange(inputValue);
     }
   };
@@ -98,13 +105,12 @@ const StandardInput: React.FC<StandardInputProps> = ({
   // Determine what to display in the input
   const getDisplayValue = (): string => {
     if (formatCurrency && type === 'number') {
-      const numValue = typeof value === 'number' ? value : (typeof value === 'string' ? parseFloat(value) || 0 : 0);
-      
       if (isFocused) {
-        // When focused, show raw number for easy editing
-        return numValue === 0 ? '' : numValue.toString();
+        // When focused, show raw value for editing
+        return rawValue;
       } else {
-        // When not focused, show formatted number with commas
+        // When not focused, show formatted value
+        const numValue = typeof value === 'number' ? value : (typeof value === 'string' ? parseFloat(value) || 0 : 0);
         return formatCurrencyValue(numValue);
       }
     } else {
