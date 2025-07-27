@@ -295,20 +295,20 @@ export default function LandingPage() {
               >
                 {[
                   {
-                    icon: '🤔',
-                    title: 'Mental Math Helper',
+                    icon: '😴',
+                    title: 'lazy',
                     description: 'I got tired of doing rough mortgage calculations in my head while browsing Zillow.',
                     color: 'blue'
                   },
                   {
-                    icon: '🛠️',
-                    title: 'Learning Project',
+                    icon: '🎮',
+                    title: 'for funsies',
                     description: 'Wanted to practice some UI/UX design and try out some "vibe coding" approaches.',
                     color: 'green'
                   },
                   {
-                    icon: '📊',
-                    title: 'Useful Utilities',
+                    icon: '✨',
+                    title: 'w0w',
                     description: 'Turns out these tools are actually pretty handy for real financial decisions.',
                     color: 'purple'
                   }
