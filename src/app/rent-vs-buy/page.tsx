@@ -23,12 +23,28 @@ export default function RentVsBuyCalculator() {
   // State with default values
   const [monthlyRent, setMonthlyRent] = useState<string>(DEFAULT_VALUES.monthlyRent);
   
+  // Down payment selections for variable loans
+  const [downPayments, setDownPayments] = useState<Record<string, number>>({
+    'Conventional 30-Year': 0.20, // 20%
+    'Conventional 15-Year': 0.20, // 20%
+    '5/1 ARM': 0.20, // 20%
+    '7/1 ARM': 0.20, // 20%
+  });
+  
   // Debounced values for validation tooltips
   const [debouncedMonthlyRent, setDebouncedMonthlyRent] = useState<string>(DEFAULT_VALUES.monthlyRent);
   
   // Analysis results
   const [analysis, setAnalysis] = useState<RentVsBuyAnalysis | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
+
+  // Update down payment for a specific loan type
+  const updateDownPayment = (loanType: string, value: number) => {
+    setDownPayments(prev => ({
+      ...prev,
+      [loanType]: value
+    }));
+  };
 
   // Debounce validation values (500ms delay)
   useEffect(() => {
@@ -76,14 +92,14 @@ export default function RentVsBuyCalculator() {
         downPayment: 0, // Ignore down payment - show all scenarios
         investmentReturn: 0.07, // Fixed at 7% (S&P 500 average)
         rentIncrease: 0.03 // Fixed at 3% annual increase
-      });
+      }, downPayments); // Pass down payment selections
       
       setAnalysis(result);
       setIsCalculating(false);
     };
 
     calculateAnalysis();
-  }, [monthlyRent]);
+  }, [monthlyRent, downPayments]); // Add downPayments to dependencies
 
   return (
     <>
@@ -299,20 +315,43 @@ export default function RentVsBuyCalculator() {
                               </div>
                               
                               {/* Down Payment */}
-                              <div className="flex justify-between items-center">
-                                <span className="text-slate-400">Down Payment:</span>
-                                <span className="text-white font-medium text-right">
-                                  {scenario.downPaymentOptions.isFixed ? (
-                                    <>{(scenario.downPaymentOptions.fixedPercent! * 100).toFixed(1)}%</>
-                                  ) : (
-                                    <>
-                                      {(downPayment * 100).toFixed(1)}%
-                                      <div className="text-xs text-slate-400">
-                                        ({(scenario.downPaymentOptions.range!.min * 100).toFixed(1)}% - {(scenario.downPaymentOptions.range!.max * 100).toFixed(1)}% range)
-                                      </div>
-                                    </>
-                                  )}
-                                </span>
+                              <div className="space-y-3">
+                                <div className="flex justify-between items-center">
+                                  <span className="text-slate-400">Down Payment:</span>
+                                  <span className="text-white font-medium text-right">
+                                    {scenario.downPaymentOptions.isFixed ? (
+                                      <>{(scenario.downPaymentOptions.fixedPercent! * 100).toFixed(1)}%</>
+                                    ) : (
+                                      <>
+                                        {(downPayment * 100).toFixed(1)}%
+                                        <div className="text-xs text-slate-400">
+                                          ({(scenario.downPaymentOptions.range!.min * 100).toFixed(1)}% - {(scenario.downPaymentOptions.range!.max * 100).toFixed(1)}% range)
+                                        </div>
+                                      </>
+                                    )}
+                                  </span>
+                                </div>
+                                
+                                {/* Down Payment Slider for Variable Loans */}
+                                {!scenario.downPaymentOptions.isFixed && (
+                                  <div className="mt-3">
+                                    <SliderInput
+                                      label=""
+                                      value={downPayment * 100} // Convert to percentage for display
+                                      onChange={(value) => updateDownPayment(scenario.loanType, Number(value) / 100)} // Convert back to decimal
+                                      min={scenario.downPaymentOptions.range!.min * 100}
+                                      max={scenario.downPaymentOptions.range!.max * 100}
+                                      step={0.5}
+                                      unit="%"
+                                      helpText="Adjust down payment percentage"
+                                      colorCondition={(value) => {
+                                        if (value >= 20) return 'success'; // 20%+ is good (no PMI)
+                                        if (value >= 10) return 'default'; // 10-19% is okay
+                                        return 'warning'; // <10% is risky
+                                      }}
+                                    />
+                                  </div>
+                                )}
                               </div>
                               
                               {/* Monthly Payment Breakdown */}

@@ -140,7 +140,7 @@ function calculateHousePriceFromPayment(
   }
 }
 
-function calculateLoanScenarios(monthlyRent: number): LoanScenario[] {
+function calculateLoanScenarios(monthlyRent: number, downPaymentSelections?: Record<string, number>): LoanScenario[] {
   const scenarios: LoanScenario[] = [
     {
       loanType: 'FHA Loan',
@@ -169,7 +169,7 @@ function calculateLoanScenarios(monthlyRent: number): LoanScenario[] {
       },
       housePriceForPIOnly: 0,
       housePriceForTotalHousing: 0,
-      selectedDownPayment: 0.20,
+      selectedDownPayment: downPaymentSelections?.['Conventional 30-Year'] || 0.20,
       monthlyPI: 0,
       totalMonthlyHousing: 0
     },
@@ -187,7 +187,7 @@ function calculateLoanScenarios(monthlyRent: number): LoanScenario[] {
       },
       housePriceForPIOnly: 0,
       housePriceForTotalHousing: 0,
-      selectedDownPayment: 0.20,
+      selectedDownPayment: downPaymentSelections?.['Conventional 15-Year'] || 0.20,
       monthlyPI: 0,
       totalMonthlyHousing: 0
     },
@@ -205,7 +205,7 @@ function calculateLoanScenarios(monthlyRent: number): LoanScenario[] {
       },
       housePriceForPIOnly: 0,
       housePriceForTotalHousing: 0,
-      selectedDownPayment: 0.20,
+      selectedDownPayment: downPaymentSelections?.['5/1 ARM'] || 0.20,
       monthlyPI: 0,
       totalMonthlyHousing: 0
     },
@@ -223,7 +223,7 @@ function calculateLoanScenarios(monthlyRent: number): LoanScenario[] {
       },
       housePriceForPIOnly: 0,
       housePriceForTotalHousing: 0,
-      selectedDownPayment: 0.20,
+      selectedDownPayment: downPaymentSelections?.['7/1 ARM'] || 0.20,
       monthlyPI: 0,
       totalMonthlyHousing: 0
     }
@@ -307,8 +307,8 @@ function findBreakEvenPoint(projections: CostProjection[]): number {
   return projections.length * 12; // If never breaks even, return full timeline
 }
 
-export function calculateRentVsBuyAnalysis(inputs: RentVsBuyInputs): RentVsBuyAnalysis {
-  const equivalentHousePrices = calculateLoanScenarios(inputs.monthlyRent);
+export function calculateRentVsBuyAnalysis(inputs: RentVsBuyInputs, downPaymentSelections?: Record<string, number>): RentVsBuyAnalysis {
+  const equivalentHousePrices = calculateLoanScenarios(inputs.monthlyRent, downPaymentSelections);
   
   // Use the average house price from the first scenario for cost projections
   const primaryScenario = equivalentHousePrices[0];
