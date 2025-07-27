@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import HelpTooltip from './HelpTooltip';
+import { useTheme, themes } from '@/contexts/ThemeContext';
 
 interface StandardInputProps {
   label: string;
@@ -43,6 +44,8 @@ const StandardInput: React.FC<StandardInputProps> = ({
   allowZero = true, // eslint-disable-line @typescript-eslint/no-unused-vars
   formatCurrency = false
 }) => {
+  const { theme } = useTheme();
+  const themeClasses = themes[theme];
   const [easterEggMessage, setEasterEggMessage] = useState<string>('');
   const [showEasterEgg, setShowEasterEgg] = useState(false);
 
@@ -55,10 +58,10 @@ const StandardInput: React.FC<StandardInputProps> = ({
         const messages = [
           "🤔 Trying to buy Manhattan? The creator of this app is a certified genius who saw this coming.",
           "💡 Nice try! But this app's creator anticipated your billionaire dreams.",
-          "🎯 The app's brilliant creator set reasonable limits. You're not buying the moon today.",
+          "The app's brilliant creator set reasonable limits. You're not buying the moon today.",
           "🧠 Plot twist: The genius who built this app already thought of everything.",
           "🏰 Easy there, Bezos! The app's creator was smart enough to add guardrails.",
-          "💰 The mastermind behind this app knew someone would try this. Not today, friend!"
+          "The mastermind behind this app knew someone would try this. Not today, friend!"
         ];
         return messages[Math.floor(Math.random() * messages.length)];
       } else {
@@ -230,7 +233,7 @@ const StandardInput: React.FC<StandardInputProps> = ({
           onChange={handleChange}
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
-          className={`w-full py-4 bg-white/5 border ${styles.border} ${styles.focusRing} rounded-xl focus:outline-none focus:ring-2 focus:border-transparent text-white placeholder-slate-400 transition-all duration-200 hover:bg-white/10 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${
+          className={`w-full py-4 bg-white/5 border ${styles.border} ${styles.focusRing} ${themeClasses.rounded} focus:outline-none focus:ring-2 focus:border-transparent text-white placeholder-slate-400 transition-all duration-200 hover:bg-white/10 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${
             prefix ? 'pl-8 pr-4' : suffix ? 'pl-4 pr-8' : 'px-4'
           }`}
         />
@@ -244,7 +247,9 @@ const StandardInput: React.FC<StandardInputProps> = ({
       {/* Error message takes priority over help text */}
       {errorMessage && validationState === 'error' ? (
         <p className="text-xs text-red-300 mt-1 flex items-center">
-          <span className="w-1 h-1 bg-red-400 rounded-full mr-2"></span>
+          <span className={`w-1 h-1 ${
+            theme === 'brutalist' ? 'bg-black' : 'bg-red-400'
+          } ${theme === 'brutalist' ? '' : 'rounded-full'} mr-2`}></span>
           {errorMessage}
         </p>
       ) : combinedHelpText ? (
@@ -253,7 +258,7 @@ const StandardInput: React.FC<StandardInputProps> = ({
       
       {/* Easter egg message */}
       {showEasterEgg && (
-        <div className="mt-2 p-3 bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-400/30 rounded-lg animate-pulse">
+        <div className={`mt-2 p-3 bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-400/30 ${themeClasses.rounded} animate-pulse`}>
           <p className="text-xs text-purple-200 font-medium">
             {easterEggMessage}
           </p>

@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { ThemeProvider } from "@/contexts/ThemeContext";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -13,19 +14,19 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "wut? - housing math tools",
-  description: "ok so i kept doing mortgage math in my head while looking at houses online and it was annoying so i built these",
-  keywords: "mortgage calculator, rent vs buy, housing math, mortgage payment, real estate calculator",
+  title: "wut? - mortgage calculator",
+  description: "mortgage math in your head was annoying so i built this",
+  keywords: "mortgage calculator, housing math, mortgage payment, real estate calculator, investment property",
   authors: [{ name: "Jeff" }],
   openGraph: {
-    title: "Mortgage Analyzer - Smart Real Estate Investment Analysis",
-    description: "Professional mortgage analysis tool with interactive charts, ARM visualization, and real-time payment breakdowns.",
+    title: "wut? - mortgage calculator",
+    description: "mortgage math in your head was annoying so i built this",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Mortgage Analyzer - Smart Real Estate Investment Analysis",
-    description: "Professional mortgage analysis tool with interactive charts, ARM visualization, and real-time payment breakdowns.",
+    title: "wut? - mortgage calculator",
+    description: "mortgage math in your head was annoying so i built this",
   },
 };
 
@@ -44,7 +45,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <ThemeProvider>
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );

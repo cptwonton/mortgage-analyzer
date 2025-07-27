@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTheme, getThemeClasses } from '@/contexts/ThemeContext';
 
 interface CardProps {
   children: React.ReactNode;
@@ -11,14 +12,19 @@ const Card: React.FC<CardProps> = ({
   className = '',
   variant = 'default'
 }) => {
+  const { theme } = useTheme();
+  const themeClasses = getThemeClasses(theme);
+
   const getVariantClasses = () => {
+    const baseClasses = `${themeClasses.card} ${themeClasses.rounded}`;
+    
     switch (variant) {
       case 'section':
-        return 'bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl border border-white/20 p-8 physical-card';
+        return `${baseClasses} p-8 shadow-2xl`;
       case 'result':
-        return 'bg-white/5 backdrop-blur-sm rounded-xl border border-white/20 p-6';
+        return `${baseClasses} p-6`;
       default:
-        return 'bg-white/5 border border-white/20 rounded-xl p-4';
+        return `${baseClasses} p-4`;
     }
   };
 

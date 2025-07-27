@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { calculateBreakevenAnalysis, MortgageInputs, validateMortgageInputs, validateField, getFieldRanges } from '@/lib/mortgage-calculations';
 import { getStorageInfo } from '@/lib/localStorage';
 import { usePersistedInputs } from '@/hooks/usePersistedInputs';
+import { useTheme, getThemeClasses } from '@/contexts/ThemeContext';
 import AmortizationChart from '@/components/AmortizationChart';
 import FloatingMortgageControls from '@/components/FloatingMortgageControls';
 import CurrentRatesDisplay from '@/components/CurrentRatesDisplay';
@@ -18,36 +19,15 @@ import Footer from '@/components/Footer';
 
 export default function Home() {
   const { inputs, updateInput, resetInputs, isLoaded } = usePersistedInputs();
+  const { theme } = useTheme();
+  const themeClasses = getThemeClasses(theme);
   const [errors, setErrors] = useState<string[]>([]);
   const [showPMIInfo, setShowPMIInfo] = useState(false);
   const [showFloatingControls, setShowFloatingControls] = useState(false);
   const [interestRateEasterEgg, setInterestRateEasterEgg] = useState<string>('');
   const [showInterestRateEasterEgg, setShowInterestRateEasterEgg] = useState(false);
-  const [rentVsBuyData, setRentVsBuyData] = useState<any>(null);
 
-  // Check for rent vs buy data on load
-  useEffect(() => {
-    if (isLoaded) {
-      try {
-        const storedData = localStorage.getItem('mortgageAnalyzerData');
-        if (storedData) {
-          const data = JSON.parse(storedData);
-          setRentVsBuyData(data);
-          
-          // Auto-populate the form with the data
-          updateInput('purchasePrice', data.housePrice);
-          updateInput('downPaymentPercent', data.downPayment);
-          updateInput('interestRate', data.interestRate);
-          updateInput('loanTermYears', data.loanTerm);
-          
-          // Clear the data after using it
-          localStorage.removeItem('mortgageAnalyzerData');
-        }
-      } catch (error) {
-        console.error('Failed to load rent vs buy data:', error);
-      }
-    }
-  }, [isLoaded, updateInput]);
+
 
   // Clear interest rate easter egg after a few seconds
   useEffect(() => {
@@ -64,7 +44,7 @@ export default function Home() {
   const getInterestRateEasterEgg = (rate: number): string => {
     if (rate === 0) {
       const messages = [
-        "🏠 Family loan detected. The app's creator anticipated these sweet deals.",
+        "Family loan detected. The app's creator anticipated these sweet deals.",
         "Someone's getting the friends & family rate. Smart move, honestly.",
         "Zero percent? Either family money or you know someone important.",
         "Free money is free money. The app's creator respects the hustle."
@@ -119,12 +99,19 @@ export default function Home() {
   // Show loading state while localStorage is being read
   if (!isLoaded) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
+      <div className={`min-h-screen ${themeClasses.background} flex items-center justify-center`}>
         <div className="text-center">
-          <div className="w-16 h-16 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse">
-            <span className="text-2xl">🏠</span>
+          <div className={`w-16 h-16 ${
+            theme === 'brutalist' 
+              ? 'bg-black border-4 border-black' 
+              : 'bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500'
+          } ${themeClasses.rounded} flex items-center justify-center mx-auto mb-4 ${
+            theme === 'brutalist' ? '' : 'animate-pulse'
+          }`}>
+            {theme !== 'brutalist' && <span className="text-2xl">🏠</span>}
+            {theme === 'brutalist' && <div className="w-4 h-4 bg-white"></div>}
           </div>
-          <p className="text-slate-300 text-lg">Loading your mortgage analysis...</p>
+          <p className={`${themeClasses.text.muted} text-lg`}>Loading your mortgage analysis...</p>
         </div>
       </div>
     );
@@ -133,61 +120,42 @@ export default function Home() {
   return (
     <>
       <Header />
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-        {/* Animated background elements */}
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
-          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-2000"></div>
-          <div className="absolute top-40 left-1/2 w-80 h-80 bg-pink-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-4000"></div>
-        </div>
+      <div className={`min-h-screen ${themeClasses.background}`}>
+        {/* Animated background elements - only show for glass theme */}
+        {theme === 'glass' && (
+          <div className="absolute inset-0 overflow-hidden">
+            <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
+            <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-2000"></div>
+            <div className="absolute top-40 left-1/2 w-80 h-80 bg-pink-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-4000"></div>
+          </div>
+        )}
 
       <div className="relative z-10 py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Hero Header */}
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center p-2 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full mb-6">
-              <span className="text-4xl">🏠</span>
+            <div className={`inline-flex items-center justify-center p-2 ${theme === 'brutalist' ? 'bg-black border-4 border-black' : 'bg-gradient-to-r from-purple-600 to-blue-600'} ${themeClasses.rounded} mb-6`}>
+              {theme !== 'brutalist' && <span className="text-4xl">🏠</span>}
+              {theme === 'brutalist' && <div className="w-8 h-8 bg-white"></div>}
             </div>
-            <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-white via-blue-100 to-purple-100 bg-clip-text text-transparent mb-4">
+            <h1 className={`text-5xl md:text-6xl font-bold mb-4 ${
+              theme === 'brutalist' 
+                ? `${themeClasses.text.primary} font-black uppercase tracking-wider leading-none` 
+                : 'bg-gradient-to-r from-white via-blue-100 to-purple-100 bg-clip-text text-transparent'
+            }`}>
               Mortgage Analyzer
             </h1>
-            <p className="text-xl text-slate-300 max-w-2xl mx-auto leading-relaxed">
+            <p className={`text-xl max-w-2xl mx-auto leading-relaxed ${themeClasses.text.muted}`}>
               Discover the exact rental income needed to make your investment property profitable
             </p>
             <div className="mt-6 flex justify-center">
-              <div className="h-1 w-24 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 rounded-full"></div>
+              <div className={`h-1 w-24 ${
+                theme === 'brutalist' 
+                  ? 'bg-black border-2 border-black' 
+                  : 'bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500'
+              } ${themeClasses.rounded}`}></div>
             </div>
           </div>
-
-          {/* Rent vs Buy Data Banner */}
-          {rentVsBuyData && (
-            <div className="mb-8">
-              <div className="max-w-4xl mx-auto">
-                <div className="bg-gradient-to-r from-blue-500/10 to-green-500/10 border border-blue-500/20 rounded-lg p-4">
-                  <div className="flex items-center justify-center mb-2">
-                    <span className="text-2xl mr-2">🏠</span>
-                    <h3 className="text-lg font-bold text-blue-300">
-                      Analyzing {rentVsBuyData.loanType} from Rent vs Buy Calculator
-                    </h3>
-                  </div>
-                  <div className="text-center text-sm text-slate-300 space-y-1">
-                    <div>
-                      <strong>${rentVsBuyData.housePrice.toLocaleString()}</strong> house price • 
-                      <strong> {rentVsBuyData.downPayment.toFixed(0)}%</strong> down • 
-                      <strong> {rentVsBuyData.interestRate.toFixed(2)}%</strong> APR • 
-                      <strong> {rentVsBuyData.loanTerm}</strong> years
-                    </div>
-                    <div className="text-xs text-slate-400">
-                      {rentVsBuyData.calculationMode === 'total' 
-                        ? `Based on $${rentVsBuyData.sourceRent}/month total housing cost`
-                        : `Based on $${rentVsBuyData.sourceRent}/month burnable money (no principal)`
-                      }
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
 
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
             {/* Input Panel */}
@@ -201,7 +169,11 @@ export default function Home() {
                 {/* Reset Button */}
                 <button
                   onClick={resetInputs}
-                  className="flex items-center space-x-2 px-3 py-2 bg-slate-700/50 hover:bg-slate-600/50 border border-slate-600/50 rounded-lg text-slate-300 hover:text-slate-200 transition-all duration-200 text-sm"
+                  className={`flex items-center space-x-2 px-3 py-2 ${
+                    theme === 'brutalist' 
+                      ? 'bg-white border-4 border-black text-black hover:bg-black hover:text-white font-bold uppercase tracking-wide transition-all duration-100 ease-linear' 
+                      : 'bg-slate-700/50 hover:bg-slate-600/50 border border-slate-600/50 text-slate-300 hover:text-slate-200 transition-all duration-200'
+                  } ${themeClasses.rounded} text-sm`}
                   title={(() => {
                     const storageInfo = getStorageInfo();
                     return storageInfo.hasData 
@@ -209,7 +181,7 @@ export default function Home() {
                       : 'Reset all inputs to defaults\nNo saved data';
                   })()}
                 >
-                  <span className="text-xs">🔄</span>
+                  {theme !== 'brutalist' && <span className="text-xs">🔄</span>}
                   <span>Reset</span>
                 </button>
               </div>
@@ -217,8 +189,9 @@ export default function Home() {
               {/* Basic Information Section */}
               <div className="mb-8">
                 <div className="flex items-center mb-4">
-                  <span className="text-lg font-semibold text-blue-300 mr-2">🏠</span>
-                  <h3 className="text-lg font-semibold text-blue-300">Basic Information</h3>
+                  {theme !== 'brutalist' && <span className="text-lg font-semibold text-blue-300 mr-2">🏠</span>}
+                  {theme === 'brutalist' && <div className="w-3 h-3 bg-black mr-2"></div>}
+                  <h3 className={`text-lg font-semibold ${theme === 'brutalist' ? themeClasses.text.primary : 'text-blue-300'}`}>Basic Information</h3>
                 </div>
                 
                 <div className="space-y-4">
@@ -248,7 +221,8 @@ export default function Home() {
               {/* Mortgage Details Section */}
               <div className="mb-8">
                 <div className="flex items-center mb-4">
-                  <span className="text-lg font-semibold text-blue-300 mr-2">🏦</span>
+                  {theme !== 'brutalist' && <span className="text-lg font-semibold text-blue-300 mr-2">🏦</span>}
+                  {theme === 'brutalist' && <div className="w-4 h-4 bg-white mr-2"></div>}
                   <h3 className="text-lg font-semibold text-blue-300">Mortgage Details</h3>
                 </div>
                 
@@ -411,7 +385,8 @@ export default function Home() {
                                   </span>
                                 ) : (
                                   <span className="flex items-center">
-                                    <span className="mr-1">✅</span>
+                                    {theme !== 'brutalist' && <span className="mr-1">✅</span>}
+                                    {theme === 'brutalist' && <div className="w-2 h-2 bg-green-600 mr-2"></div>}
                                     No PMI
                                   </span>
                                 )}
@@ -581,7 +556,8 @@ export default function Home() {
               {/* Property Expenses Section */}
               <div className="mb-8">
                 <div className="flex items-center mb-4">
-                  <span className="text-lg font-semibold text-orange-300 mr-2">🏡</span>
+                  {theme !== 'brutalist' && <span className="text-lg font-semibold text-orange-300 mr-2">🏡</span>}
+                  {theme === 'brutalist' && <div className="w-4 h-4 bg-white mr-2"></div>}
                   <h3 className="text-lg font-semibold text-orange-300">Property Expenses</h3>
                 </div>
                 
@@ -648,7 +624,7 @@ export default function Home() {
                           
                           <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-2">
                             <p className="text-xs text-amber-300">
-                              💡 <strong>Pro Tip:</strong> Check your county assessor&apos;s website for exact rates. They can vary significantly within states!
+                              {theme !== 'brutalist' && '💡 '}<strong>Pro Tip:</strong> Check your county assessor&apos;s website for exact rates. They can vary significantly within states!
                             </p>
                           </div>
                         </div>
@@ -693,7 +669,9 @@ export default function Home() {
                         content: (
                           <div className="space-y-3">
                             <div>
-                              <p className="font-medium text-blue-300 mb-1">🔧 Monthly Maintenance</p>
+                              <p className={`font-medium ${theme === 'brutalist' ? themeClasses.text.primary : 'text-blue-300'} mb-1`}>
+                                {theme !== 'brutalist' && '🔧 '}Monthly Maintenance
+                              </p>
                               <p className="text-xs mb-2">Ongoing, predictable repairs and upkeep</p>
                               <ul className="text-xs space-y-1 text-slate-400">
                                 <li>• Lawn care and landscaping</li>
@@ -705,7 +683,9 @@ export default function Home() {
                               <p className="text-xs mt-2 text-slate-300">Typical: $100-300/month</p>
                             </div>
                             <div className="border-t border-slate-600/50 pt-3">
-                              <p className="font-medium text-amber-300 mb-1">🏗️ CapEx Reserve (below)</p>
+                              <p className={`font-medium ${theme === 'brutalist' ? themeClasses.text.primary : 'text-amber-300'} mb-1`}>
+                                {theme !== 'brutalist' && '🏗️ '}CapEx Reserve (below)
+                              </p>
                               <p className="text-xs mb-2">Major replacements you save for</p>
                               <ul className="text-xs space-y-1 text-slate-400">
                                 <li>• Roof replacement (15-25 years)</li>
@@ -737,9 +717,10 @@ export default function Home() {
               {/* Investment Expenses Section */}
               <div className="mb-8">
                 <div className="flex items-center mb-4">
-                  <span className="text-lg font-semibold text-green-300 mr-2">💰</span>
-                  <h3 className="text-lg font-semibold text-green-300">Investment Expenses</h3>
-                  <div className="ml-2 px-2 py-1 bg-green-500/20 border border-green-500/30 rounded-full">
+                  {theme !== 'brutalist' && <span className="text-lg font-semibold text-green-300 mr-2">💰</span>}
+                  {theme === 'brutalist' && <div className="w-3 h-3 bg-black mr-2"></div>}
+                  <h3 className={`text-lg font-semibold ${theme === 'brutalist' ? themeClasses.text.primary : 'text-green-300'}`}>Investment Expenses</h3>
+                  <div className={`ml-2 px-2 py-1 bg-green-500/20 border border-green-500/30 ${themeClasses.rounded}`}>
                     <span className="text-xs text-green-300 font-medium">For Investors</span>
                   </div>
                 </div>
@@ -760,7 +741,9 @@ export default function Home() {
                         content: (
                           <div className="space-y-3">
                             <div>
-                              <p className="font-medium text-amber-300 mb-1">🏗️ What is CapEx Reserve?</p>
+                              <p className={`font-medium ${theme === 'brutalist' ? themeClasses.text.primary : 'text-amber-300'} mb-1`}>
+                                {theme !== 'brutalist' && '🏗️ '}What is CapEx Reserve?
+                              </p>
                               <p className="text-xs mb-2">Money you set aside each month for major replacements that will eventually happen</p>
                             </div>
                             <div>
@@ -773,7 +756,7 @@ export default function Home() {
                               </ul>
                             </div>
                             <div className="border-t border-slate-600/50 pt-2">
-                              <p className="text-xs text-green-300">💡 <strong>Smart Strategy:</strong> Set aside $100-200/month so you&apos;re prepared when these big expenses hit!</p>
+                              <p className="text-xs text-green-300">{theme !== 'brutalist' && '💡 '}<strong>Smart Strategy:</strong> Set aside $100-200/month so you&apos;re prepared when these big expenses hit!</p>
                             </div>
                           </div>
                         )
@@ -870,7 +853,7 @@ export default function Home() {
                           This is your true monthly cost and can be compared directly to rent payments.
                         </p>
                         <p className="text-xs text-red-300/60 mt-2">
-                          💡 <strong>Key insight:</strong> Compare this number to rent, not your full mortgage payment!
+                          {theme !== 'brutalist' && '💡 '}<strong>Key insight:</strong> Compare this number to rent, not your full mortgage payment!
                         </p>
                       </div>
                     </BreakevenCard>
@@ -888,7 +871,7 @@ export default function Home() {
                           Higher than burned money because principal builds equity you&apos;ll likely recover when selling.
                         </p>
                         <p className="text-xs text-yellow-300/60 mt-2">
-                          ⚠️ <strong>Not comparable to rent:</strong> Includes recoverable equity building
+                          {theme !== 'brutalist' && '⚠️ '}<strong>Not comparable to rent:</strong> Includes recoverable equity building
                         </p>
                       </div>
                     </BreakevenCard>
@@ -906,7 +889,7 @@ export default function Home() {
                           Accounts for vacancy periods, property management, and all carrying costs.
                         </p>
                         <p className="text-xs text-green-300/60 mt-2">
-                          💰 <strong>Investment bar:</strong> Different calculation due to investor considerations
+                          {theme !== 'brutalist' && '💰 '}<strong>Investment bar:</strong> Different calculation due to investor considerations
                         </p>
                       </div>
                     </BreakevenCard>
@@ -915,7 +898,7 @@ export default function Home() {
                     {inputs.mortgageType === 'arm' && analysis.armPaymentRange && (
                       <BreakevenCard
                         title="ARM Payment Range"
-                        icon="📊"
+                        icon={theme === 'brutalist' ? undefined : "📊"}
                         colorScheme="amber"
                       >
                         <div className="space-y-2">
@@ -948,13 +931,17 @@ export default function Home() {
                   {/* Expense Breakdown */}
                   <InfoCard 
                     title="Monthly Expense Breakdown"
-                    icon="📊"
+                    icon={theme === 'brutalist' ? undefined : "📊"}
                     size="large"
                   >
                     <div className="space-y-3">
                       <div className="flex justify-between items-center py-2 border-b border-white/10">
                         <span className="text-slate-300 flex items-center">
-                          <span className="w-3 h-3 bg-gradient-to-r from-emerald-400 via-teal-500 to-green-500 rounded-full mr-3"></span>
+                          <span className={`w-3 h-3 ${
+                            theme === 'brutalist' 
+                              ? 'bg-black' 
+                              : 'bg-gradient-to-r from-emerald-400 via-teal-500 to-green-500'
+                          } ${theme === 'brutalist' ? '' : 'rounded-full'} mr-3`}></span>
                           Principal (equity building)
                         </span>
                         <span className="font-bold text-green-400">
@@ -963,7 +950,11 @@ export default function Home() {
                       </div>
                       <div className="flex justify-between items-center py-2 border-b border-white/10">
                         <span className="text-slate-300 flex items-center">
-                          <span className="w-3 h-3 bg-gradient-to-r from-red-400 via-rose-500 to-pink-500 rounded-full mr-3"></span>
+                          <span className={`w-3 h-3 ${
+                            theme === 'brutalist' 
+                              ? 'bg-black' 
+                              : 'bg-gradient-to-r from-red-400 via-rose-500 to-pink-500'
+                          } ${theme === 'brutalist' ? '' : 'rounded-full'} mr-3`}></span>
                           Interest
                         </span>
                         <span className="font-bold text-red-400">
@@ -972,7 +963,11 @@ export default function Home() {
                       </div>
                       <div className="flex justify-between items-center py-2 border-b border-white/10">
                         <span className="text-slate-300 flex items-center">
-                          <span className="w-3 h-3 bg-gradient-to-r from-amber-400 via-yellow-500 to-orange-500 rounded-full mr-3"></span>
+                          <span className={`w-3 h-3 ${
+                            theme === 'brutalist' 
+                              ? 'bg-black' 
+                              : 'bg-gradient-to-r from-amber-400 via-yellow-500 to-orange-500'
+                          } ${theme === 'brutalist' ? '' : 'rounded-full'} mr-3`}></span>
                           Property Tax
                         </span>
                         <span className="font-bold text-orange-400">
@@ -981,7 +976,11 @@ export default function Home() {
                       </div>
                       <div className="flex justify-between items-center py-2 border-b border-white/10">
                         <span className="text-slate-300 flex items-center">
-                          <span className="w-3 h-3 bg-gradient-to-r from-sky-400 via-blue-500 to-cyan-500 rounded-full mr-3"></span>
+                          <span className={`w-3 h-3 ${
+                            theme === 'brutalist' 
+                              ? 'bg-black' 
+                              : 'bg-gradient-to-r from-sky-400 via-blue-500 to-cyan-500'
+                          } ${theme === 'brutalist' ? '' : 'rounded-full'} mr-3`}></span>
                           Insurance
                         </span>
                         <span className="font-bold text-blue-400">
@@ -991,7 +990,11 @@ export default function Home() {
                       {analysis.breakdown.pmi > 0 && (
                         <div className="flex justify-between items-center py-2 border-b border-white/10">
                           <span className="text-slate-300 flex items-center">
-                            <span className="w-3 h-3 bg-gradient-to-r from-violet-400 via-purple-500 to-fuchsia-500 rounded-full mr-3"></span>
+                            <span className={`w-3 h-3 ${
+                              theme === 'brutalist' 
+                                ? 'bg-black' 
+                                : 'bg-gradient-to-r from-violet-400 via-purple-500 to-fuchsia-500'
+                            } ${theme === 'brutalist' ? '' : 'rounded-full'} mr-3`}></span>
                             PMI
                           </span>
                           <span className="font-bold text-purple-400">
@@ -1001,7 +1004,11 @@ export default function Home() {
                       )}
                       <div className="flex justify-between items-center py-2 border-b border-white/10">
                         <span className="text-slate-300 flex items-center">
-                          <span className="w-3 h-3 bg-gradient-to-r from-orange-400 via-amber-500 to-yellow-500 rounded-full mr-3"></span>
+                          <span className={`w-3 h-3 ${
+                            theme === 'brutalist' 
+                              ? 'bg-black' 
+                              : 'bg-gradient-to-r from-orange-400 via-amber-500 to-yellow-500'
+                          } ${theme === 'brutalist' ? '' : 'rounded-full'} mr-3`}></span>
                           Maintenance
                         </span>
                         <span className="font-bold text-yellow-400">
@@ -1010,7 +1017,11 @@ export default function Home() {
                       </div>
                       <div className="flex justify-between items-center py-2 border-b border-white/10">
                         <span className="text-slate-300 flex items-center">
-                          <span className="w-3 h-3 bg-gradient-to-r from-rose-400 via-orange-500 to-amber-500 rounded-full mr-3"></span>
+                          <span className={`w-3 h-3 ${
+                            theme === 'brutalist' 
+                              ? 'bg-black' 
+                              : 'bg-gradient-to-r from-rose-400 via-orange-500 to-amber-500'
+                          } ${theme === 'brutalist' ? '' : 'rounded-full'} mr-3`}></span>
                           CapEx Reserve
                         </span>
                         <span className="font-bold text-amber-400">
@@ -1020,7 +1031,11 @@ export default function Home() {
                       {analysis.breakdown.propertyManagement > 0 && (
                         <div className="flex justify-between items-center py-2 border-b border-white/10">
                           <span className="text-slate-300 flex items-center">
-                            <span className="w-3 h-3 bg-gradient-to-r from-indigo-400 via-blue-500 to-purple-500 rounded-full mr-3"></span>
+                            <span className={`w-3 h-3 ${
+                              theme === 'brutalist' 
+                                ? 'bg-black' 
+                                : 'bg-gradient-to-r from-indigo-400 via-blue-500 to-purple-500'
+                            } ${theme === 'brutalist' ? '' : 'rounded-full'} mr-3`}></span>
                             Property Management
                           </span>
                           <span className="font-bold text-indigo-400">
@@ -1030,7 +1045,11 @@ export default function Home() {
                       )}
                       <div className="flex justify-between items-center pt-4 border-t-2 border-gradient-to-r from-purple-500 to-blue-500">
                         <span className="font-bold text-white flex items-center">
-                          <span className="w-4 h-4 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 rounded-full mr-3"></span>
+                          <span className={`w-4 h-4 ${
+                            theme === 'brutalist' 
+                              ? 'bg-black' 
+                              : 'bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500'
+                          } ${theme === 'brutalist' ? '' : 'rounded-full'} mr-3`}></span>
                           Total Monthly Expenses
                         </span>
                         <span className="font-bold text-2xl bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 bg-clip-text text-transparent">
@@ -1042,8 +1061,13 @@ export default function Home() {
                 </div>
               ) : (
                 <div className="text-center py-12">
-                  <div className="w-16 h-16 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <span className="text-2xl">📊</span>
+                  <div className={`w-16 h-16 ${
+                    theme === 'brutalist' 
+                      ? 'bg-black border-4 border-black' 
+                      : 'bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500'
+                  } ${themeClasses.rounded} flex items-center justify-center mx-auto mb-4`}>
+                    {theme !== 'brutalist' && <span className="text-2xl">📊</span>}
+                    {theme === 'brutalist' && <div className="w-8 h-8 bg-white"></div>}
                   </div>
                   <p className="text-slate-300 text-lg">Enter property details to see your analysis</p>
                   <p className="text-slate-400 text-sm mt-2">Fix any validation errors above to continue</p>
@@ -1058,14 +1082,22 @@ export default function Home() {
               <Card variant="section">
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center">
-                    <div className="w-3 h-3 bg-gradient-to-r from-cyan-400 via-teal-500 to-blue-500 rounded-full mr-3"></div>
+                    <div className={`w-3 h-3 ${
+                      theme === 'brutalist' 
+                        ? 'bg-black' 
+                        : 'bg-gradient-to-r from-cyan-400 via-teal-500 to-blue-500'
+                    } ${theme === 'brutalist' ? '' : 'rounded-full'} mr-3`}></div>
                     <h2 className="text-2xl font-bold text-white">Payment Breakdown Over Time</h2>
                   </div>
                   
                   {/* Quick Adjust Button */}
                   <button
                     onClick={() => setShowFloatingControls(true)}
-                    className="flex items-center space-x-2 px-4 py-2 bg-purple-500/20 hover:bg-purple-500/30 border border-purple-500/40 rounded-lg text-purple-300 hover:text-purple-200 transition-all duration-200 physical-button"
+                    className={`flex items-center space-x-2 px-4 py-2 ${
+                      theme === 'brutalist' 
+                        ? themeClasses.button 
+                        : 'bg-purple-500/20 hover:bg-purple-500/30 border border-purple-500/40 text-purple-300 hover:text-purple-200'
+                    } ${themeClasses.rounded} transition-all duration-200 physical-button`}
                   >
                     <span className="text-sm font-medium">Quick Adjust</span>
                     <div className="w-4 h-4 flex items-center justify-center">
@@ -1095,7 +1127,9 @@ export default function Home() {
                 <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                   <InfoCard size="small">
                     <div className="flex items-center mb-2">
-                      <div className="w-3 h-3 bg-green-400 rounded-full mr-2"></div>
+                      <div className={`w-3 h-3 ${
+                        theme === 'brutalist' ? 'bg-black' : 'bg-green-400'
+                      } ${theme === 'brutalist' ? '' : 'rounded-full'} mr-2`}></div>
                       <span className="text-green-300 font-semibold">Principal Payments</span>
                     </div>
                     <p className="text-slate-300">
@@ -1105,7 +1139,9 @@ export default function Home() {
                   
                   <InfoCard size="small">
                     <div className="flex items-center mb-2">
-                      <div className="w-3 h-3 bg-red-400 rounded-full mr-2"></div>
+                      <div className={`w-3 h-3 ${
+                        theme === 'brutalist' ? 'bg-black' : 'bg-red-400'
+                      } ${theme === 'brutalist' ? '' : 'rounded-full'} mr-2`}></div>
                       <span className="text-red-300 font-semibold">Interest Payments</span>
                     </div>
                     <p className="text-slate-300">
@@ -1115,7 +1151,9 @@ export default function Home() {
                   
                   <InfoCard size="small">
                     <div className="flex items-center mb-2">
-                      <div className="w-3 h-3 bg-cyan-400 rounded-full mr-2"></div>
+                      <div className={`w-3 h-3 ${
+                        theme === 'brutalist' ? 'bg-black' : 'bg-cyan-400'
+                      } ${theme === 'brutalist' ? '' : 'rounded-full'} mr-2`}></div>
                       <span className="text-cyan-300 font-semibold">The Crossover</span>
                     </div>
                     <p className="text-slate-300">

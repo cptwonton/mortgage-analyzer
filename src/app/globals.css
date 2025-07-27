@@ -231,3 +231,164 @@ input:active {
   transform: translateY(-2px);
   transition: all 0.3s ease;
 }
+
+/* Theme-specific styles */
+.theme-brutalist {
+  font-family: 'Courier New', 'Monaco', 'Menlo', 'Consolas', monospace;
+  
+  /* Brutalist CSS Custom Properties */
+  --font-brutalist: 'Courier New', 'Monaco', 'Menlo', 'Consolas', monospace;
+  --font-weight-normal: 400;
+  --font-weight-bold: 700;
+  --font-weight-black: 900;
+  
+  /* Colors - WCAG AA Compliant */
+  --concrete-white: #ffffff;
+  --concrete-black: #000000;
+  --steel-gray: #666666;
+  --raw-red: #dc2626;
+  --warning-yellow: #fbbf24;
+  
+  /* Spacing */
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  
+  /* Borders */
+  --border-thick: 4px solid var(--concrete-black);
+  --border-accent: 4px solid var(--raw-red);
+  
+  /* Shadows */
+  --shadow-md: 8px 8px 0px 0px rgba(0,0,0,1);
+  --shadow-lg: 12px 12px 0px 0px rgba(0,0,0,1);
+  --shadow-inset: inset 4px 4px 0px rgba(0,0,0,0.2);
+}
+
+/* Brutalist Typography */
+.theme-brutalist h1,
+.theme-brutalist h2,
+.theme-brutalist h3,
+.theme-brutalist h4,
+.theme-brutalist h5,
+.theme-brutalist h6 {
+  font-family: var(--font-brutalist);
+  font-weight: var(--font-weight-black);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  line-height: 0.9;
+  margin-bottom: var(--space-4);
+}
+
+.theme-brutalist h1 {
+  font-size: 4rem;
+  letter-spacing: 0.2em;
+}
+
+.theme-brutalist h2 {
+  font-size: 3rem;
+  letter-spacing: 0.15em;
+}
+
+.theme-brutalist h3 {
+  font-size: 2.25rem;
+  letter-spacing: 0.1em;
+}
+
+/* Brutalist Buttons */
+.theme-brutalist button,
+.theme-brutalist .brutalist-button {
+  font-family: var(--font-brutalist);
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border-radius: 0;
+  transition: all 0.1s linear;
+}
+
+/* Brutalist Inputs */
+.theme-brutalist input,
+.theme-brutalist textarea,
+.theme-brutalist select {
+  font-family: var(--font-brutalist);
+  border-radius: 0;
+  transition: all 0.1s linear;
+}
+
+/* Brutalist Focus States */
+.theme-brutalist *:focus-visible {
+  outline: 2px solid var(--raw-red);
+  outline-offset: 2px;
+}
+
+/* Brutalist theme overrides for hardcoded slate colors */
+.theme-brutalist .text-slate-200,
+.theme-brutalist .text-slate-300 {
+  color: #374151 !important; /* text-gray-800 equivalent */
+}
+
+.theme-brutalist .text-slate-400 {
+  color: #374151 !important; /* text-gray-800 equivalent */
+}
+
+/* Additional brutalist overrides for common glass elements */
+.theme-brutalist .bg-gradient-to-r {
+  background: black !important;
+  color: white !important;
+}
+
+.theme-brutalist .text-transparent {
+  color: black !important;
+}
+
+.theme-brutalist .bg-clip-text {
+  background: none !important;
+  -webkit-background-clip: unset !important;
+  background-clip: unset !important;
+}
+@media (prefers-contrast: high) {
+  .theme-brutalist {
+    --border-thick: 6px solid var(--concrete-black);
+  }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  .theme-brutalist * {
+    transition: none !important;
+    animation: none !important;
+    transform: none !important;
+  }
+}
+
+.theme-brutalist .brutalist-shadow {
+  box-shadow: 8px 8px 0px 0px rgba(0,0,0,1);
+}
+
+.theme-brutalist .brutalist-shadow:hover {
+  box-shadow: 12px 12px 0px 0px rgba(0,0,0,1);
+  transform: translate(-2px, -2px);
+}
+
+.theme-glass .physical-card {
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+/* Custom scrollbar for brutalist theme */
+.theme-brutalist ::-webkit-scrollbar {
+  width: 16px;
+}
+
+.theme-brutalist ::-webkit-scrollbar-track {
+  background: white;
+  border: 2px solid black;
+}
+
+.theme-brutalist ::-webkit-scrollbar-thumb {
+  background: black;
+  border: 2px solid black;
+}
+
+.theme-brutalist ::-webkit-scrollbar-thumb:hover {
+  background: #333;
+}

@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { useTheme } from '@/contexts/ThemeContext';
 import {
   AreaChart,
   Area,
@@ -39,6 +40,7 @@ const AmortizationChart: React.FC<AmortizationChartProps> = ({
   armInitialPeriod = 5,
   loanTermYears
 }) => {
+  const { theme } = useTheme();
   const [zoomLevel, setZoomLevel] = useState<ZoomLevel>('full');
   const [selectedPoint, setSelectedPoint] = useState<ChartDataPoint | null>(null);
   const [showMonthly, setShowMonthly] = useState(false);
@@ -292,8 +294,13 @@ const AmortizationChart: React.FC<AmortizationChartProps> = ({
         <div className="bg-gradient-to-r from-green-500/10 to-emerald-500/10 border border-green-500/20 rounded-lg p-4 mb-4">
           <div className="flex items-center space-x-3">
             <div className="flex-shrink-0">
-              <div className="w-12 h-12 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full flex items-center justify-center">
-                <span className="text-2xl">🎉</span>
+              <div className={`w-12 h-12 ${
+                theme === 'brutalist' 
+                  ? 'bg-black border-4 border-black' 
+                  : 'bg-gradient-to-r from-green-400 to-emerald-500'
+              } ${theme === 'brutalist' ? '' : 'rounded-full'} flex items-center justify-center`}>
+                {theme !== 'brutalist' && <span className="text-2xl">🎉</span>}
+                {theme === 'brutalist' && <div className="w-6 h-6 bg-white"></div>}
               </div>
             </div>
             <div className="flex-1">
@@ -317,7 +324,9 @@ const AmortizationChart: React.FC<AmortizationChartProps> = ({
             </div>
             <div className="flex-shrink-0 text-right">
               <div className="text-green-300 font-bold text-xs">SMART MONEY</div>
-              <div className="text-green-400 text-xs">💰 Building Equity Fast</div>
+              <div className="text-green-400 text-xs">
+                {theme !== 'brutalist' && '💰 '}Building Equity Fast
+              </div>
             </div>
           </div>
         </div>

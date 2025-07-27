@@ -1,6 +1,6 @@
-# 🏠 Money Math
+# 🏠 wut?
 
-ok so i kept doing mortgage math in my head while looking at houses online and it was annoying so i built these
+mortgage math in your head was annoying so i built this
 
 ## 🚀 Live Demo
 
@@ -9,31 +9,19 @@ ok so i kept doing mortgage math in my head while looking at houses online and i
 ## 🛠️ What's Here
 
 ### 🏠 **Mortgage Analyzer**
-so you want to buy a house to rent out? this tells you what rent you need to break even. also shows you what money you actually "burn" each month vs what builds equity. (important: principal payments aren't burned money - you get that back when you sell)
+figure out what rent you need to break even on an investment property. shows what money you actually "burn" vs what builds equity.
 
 **Features:**
-- shows what money you actually "burn" (hint: not the principal)
-- tells you exactly what rent you need to not lose money
-- breaks down where your payment actually goes
-- amortization table because why not
-- handles ARM loans with payment ranges
-- saves your inputs so you don't lose them
+- what money you actually "burn" (not the principal)
+- break-even rent calculation  
+- payment breakdown
+- amortization table
+- handles ARM loans
+- saves your inputs
 
-### ⚖️ **Rent vs Buy Calculator** 
-🚧 **Under Development**
+## 🎯 Why I Built This
 
-the eternal question. should you keep throwing money at rent or buy something? this was gonna help figure out the break-even math but it's not ready yet.
-
-## 🎯 Why I Built These
-
-### 😴 **lazy**
 was browsing zillow and kept trying to figure out payments in my head. got tired of it.
-
-### 🎮 **for funsies**
-wanted to mess around with some ui stuff and see what this "vibe coding" thing was about.
-
-### ✨ **w0w**
-actually ended up being pretty useful for real decisions. who knew.
 
 ## 🔧 Tech Stack
 

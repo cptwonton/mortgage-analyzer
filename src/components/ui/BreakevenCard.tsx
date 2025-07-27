@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTheme, themes } from '@/contexts/ThemeContext';
 
 interface BreakevenCardProps {
   title: string;
@@ -19,6 +20,8 @@ const BreakevenCard: React.FC<BreakevenCardProps> = ({
   className = '',
   children
 }) => {
+  const { theme } = useTheme();
+  const themeClasses = themes[theme];
   const getColorClasses = () => {
     switch (colorScheme) {
       case 'danger':
@@ -72,7 +75,7 @@ const BreakevenCard: React.FC<BreakevenCardProps> = ({
   const colors = getColorClasses();
 
   return (
-    <div className={`group relative overflow-hidden ${colors.background} border ${colors.border} rounded-xl p-6 ${colors.hover} transition-all duration-300 physical-card ${className}`}>
+    <div className={`group relative overflow-hidden ${colors.background} border ${colors.border} ${themeClasses.rounded} p-6 ${colors.hover} transition-all duration-300 physical-card ${className}`}>
       <div className={`absolute top-0 left-0 w-full h-1 ${colors.topBar}`}></div>
       <div className="flex items-center justify-between mb-2">
         <h3 className={`font-bold ${colors.titleText} flex items-center`}>

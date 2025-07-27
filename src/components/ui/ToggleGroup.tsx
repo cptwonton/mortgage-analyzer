@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTheme, themes } from '@/contexts/ThemeContext';
 
 interface ToggleOption {
   value: string;
@@ -24,6 +25,8 @@ const ToggleGroup: React.FC<ToggleGroupProps> = ({
   className = '',
   helpText
 }) => {
+  const { theme } = useTheme();
+  const themeClasses = themes[theme];
   const getColorClasses = (option: ToggleOption, isSelected: boolean) => {
     const colorScheme = option.colorScheme || 'blue';
     
@@ -61,7 +64,7 @@ const ToggleGroup: React.FC<ToggleGroupProps> = ({
             <button
               key={option.value}
               onClick={() => onChange(option.value)}
-              className={`px-4 py-4 rounded-xl border transition-all duration-200 physical-button ${getColorClasses(option, isSelected)}`}
+              className={`px-4 py-4 ${themeClasses.rounded} border transition-all duration-200 physical-button ${getColorClasses(option, isSelected)}`}
             >
               <div className="text-center">
                 <div className="font-semibold">{option.label}</div>

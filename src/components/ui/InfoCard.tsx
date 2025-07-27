@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTheme, themes } from '@/contexts/ThemeContext';
 
 interface InfoCardProps {
   children: React.ReactNode;
@@ -17,12 +18,14 @@ const InfoCard: React.FC<InfoCardProps> = ({
   title,
   icon
 }) => {
+  const { theme } = useTheme();
+  const themeClasses = themes[theme];
   const getSizeClasses = () => {
     switch (size) {
       case 'small':
-        return 'rounded-lg p-4';
+        return `${themeClasses.rounded} p-4`;
       case 'large':
-        return 'rounded-xl p-6';
+        return `${themeClasses.rounded} p-6`;
     }
   };
 
@@ -48,7 +51,8 @@ const InfoCard: React.FC<InfoCardProps> = ({
     <div className={`${getSizeClasses()} ${getVariantClasses()} ${className}`}>
       {title && (
         <h3 className={`mb-4 flex items-center ${getTitleClasses()}`}>
-          {icon && <span className="mr-2">{icon}</span>}
+          {icon && theme !== 'brutalist' && <span className="mr-2">{icon}</span>}
+          {icon && theme === 'brutalist' && <div className="w-3 h-3 bg-black mr-2"></div>}
           {title}
         </h3>
       )}
