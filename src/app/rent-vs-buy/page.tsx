@@ -23,6 +23,9 @@ export default function RentVsBuyCalculator() {
   // State with default values
   const [monthlyRent, setMonthlyRent] = useState<string>(DEFAULT_VALUES.monthlyRent);
   
+  // Calculation mode toggle
+  const [calculationMode, setCalculationMode] = useState<'total' | 'burnable'>('total');
+  
   // Down payment selections for variable loans
   const [downPayments, setDownPayments] = useState<Record<string, number>>({
     'Conventional 30-Year': 0.20, // 20%
@@ -84,7 +87,7 @@ export default function RentVsBuyCalculator() {
   // Calculate analysis when inputs change
   useEffect(() => {
     const calculateAnalysis = async () => {
-      // Check if rent changed (not just slider)
+      // Check if rent changed (not just slider or toggle)
       const rentChanged = monthlyRent !== prevRentRef.current;
       
       if (rentChanged) {
@@ -110,7 +113,7 @@ export default function RentVsBuyCalculator() {
     };
 
     calculateAnalysis();
-  }, [monthlyRent, downPayments]); // Clean dependencies
+  }, [monthlyRent, downPayments, calculationMode]); // Add calculationMode to dependencies
 
   return (
     <>
@@ -226,6 +229,41 @@ export default function RentVsBuyCalculator() {
                         }
                       />
 
+                      {/* Calculation Mode Toggle */}
+                      <div className="space-y-3">
+                        <label className="block text-sm font-medium text-slate-300">
+                          Calculation Mode
+                        </label>
+                        <div className="flex bg-slate-800/50 rounded-lg p-1">
+                          <button
+                            onClick={() => setCalculationMode('total')}
+                            className={`flex-1 px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 ${
+                              calculationMode === 'total'
+                                ? 'bg-blue-600 text-white shadow-lg'
+                                : 'text-slate-400 hover:text-slate-300'
+                            }`}
+                          >
+                            Total Housing Cost
+                          </button>
+                          <button
+                            onClick={() => setCalculationMode('burnable')}
+                            className={`flex-1 px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 ${
+                              calculationMode === 'burnable'
+                                ? 'bg-orange-600 text-white shadow-lg'
+                                : 'text-slate-400 hover:text-slate-300'
+                            }`}
+                          >
+                            Burnable Money Only
+                          </button>
+                        </div>
+                        <div className="text-xs text-slate-400 text-center">
+                          {calculationMode === 'total' 
+                            ? 'Shows house prices if rent equals your total monthly housing payment'
+                            : 'Shows house prices if rent equals only the money you don\'t get back (no principal)'
+                          }
+                        </div>
+                      </div>
+
                       {/* Key Insight Box */}
                       <div className="bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-500/20 rounded-lg p-4">
                         <h3 className="text-sm font-medium text-blue-300 mb-2 flex items-center justify-center">
@@ -308,64 +346,49 @@ export default function RentVsBuyCalculator() {
                             </div>
                             
                             <div className="space-y-4">
-                              {/* House Price Options with Breakdowns */}
-                              <div className="space-y-3">
-                                {/* Total Housing Cost */}
-                                <div className="bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-lg p-3">
-                                  <div className="text-center mb-2">
-                                    <div className="text-lg font-bold text-blue-400">
-                                      ${scenario.housePriceForTotalHousing.toLocaleString()}
-                                    </div>
-                                    <div className="text-xs text-slate-400">
-                                      If rent = total housing cost
-                                      {downPayment < 0.2 && (
-                                        <div className="text-amber-400 mt-1">
-                                          ⚠️ Includes PMI (down payment &lt; 20%)
-                                        </div>
-                                      )}
-                                    </div>
-                                  </div>
-                                  <div className="grid grid-cols-2 gap-2 text-xs">
-                                    <div className="text-center">
-                                      <div className="text-blue-300 font-medium">
-                                        ${Math.round(scenario.housePriceForTotalHousing * downPayment).toLocaleString()}
-                                      </div>
-                                      <div className="text-slate-500">Down Payment</div>
-                                    </div>
-                                    <div className="text-center">
-                                      <div className="text-purple-300 font-medium">
-                                        ${Math.round(scenario.housePriceForTotalHousing * (1 - downPayment)).toLocaleString()}
-                                      </div>
-                                      <div className="text-slate-500">Mortgage</div>
-                                    </div>
-                                  </div>
+                              {/* Single House Price Display Based on Mode */}
+                              <div className="text-center bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-lg p-4">
+                                <div className="text-2xl font-bold text-blue-400">
+                                  ${calculationMode === 'total' 
+                                    ? scenario.housePriceForTotalHousing.toLocaleString()
+                                    : scenario.housePriceForBurnableMoney.toLocaleString()
+                                  }
                                 </div>
-                                
-                                {/* Burnable Money Only */}
-                                <div className="bg-gradient-to-r from-green-500/10 to-blue-500/10 rounded-lg p-3">
-                                  <div className="text-center mb-2">
-                                    <div className="text-lg font-bold text-green-400">
-                                      ${scenario.housePriceForBurnableMoney.toLocaleString()}
-                                    </div>
-                                    <div className="text-xs text-slate-400">If rent = burnable money only</div>
-                                    <div className="text-xs text-slate-500 mt-1">
-                                      (Interest + taxes + insurance{downPayment < 0.2 ? ' + PMI' : ''}, no principal)
-                                    </div>
+                                <div className="text-sm text-slate-400">
+                                  {calculationMode === 'total' 
+                                    ? 'Total Housing Cost Mode'
+                                    : 'Burnable Money Only Mode'
+                                  }
+                                </div>
+                                {calculationMode === 'total' && downPayment < 0.2 && (
+                                  <div className="text-amber-400 text-xs mt-1">
+                                    ⚠️ Includes PMI (down payment &lt; 20%)
                                   </div>
-                                  <div className="grid grid-cols-2 gap-2 text-xs">
-                                    <div className="text-center">
-                                      <div className="text-green-300 font-medium">
-                                        ${Math.round(scenario.housePriceForBurnableMoney * downPayment).toLocaleString()}
-                                      </div>
-                                      <div className="text-slate-500">Down Payment</div>
-                                    </div>
-                                    <div className="text-center">
-                                      <div className="text-blue-300 font-medium">
-                                        ${Math.round(scenario.housePriceForBurnableMoney * (1 - downPayment)).toLocaleString()}
-                                      </div>
-                                      <div className="text-slate-500">Mortgage</div>
-                                    </div>
+                                )}
+                                {calculationMode === 'burnable' && (
+                                  <div className="text-xs text-slate-500 mt-1">
+                                    Interest + taxes + insurance{downPayment < 0.2 ? ' + PMI' : ''} (no principal)
                                   </div>
+                                )}
+                              </div>
+
+                              {/* Down Payment and Mortgage Breakdown */}
+                              <div className="grid grid-cols-2 gap-4">
+                                <div className="text-center">
+                                  <div className="text-lg font-bold text-green-400">
+                                    ${Math.round((calculationMode === 'total' 
+                                      ? scenario.housePriceForTotalHousing 
+                                      : scenario.housePriceForBurnableMoney) * downPayment).toLocaleString()}
+                                  </div>
+                                  <div className="text-xs text-slate-400">Down Payment</div>
+                                </div>
+                                <div className="text-center">
+                                  <div className="text-lg font-bold text-purple-400">
+                                    ${Math.round((calculationMode === 'total' 
+                                      ? scenario.housePriceForTotalHousing 
+                                      : scenario.housePriceForBurnableMoney) * (1 - downPayment)).toLocaleString()}
+                                  </div>
+                                  <div className="text-xs text-slate-400">Mortgage Amount</div>
                                 </div>
                               </div>
                               
@@ -411,34 +434,61 @@ export default function RentVsBuyCalculator() {
                               
                               {/* Monthly Payment Breakdown */}
                               <div className="border-t border-slate-600/30 pt-4">
-                                <div className="flex justify-between items-center mb-2">
-                                  <span className="text-slate-400">Principal (equity building):</span>
-                                  <span className="text-green-400">${scenario.monthlyPrincipalOnly.toLocaleString()}</span>
-                                </div>
-                                <div className="flex justify-between items-center mb-2">
-                                  <span className="text-slate-400">Interest (burnable):</span>
-                                  <span className="text-orange-400">${scenario.monthlyInterestOnly.toLocaleString()}</span>
-                                </div>
-                                {downPayment < 0.2 && (
-                                  <div className="flex justify-between items-center mb-2">
-                                    <span className="text-slate-400">PMI (burnable):</span>
-                                    <span className="text-amber-400">
-                                      ${Math.round((scenario.housePriceForTotalHousing * 0.005) / 12).toLocaleString()}
-                                    </span>
-                                  </div>
+                                {calculationMode === 'total' ? (
+                                  <>
+                                    <div className="flex justify-between items-center mb-2">
+                                      <span className="text-slate-400">Principal (equity building):</span>
+                                      <span className="text-green-400">${scenario.monthlyPrincipalOnly.toLocaleString()}</span>
+                                    </div>
+                                    <div className="flex justify-between items-center mb-2">
+                                      <span className="text-slate-400">Interest (burnable):</span>
+                                      <span className="text-orange-400">${scenario.monthlyInterestOnly.toLocaleString()}</span>
+                                    </div>
+                                    {downPayment < 0.2 && (
+                                      <div className="flex justify-between items-center mb-2">
+                                        <span className="text-slate-400">PMI (burnable):</span>
+                                        <span className="text-amber-400">
+                                          ${Math.round((scenario.housePriceForTotalHousing * 0.005) / 12).toLocaleString()}
+                                        </span>
+                                      </div>
+                                    )}
+                                    <div className="flex justify-between items-center">
+                                      <span className="text-slate-400">Total Monthly Payment:</span>
+                                      <span className="text-blue-400 font-medium">
+                                        ${scenario.totalMonthlyHousing.toLocaleString()}
+                                      </span>
+                                    </div>
+                                  </>
+                                ) : (
+                                  <>
+                                    <div className="flex justify-between items-center mb-2">
+                                      <span className="text-slate-400">Interest (burnable):</span>
+                                      <span className="text-orange-400">${Math.round(((scenario.housePriceForBurnableMoney * (1 - downPayment)) * scenario.interestRate) / 12).toLocaleString()}</span>
+                                    </div>
+                                    <div className="flex justify-between items-center mb-2">
+                                      <span className="text-slate-400">Property Tax (burnable):</span>
+                                      <span className="text-red-400">${Math.round((scenario.housePriceForBurnableMoney * 0.012) / 12).toLocaleString()}</span>
+                                    </div>
+                                    <div className="flex justify-between items-center mb-2">
+                                      <span className="text-slate-400">Insurance (burnable):</span>
+                                      <span className="text-red-400">${Math.round((scenario.housePriceForBurnableMoney * 0.004) / 12).toLocaleString()}</span>
+                                    </div>
+                                    {downPayment < 0.2 && (
+                                      <div className="flex justify-between items-center mb-2">
+                                        <span className="text-slate-400">PMI (burnable):</span>
+                                        <span className="text-amber-400">
+                                          ${Math.round((scenario.housePriceForBurnableMoney * 0.005) / 12).toLocaleString()}
+                                        </span>
+                                      </div>
+                                    )}
+                                    <div className="flex justify-between items-center">
+                                      <span className="text-slate-400">Total Burnable Money:</span>
+                                      <span className="text-red-400 font-medium">
+                                        ${scenario.totalBurnableMoney.toLocaleString()}
+                                      </span>
+                                    </div>
+                                  </>
                                 )}
-                                <div className="flex justify-between items-center mb-2">
-                                  <span className="text-slate-400">Total Burnable Money:</span>
-                                  <span className="text-red-400 font-medium">
-                                    ${scenario.totalBurnableMoney.toLocaleString()}
-                                  </span>
-                                </div>
-                                <div className="flex justify-between items-center">
-                                  <span className="text-slate-400">Total Monthly Payment:</span>
-                                  <span className="text-blue-400 font-medium">
-                                    ${scenario.totalMonthlyHousing.toLocaleString()}
-                                  </span>
-                                </div>
                               </div>
                               
                               {/* Loan Details */}
@@ -448,11 +498,16 @@ export default function RentVsBuyCalculator() {
                                   {scenario.loanTermYears}-year term at {(scenario.interestRate * 100).toFixed(2)}% APR
                                 </div>
                                 <div className="text-xs text-slate-400 mt-1">
-                                  Burnable money = money you don&apos;t get back (like rent)
+                                  {calculationMode === 'total' 
+                                    ? 'Total housing cost = what you actually pay monthly'
+                                    : 'Burnable money = money you don\'t get back (like rent)'
+                                  }
                                 </div>
-                                <div className="text-xs text-slate-400">
-                                  Principal builds equity - you get it back when you sell
-                                </div>
+                                {calculationMode === 'total' && (
+                                  <div className="text-xs text-slate-400">
+                                    Principal builds equity - you get it back when you sell
+                                  </div>
+                                )}
                                 {downPayment < 0.2 && (
                                   <div className="text-xs text-amber-400 mt-1">
                                     ⚠️ PMI required until 20% equity reached
