@@ -21,6 +21,59 @@ export default function Home() {
   const { inputs, updateInput, resetInputs, isLoaded } = usePersistedInputs();
   const { theme } = useTheme();
   const themeClasses = getThemeClasses(theme);
+  
+  // Helper function to get accessible colors for brutalist theme
+  const getAccessibleColor = (originalColor: string) => {
+    if (theme !== 'brutalist') return originalColor;
+    
+    // Map light colors to accessible dark colors for white backgrounds
+    const colorMap: { [key: string]: string } = {
+      // Slate colors (too light on white)
+      'text-slate-200': 'text-slate-700',
+      'text-slate-300': 'text-slate-700', 
+      'text-slate-400': 'text-slate-600',
+      
+      // Blue colors
+      'text-blue-200': 'text-blue-700',
+      'text-blue-300': 'text-blue-700',
+      'text-blue-400': 'text-blue-600',
+      
+      // Green colors
+      'text-green-200': 'text-green-700',
+      'text-green-300': 'text-green-700',
+      'text-green-400': 'text-green-600',
+      
+      // Amber/Yellow colors
+      'text-amber-200': 'text-amber-700',
+      'text-amber-300': 'text-amber-700',
+      'text-yellow-200': 'text-yellow-700',
+      'text-yellow-300': 'text-yellow-700',
+      
+      // Red colors
+      'text-red-200': 'text-red-700',
+      'text-red-300': 'text-red-700',
+      'text-red-400': 'text-red-600',
+      
+      // Purple colors
+      'text-purple-200': 'text-purple-700',
+      'text-purple-300': 'text-purple-700',
+      
+      // Orange colors
+      'text-orange-200': 'text-orange-700',
+      'text-orange-300': 'text-orange-700',
+      
+      // Teal colors
+      'text-teal-200': 'text-teal-700',
+      'text-teal-300': 'text-teal-700',
+      
+      // Pink colors
+      'text-pink-200': 'text-pink-700',
+      'text-pink-300': 'text-pink-700',
+    };
+    
+    return colorMap[originalColor] || originalColor;
+  };
+  
   const [errors, setErrors] = useState<string[]>([]);
   const [showPMIInfo, setShowPMIInfo] = useState(false);
   const [showFloatingControls, setShowFloatingControls] = useState(false);
@@ -163,7 +216,7 @@ export default function Home() {
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center">
                   <div className="w-3 h-3 bg-gradient-to-r from-emerald-400 via-teal-500 to-cyan-500 rounded-full mr-3"></div>
-                  <h2 className="text-2xl font-bold text-white">Property Details</h2>
+                  <h2 className={`text-2xl font-bold ${theme === 'brutalist' ? themeClasses.text.primary : 'text-white'}`}>Property Details</h2>
                 </div>
                 
                 {/* Reset Button */}
@@ -223,7 +276,7 @@ export default function Home() {
                 <div className="flex items-center mb-4">
                   {theme !== 'brutalist' && <span className="text-lg font-semibold text-blue-300 mr-2">🏦</span>}
                   {theme === 'brutalist' && <div className="w-4 h-4 bg-white mr-2"></div>}
-                  <h3 className="text-lg font-semibold text-blue-300">Mortgage Details</h3>
+                  <h3 className={`text-lg font-semibold ${theme === 'brutalist' ? themeClasses.text.primary : 'text-blue-300'}`}>Mortgage Details</h3>
                 </div>
                 
                 <div className="space-y-4">
@@ -250,7 +303,7 @@ export default function Home() {
                   {/* ARM Initial Period Slider - Only show for ARM */}
                   {inputs.mortgageType === 'arm' && (
                     <div className="group">
-                      <label className="block text-sm font-semibold text-slate-200 mb-2 group-focus-within:text-blue-300 transition-colors">
+                      <label className={`block text-sm font-semibold ${getAccessibleColor('text-slate-200')} mb-2 group-focus-within:text-blue-300 transition-colors`}>
                         Initial Fixed Period
                       </label>
                       <div className="relative">
@@ -259,7 +312,7 @@ export default function Home() {
                             <span className="text-white font-bold text-lg">
                               {inputs.armInitialPeriod} years
                             </span>
-                            <div className="flex space-x-1 text-xs text-slate-400">
+                            <div className={`flex space-x-1 text-xs ${getAccessibleColor('text-slate-400')}`}>
                               <span>3</span>
                               <span>•</span>
                               <span>10</span>
@@ -289,13 +342,13 @@ export default function Home() {
                           <div className="mt-3 pt-3 border-t border-white/10">
                             <div className="flex items-center space-x-2 mb-2">
                               <div className="w-2 h-2 bg-amber-400 rounded-full"></div>
-                              <span className="text-xs font-medium text-amber-300">ARM Structure</span>
+                              <span className={`text-xs font-medium ${getAccessibleColor('text-amber-300')}`}>ARM Structure</span>
                             </div>
-                            <div className="text-xs text-slate-300 mb-3">
+                            <div className={`text-xs ${getAccessibleColor('text-slate-300')} mb-3`}>
                               <p className="mb-1">
                                 <strong>{inputs.armInitialPeriod || 5}/1 ARM:</strong> Rate fixed for {inputs.armInitialPeriod || 5} years, then adjusts annually for remaining {inputs.loanTermYears - (inputs.armInitialPeriod || 5)} years
                               </p>
-                              <p className="text-slate-400">
+                              <p className={getAccessibleColor('text-slate-400')}>
                                 {(inputs.armInitialPeriod || 5) <= 5 
                                   ? 'Shorter fixed period = sooner rate adjustments' 
                                   : 'Longer fixed period = more initial rate stability'
@@ -330,7 +383,7 @@ export default function Home() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="group">
-                      <label className="block text-sm font-semibold text-slate-200 mb-2 group-focus-within:text-blue-300 transition-colors">
+                      <label className={`block text-sm font-semibold ${getAccessibleColor('text-slate-200')} mb-2 group-focus-within:text-blue-300 transition-colors`}>
                         Down Payment
                       </label>
                       <div className="relative">
@@ -339,7 +392,7 @@ export default function Home() {
                             <span className="text-white font-bold text-lg">
                               {inputs.downPaymentPercent.toFixed(0)}%
                             </span>
-                            <div className="flex space-x-1 text-xs text-slate-400">
+                            <div className={`flex space-x-1 text-xs ${getAccessibleColor('text-slate-400')}`}>
                               <span>0%</span>
                               <span>•</span>
                               <span>50%</span>
@@ -375,8 +428,8 @@ export default function Home() {
                               }`}></div>
                               <span className={`text-xs font-medium transition-colors duration-300 ${
                                 inputs.downPaymentPercent < 20 
-                                  ? 'text-amber-300' 
-                                  : 'text-green-300'
+                                  ? getAccessibleColor('text-amber-300')
+                                  : getAccessibleColor('text-green-300')
                               }`}>
                                 {inputs.downPaymentPercent < 20 ? (
                                   <span className="flex items-center">
@@ -398,8 +451,8 @@ export default function Home() {
                               onClick={() => setShowPMIInfo(!showPMIInfo)}
                               className={`w-5 h-5 rounded-full border flex items-center justify-center transition-all duration-200 hover:scale-110 physical-button ${
                                 inputs.downPaymentPercent < 20 
-                                  ? 'border-amber-400/50 text-amber-300 hover:border-amber-400 hover:bg-amber-400/10' 
-                                  : 'border-green-400/50 text-green-300 hover:border-green-400 hover:bg-green-400/10'
+                                  ? `border-amber-400/50 ${getAccessibleColor('text-amber-300')} hover:border-amber-400 hover:bg-amber-400/10`
+                                  : `border-green-400/50 ${getAccessibleColor('text-green-300')} hover:border-green-400 hover:bg-green-400/10`
                               }`}
                             >
                               <span className="text-xs font-bold">i</span>
@@ -408,7 +461,7 @@ export default function Home() {
                           
                           {/* PMI Cost Display (when applicable) */}
                           {inputs.downPaymentPercent < 20 && analysis && (
-                            <div className="mt-2 text-xs text-amber-200">
+                            <div className={`mt-2 text-xs ${getAccessibleColor('text-amber-200')}`}>
                               <div className="flex justify-between">
                                 <span>Monthly PMI:</span>
                                 <span className="font-semibold">+${analysis.breakdown.pmi.toLocaleString()}</span>
@@ -476,7 +529,7 @@ export default function Home() {
                   </div>
 
                   <div className="group">
-                    <label className="block text-sm font-semibold text-slate-200 mb-2 group-focus-within:text-blue-300 transition-colors">
+                    <label className={`block text-sm font-semibold ${getAccessibleColor('text-slate-200')} mb-2 group-focus-within:text-blue-300 transition-colors`}>
                       {inputs.mortgageType === 'fixed' ? 'Interest Rate' : 'Initial Interest Rate'}
                     </label>
                     <div className="relative">
@@ -512,28 +565,28 @@ export default function Home() {
                           <div className="mt-3 pt-3 border-t border-white/10">
                             <div className="flex items-center space-x-2 mb-2">
                               <div className="w-2 h-2 bg-amber-400 rounded-full"></div>
-                              <span className="text-xs font-medium text-amber-300">Rate Adjustments</span>
+                              <span className={`text-xs font-medium ${getAccessibleColor('text-amber-300')}`}>Rate Adjustments</span>
                             </div>
-                            <p className="text-xs text-slate-300 mb-3">
+                            <p className={`text-xs ${getAccessibleColor('text-slate-300')} mb-3`}>
                               After {inputs.armInitialPeriod || 5} years, rate adjusts annually based on market conditions with protective caps.
                             </p>
                             
                             {/* Rate Caps */}
                             <div className="grid grid-cols-3 gap-3 text-xs">
                               <div className="text-center">
-                                <div className="text-white font-bold text-lg">{inputs.armRateCaps?.initial}%</div>
-                                <div className="text-slate-400">First Adj.</div>
+                                <div className={`${theme === 'brutalist' ? themeClasses.text.primary : 'text-white'} font-bold text-lg`}>{inputs.armRateCaps?.initial}%</div>
+                                <div className={getAccessibleColor('text-slate-400')}>First Adj.</div>
                               </div>
                               <div className="text-center">
-                                <div className="text-white font-bold text-lg">{inputs.armRateCaps?.subsequent}%</div>
-                                <div className="text-slate-400">Annual</div>
+                                <div className={`${theme === 'brutalist' ? themeClasses.text.primary : 'text-white'} font-bold text-lg`}>{inputs.armRateCaps?.subsequent}%</div>
+                                <div className={getAccessibleColor('text-slate-400')}>Annual</div>
                               </div>
                               <div className="text-center">
-                                <div className="text-white font-bold text-lg">{inputs.armRateCaps?.lifetime}%</div>
-                                <div className="text-slate-400">Lifetime</div>
+                                <div className={`${theme === 'brutalist' ? themeClasses.text.primary : 'text-white'} font-bold text-lg`}>{inputs.armRateCaps?.lifetime}%</div>
+                                <div className={getAccessibleColor('text-slate-400')}>Lifetime</div>
                               </div>
                             </div>
-                            <p className="text-xs text-slate-400 mt-2">
+                            <p className={`text-xs ${getAccessibleColor('text-slate-400')} mt-2`}>
                               Maximum increases: {inputs.armRateCaps?.initial}% first, {inputs.armRateCaps?.subsequent}% annually, {inputs.armRateCaps?.lifetime}% total
                             </p>
                           </div>
@@ -543,7 +596,7 @@ export default function Home() {
                       {/* Interest Rate Easter Egg */}
                       {showInterestRateEasterEgg && (
                         <div className="mt-3 p-3 bg-gradient-to-r from-pink-500/20 to-purple-500/20 border border-pink-400/30 rounded-lg animate-pulse">
-                          <p className="text-xs text-pink-200 font-medium">
+                          <p className={`text-xs ${getAccessibleColor('text-pink-200')} font-medium`}>
                             {interestRateEasterEgg}
                           </p>
                         </div>
@@ -558,12 +611,12 @@ export default function Home() {
                 <div className="flex items-center mb-4">
                   {theme !== 'brutalist' && <span className="text-lg font-semibold text-orange-300 mr-2">🏡</span>}
                   {theme === 'brutalist' && <div className="w-4 h-4 bg-white mr-2"></div>}
-                  <h3 className="text-lg font-semibold text-orange-300">Property Expenses</h3>
+                  <h3 className={`text-lg font-semibold ${theme === 'brutalist' ? themeClasses.text.primary : 'text-orange-300'}`}>Property Expenses</h3>
                 </div>
                 
                 <div className="space-y-4">
                   <div className="group">
-                    <label className="block text-sm font-semibold text-slate-200 mb-2 group-focus-within:text-blue-300 transition-colors">
+                    <label className={`block text-sm font-semibold ${getAccessibleColor('text-slate-200')} mb-2 group-focus-within:text-blue-300 transition-colors`}>
                       Property Tax Rate (Annual)
                     </label>
                     <div className="relative">
@@ -603,8 +656,8 @@ export default function Home() {
                           
                           <div className="grid grid-cols-2 gap-3 mb-3">
                             <div>
-                              <p className="text-xs font-medium text-green-300 mb-1">Low Tax States:</p>
-                              <div className="text-xs text-slate-400 space-y-0.5">
+                              <p className={`text-xs font-medium ${getAccessibleColor('text-green-300')} mb-1`}>Low Tax States:</p>
+                              <div className={`text-xs ${getAccessibleColor('text-slate-400')} space-y-0.5`}>
                                 <div>Hawaii: 0.3%</div>
                                 <div>Alabama: 0.4%</div>
                                 <div>Delaware: 0.6%</div>
@@ -612,8 +665,8 @@ export default function Home() {
                               </div>
                             </div>
                             <div>
-                              <p className="text-xs font-medium text-red-300 mb-1">High Tax States:</p>
-                              <div className="text-xs text-slate-400 space-y-0.5">
+                              <p className={`text-xs font-medium ${getAccessibleColor('text-red-300')} mb-1`}>High Tax States:</p>
+                              <div className={`text-xs ${getAccessibleColor('text-slate-400')} space-y-0.5`}>
                                 <div>New Jersey: 2.5%</div>
                                 <div>Illinois: 2.3%</div>
                                 <div>New Hampshire: 2.2%</div>
@@ -623,7 +676,7 @@ export default function Home() {
                           </div>
                           
                           <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-2">
-                            <p className="text-xs text-amber-300">
+                            <p className={`text-xs ${getAccessibleColor('text-amber-300')}`}>
                               {theme !== 'brutalist' && '💡 '}<strong>Pro Tip:</strong> Check your county assessor&apos;s website for exact rates. They can vary significantly within states!
                             </p>
                           </div>
@@ -721,7 +774,7 @@ export default function Home() {
                   {theme === 'brutalist' && <div className="w-3 h-3 bg-black mr-2"></div>}
                   <h3 className={`text-lg font-semibold ${theme === 'brutalist' ? themeClasses.text.primary : 'text-green-300'}`}>Investment Expenses</h3>
                   <div className={`ml-2 px-2 py-1 bg-green-500/20 border border-green-500/30 ${themeClasses.rounded}`}>
-                    <span className="text-xs text-green-300 font-medium">For Investors</span>
+                    <span className={`text-xs ${getAccessibleColor('text-green-300')} font-medium`}>For Investors</span>
                   </div>
                 </div>
                 
@@ -747,16 +800,16 @@ export default function Home() {
                               <p className="text-xs mb-2">Money you set aside each month for major replacements that will eventually happen</p>
                             </div>
                             <div>
-                              <p className="font-medium text-slate-200 mb-1">Common CapEx Items:</p>
-                              <ul className="text-xs space-y-1 text-slate-400">
-                                <li>• <span className="text-slate-300">Roof:</span> $15K every 20 years = $62/month</li>
-                                <li>• <span className="text-slate-300">HVAC:</span> $8K every 12 years = $55/month</li>
-                                <li>• <span className="text-slate-300">Water heater:</span> $1.2K every 10 years = $10/month</li>
-                                <li>• <span className="text-slate-300">Flooring:</span> $5K every 15 years = $28/month</li>
+                              <p className={`font-medium ${getAccessibleColor('text-slate-200')} mb-1`}>Common CapEx Items:</p>
+                              <ul className={`text-xs space-y-1 ${getAccessibleColor('text-slate-400')}`}>
+                                <li>• <span className={getAccessibleColor('text-slate-300')}>Roof:</span> $15K every 20 years = $62/month</li>
+                                <li>• <span className={getAccessibleColor('text-slate-300')}>HVAC:</span> $8K every 12 years = $55/month</li>
+                                <li>• <span className={getAccessibleColor('text-slate-300')}>Water heater:</span> $1.2K every 10 years = $10/month</li>
+                                <li>• <span className={getAccessibleColor('text-slate-300')}>Flooring:</span> $5K every 15 years = $28/month</li>
                               </ul>
                             </div>
                             <div className="border-t border-slate-600/50 pt-2">
-                              <p className="text-xs text-green-300">{theme !== 'brutalist' && '💡 '}<strong>Smart Strategy:</strong> Set aside $100-200/month so you&apos;re prepared when these big expenses hit!</p>
+                              <p className={`text-xs ${getAccessibleColor('text-green-300')}`}>{theme !== 'brutalist' && '💡 '}<strong>Smart Strategy:</strong> Set aside $100-200/month so you&apos;re prepared when these big expenses hit!</p>
                             </div>
                           </div>
                         )
@@ -833,7 +886,7 @@ export default function Home() {
             <Card variant="section">
               <div className="flex items-center mb-6">
                 <div className="w-3 h-3 bg-gradient-to-r from-amber-400 via-orange-500 to-red-500 rounded-full mr-3"></div>
-                <h2 className="text-2xl font-bold text-white">Required Rental Income</h2>
+                <h2 className={`text-2xl font-bold ${theme === 'brutalist' ? themeClasses.text.primary : 'text-white'}`}>Required Rental Income</h2>
               </div>
               
               {analysis ? (
@@ -888,7 +941,7 @@ export default function Home() {
                           <strong>What this means:</strong> The rental income needed to make money as an investor. 
                           Accounts for vacancy periods, property management, and all carrying costs.
                         </p>
-                        <p className="text-xs text-green-300/60 mt-2">
+                        <p className={`text-xs ${getAccessibleColor('text-green-300')}/60 mt-2`}>
                           {theme !== 'brutalist' && '💰 '}<strong>Investment bar:</strong> Different calculation due to investor considerations
                         </p>
                       </div>
@@ -904,7 +957,7 @@ export default function Home() {
                         <div className="space-y-2">
                           <div className="flex justify-between items-center">
                             <span className="text-sm text-amber-200">Current (Initial Rate):</span>
-                            <span className="text-xl font-bold text-white">
+                            <span className={`text-xl font-bold ${theme === 'brutalist' ? themeClasses.text.primary : 'text-white'}`}>
                               ${analysis.armPaymentRange.currentPayment.toLocaleString()}
                             </span>
                           </div>
@@ -921,7 +974,7 @@ export default function Home() {
                             </span>
                           </div>
                         </div>
-                        <p className="text-xs text-amber-300 mt-3">
+                        <p className={`text-xs ${getAccessibleColor('text-amber-300')} mt-3`}>
                           Based on {inputs.armRateCaps?.initial}%/{inputs.armRateCaps?.subsequent}%/{inputs.armRateCaps?.lifetime}% rate caps
                         </p>
                       </BreakevenCard>
@@ -1044,7 +1097,7 @@ export default function Home() {
                         </div>
                       )}
                       <div className="flex justify-between items-center pt-4 border-t-2 border-gradient-to-r from-purple-500 to-blue-500">
-                        <span className="font-bold text-white flex items-center">
+                        <span className={`font-bold ${theme === 'brutalist' ? themeClasses.text.primary : 'text-white'} flex items-center`}>
                           <span className={`w-4 h-4 ${
                             theme === 'brutalist' 
                               ? 'bg-black' 
@@ -1087,7 +1140,7 @@ export default function Home() {
                         ? 'bg-black' 
                         : 'bg-gradient-to-r from-cyan-400 via-teal-500 to-blue-500'
                     } ${theme === 'brutalist' ? '' : 'rounded-full'} mr-3`}></div>
-                    <h2 className="text-2xl font-bold text-white">Payment Breakdown Over Time</h2>
+                    <h2 className={`text-2xl font-bold ${theme === 'brutalist' ? themeClasses.text.primary : 'text-white'}`}>Payment Breakdown Over Time</h2>
                   </div>
                   
                   {/* Quick Adjust Button */}
@@ -1130,9 +1183,9 @@ export default function Home() {
                       <div className={`w-3 h-3 ${
                         theme === 'brutalist' ? 'bg-black' : 'bg-green-400'
                       } ${theme === 'brutalist' ? '' : 'rounded-full'} mr-2`}></div>
-                      <span className="text-green-300 font-semibold">Principal Payments</span>
+                      <span className={`${getAccessibleColor('text-green-300')} font-semibold`}>Principal Payments</span>
                     </div>
-                    <p className="text-slate-300">
+                    <p className={getAccessibleColor('text-slate-300')}>
                       Build equity in your property. Early payments are mostly interest, but this shifts over time.
                     </p>
                   </InfoCard>

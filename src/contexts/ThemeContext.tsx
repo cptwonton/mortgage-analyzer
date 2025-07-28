@@ -71,12 +71,12 @@ export const themes = {
     name: 'Brutalist',
     icon: '⬛',
     background: 'bg-white',
-    card: 'bg-black border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]',
+    card: 'bg-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]',
     cardHover: 'hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all duration-100 ease-linear',
     text: {
       primary: 'text-black',
       secondary: 'text-gray-800', // Improved contrast: 7:1 ratio
-      muted: 'text-gray-800',     // Much better contrast: 7:1 ratio (was text-gray-700)
+      muted: 'text-gray-600',     // Adjusted for white background
       accent: 'text-red-600'      // WCAG AA compliant: 5.74:1 ratio
     },
     input: 'bg-white border-4 border-black text-black placeholder-gray-500 focus:ring-0 focus:border-red-600 focus:shadow-[inset_4px_4px_0px_rgba(0,0,0,0.2)] transition-all duration-100 ease-linear',
